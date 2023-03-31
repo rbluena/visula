@@ -3,8 +3,8 @@ import Head from "next/head";
 
 type Props = {
   children: ReactNode;
-  headTitle: string;
-  metaDescription: string;
+  headTitle?: string;
+  metaDescription?: string;
 };
 
 const MainLayout = ({
