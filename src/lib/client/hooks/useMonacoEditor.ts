@@ -1,7 +1,7 @@
 import { useEffect } from "react";
 import { useMonaco } from "@monaco-editor/react";
 import {
-  createMonacoLanguageCustomTheme,
+  registerMonacoLanguageCustomTheme,
   registerMonacoCompletionItem,
 } from "../monaco";
 
@@ -10,7 +10,7 @@ export default function useMonacoEditor() {
 
   useEffect(() => {
     if (monaco) {
-      createMonacoLanguageCustomTheme(monaco);
+      registerMonacoLanguageCustomTheme(monaco);
       registerMonacoCompletionItem(monaco);
 
       monaco.editor.setTheme("visulaTheme");
