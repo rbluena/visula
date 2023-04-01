@@ -6,12 +6,22 @@ const CodeEditor = ({}) => {
 
   return (
     <Editor
-      className="h-full"
+      className="h-screen w-full"
       defaultLanguage="visulaLanguage"
       // theme="vs-dark"
       options={{
         automaticLayout: true,
         quickSuggestions: true,
+        insertSpaces: false,
+        tabSize: 2,
+        showUnused: true,
+        autoClosingBrackets: "always",
+        autoIndent: "full",
+        tabCompletion: "on",
+        formatOnPaste: true,
+        formatOnType: true,
+        glyphMargin: true,
+        fontFamily: '"Fira Code", Consolas, "Courier New", monospace',
         // wordWrap: "on",
       }}
     />

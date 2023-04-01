@@ -1,18 +1,9 @@
-import { IRange } from "monaco-editor";
 import { Monaco } from "@monaco-editor/react";
-import getColors from "./getColors";
-import {
-  generateAutocompleteSuggestions,
-  generateSnippetCompletionSuggestions,
-} from "./generateSnippetCompletion";
+import { IRange, languages } from "monaco-editor";
 
-const colors = getColors("dark");
+import generateAutocompleteSuggestions from "./generateAutocompleteSuggestions";
 
-/**
- *
- * @param monaco
- */
-export function registerCustomTheme(monaco: Monaco) {
+export function registerMonacoLanguageCustomTheme(monaco: Monaco) {
   monaco.languages.register({ id: "visulaLanguage" });
   monaco.languages.setMonarchTokensProvider("visulaLanguage", {
     tokenizer: {
@@ -29,8 +20,8 @@ export function registerCustomTheme(monaco: Monaco) {
   });
 
   monaco.editor.defineTheme("visulaTheme", {
-    base: "vs-dark",
-    inherit: true,
+    base: "vs",
+    inherit: false,
     rules: [
       {
         token: "variable",
@@ -65,14 +56,10 @@ export function registerCustomTheme(monaco: Monaco) {
   });
 }
 
-/**
- *
- * @param monaco
- */
 export function registerMonacoCompletionItem(monaco: Monaco) {
   monaco.languages.registerCompletionItemProvider("visulaLanguage", {
     triggerCharacters: ["@"],
-    provideCompletionItems(model, position) {
+    provideCompletionItems(model, position, context, token) {
       let word = model.getWordUntilPosition(position);
       let range: IRange = {
         startLineNumber: position.lineNumber,
@@ -82,29 +69,67 @@ export function registerMonacoCompletionItem(monaco: Monaco) {
       };
 
       return {
-        suggestions: generateAutocompleteSuggestions(range, monaco),
+        suggestions: generateFunctionsAutocompleteSuggestions(range, monaco),
       };
     },
   });
-}
 
-/**
- *
- * @param monaco
- */
-export function registerMonacoSnippetCompletionItem(monaco: Monaco) {
   monaco.languages.registerCompletionItemProvider("visulaLanguage", {
-    provideCompletionItems(model, position) {
-      const word = model.getWordUntilPosition(position);
-      const range: IRange = {
+    // triggerCharacters: ["$"],
+    provideCompletionItems(model, position, _) {
+      let word = model.getWordUntilPosition(position);
+      let range: IRange = {
         startLineNumber: position.lineNumber,
         endLineNumber: position.lineNumber,
         startColumn: word.startColumn,
         endColumn: word.endColumn,
       };
 
+      let suggestions: languages.CompletionItem[] = [
+        {
+          label: "model",
+          kind: monaco.languages.CompletionItemKind.Snippet,
+          insertText: ["model ${1:ModelName} {", "\t$0", "}"].join("\n"),
+          insertTextRules:
+            monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+          documentation: "Model",
+          preselect: true,
+          range,
+        },
+        {
+          label: "field",
+          kind: monaco.languages.CompletionItemKind.Snippet,
+          insertText: [
+            "# ${4:Description of the field}\n",
+            "${1:fieldID}!\t",
+            "@${2:String}",
+            '("${3:Field Name}")',
+            ";$0",
+          ].join(""),
+          preselect: true,
+          insertTextRules:
+            monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+          documentation: "Consider this as description of the model",
+          range,
+        },
+        // {
+        //   label: "fldv",
+        //   kind: monaco.languages.CompletionItemKind.Snippet,
+        //   insertText: [
+        //     "# ${2:Description of the field}\n",
+        //     "${1:fieldName}\t",
+        //     "@${3:String}",
+        //     '("${4:Field title}", [\n\t{}\n])',
+        //     ";$0",
+        //   ].join(""),
+        //   insertTextRules:
+        //     monaco.languages.CompletionItemInsertTextRule.InsertAsSnippet,
+        //   range,
+        // },
+      ];
+
       return {
-        suggestions: generateSnippetCompletionSuggestions(range, monaco),
+        suggestions,
       };
     },
   });

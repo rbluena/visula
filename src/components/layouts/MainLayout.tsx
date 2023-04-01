@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import Head from "next/head";
 import Header from "./Header";
+import { inter } from "@/assets/fonts";
 
 type Props = {
   children: ReactNode;
@@ -22,10 +23,8 @@ const MainLayout = ({
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <main className="bg-gray-100 min-h-screen">
-        <Header />
-        {children}
-      </main>
+      <Header />
+      <main className={`bg-gray-50 ${inter.variable}`}>{children}</main>
     </>
   );
 };
