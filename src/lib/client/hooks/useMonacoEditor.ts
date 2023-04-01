@@ -1,19 +1,23 @@
-import { useEffect } from "react";
-import { useMonaco } from "@monaco-editor/react";
+import { useEffect, useRef } from "react";
+import { Monaco, useMonaco } from "@monaco-editor/react";
 import {
-  registerMonacoLanguageCustomTheme,
+  registerCustomTheme,
   registerMonacoCompletionItem,
-} from "../monaco";
+  registerMonacoSnippetCompletionItem,
+} from "@/lib/client/monaco/registerCustomLanguage";
 
 export default function useMonacoEditor() {
+  const monacoRef = useRef<Monaco | null>(null);
   const monaco = useMonaco();
 
   useEffect(() => {
-    if (monaco) {
-      registerMonacoLanguageCustomTheme(monaco);
-      registerMonacoCompletionItem(monaco);
+    monacoRef.current = monaco;
 
-      monaco.editor.setTheme("visulaTheme");
+    if (monacoRef.current) {
+      registerCustomTheme(monacoRef.current);
+      registerMonacoCompletionItem(monacoRef.current);
+      registerMonacoSnippetCompletionItem(monacoRef.current);
+      monacoRef.current.editor.setTheme("visulaTheme");
     }
   }, [monaco]);
 
