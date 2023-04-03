@@ -1,1 +1,1 @@
-export { default } from "./NodeEditor";
+export { default } from "./NodesEditor";
