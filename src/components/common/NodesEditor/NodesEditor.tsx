@@ -1,3 +1,4 @@
+import { NodesState, useNodesStore } from "@/lib/client/store/nodes";
 import { MouseEvent, useRef, useEffect, KeyboardEvent } from "react";
 import ReactFlow, {
   Background,
@@ -10,6 +11,11 @@ import ReactFlow, {
 type Props = {
   showEditor: boolean;
 };
+
+function getNodesFromData(data: NodesState["data"]) {
+  console.log(data);
+  return Object.keys(data).map((itemKey) => data[itemKey]);
+}
 
 const initialNodes: Node[] = [
   {
@@ -28,6 +34,9 @@ const initialNodes: Node[] = [
 const NodeEditor = ({ showEditor }: Props) => {
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
   const flowInstance = useReactFlow();
+  const initialNodesData = useNodesStore((state) =>
+    getNodesFromData(state.data)
+  );
 
   const inputRef = useRef<HTMLDivElement>(null);
 
