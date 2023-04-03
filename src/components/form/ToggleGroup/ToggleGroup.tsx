@@ -9,13 +9,13 @@ type ToggleItem = {
 };
 
 type Props = {
-  onChange: () => void;
+  onChange: (value: string) => void;
   items?: ToggleItem[];
   defaultValue?: string;
   value?: string;
 };
 
-const ToggleGroup = ({ onChange, defaultValue, value, items = [] }: Props) => {
+const ToggleGroup = ({ onChange, value, defaultValue, items = [] }: Props) => {
   return (
     <ToggleGroupComponent.Root
       className="inline-flex bg-slate-300 rounded space-x-px p-1 text-sm"
@@ -23,7 +23,7 @@ const ToggleGroup = ({ onChange, defaultValue, value, items = [] }: Props) => {
       aria-label="Choose model editor"
       defaultValue={defaultValue}
       value={value}
-      onChange={onChange}
+      onValueChange={onChange}
     >
       {items.map((toggleItem) => (
         <ToggleGroupComponent.Item

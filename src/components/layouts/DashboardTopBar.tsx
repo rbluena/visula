@@ -1,8 +1,17 @@
 import Link from "next/link";
 import { HomeIcon } from "@heroicons/react/24/outline";
 import ToggleGroup from "@/components/form/ToggleGroup/ToggleGroup";
+import { useUIStore } from "@/lib/client/store/ui";
 
 const DashboardTopBar = () => {
+  const { editor, switchEditor } = useUIStore((state) => state);
+
+  function switchModelEditor(value: string) {
+    let editorVal: "nodes-editor" | "code-editor" =
+      value === "nodes-editor" ? "nodes-editor" : "code-editor";
+    switchEditor(editorVal);
+  }
+
   return (
     <div className="flex justify-between items-center px-4 absolute w-screen top-4">
       <div className="flex items-start space-x-2">
@@ -23,12 +32,13 @@ const DashboardTopBar = () => {
 
       <div>
         <ToggleGroup
-          onChange={console.log}
-          defaultValue="node-editor"
+          onChange={switchModelEditor}
+          value={editor}
+          defaultValue="nodes-editor"
           items={[
             {
               label: "Nodes",
-              value: "node-editor",
+              value: "nodes-editor",
               aria: "Switch to node editor",
             },
             {
