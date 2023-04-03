@@ -15,8 +15,8 @@ const MainLayout = ({
   headTitle = "Visula",
   metaDescription = "",
   children,
-  showHeader = true,
-}: Props) => {
+}: // showHeader = true,
+Props) => {
   return (
     <>
       <Head>
@@ -26,7 +26,7 @@ const MainLayout = ({
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      {showHeader ? <Header /> : <DashboardTopBar />}
+      {/* {showHeader ? <Header /> : <DashboardTopBar />} */}
       <main className={`bg-gray-50 ${inter.variable}`}>{children}</main>
     </>
   );

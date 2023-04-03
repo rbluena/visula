@@ -1,3 +1,3 @@
 export { default as MainLayout } from "./layouts/MainLayout";
 export { default as CodeEditor } from "./common/CodeEditor";
-export { default } from "./common/NodeEditor";
+export { default as NodesEditor } from "./common/NodesEditor";

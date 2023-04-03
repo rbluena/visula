@@ -6,7 +6,7 @@ import {
   generateSnippetCompletionSuggestions,
 } from "./generateSnippetCompletion";
 
-const colors = getColors("dark");
+const colors = getColors("light");
 
 /**
  *
@@ -29,7 +29,7 @@ export function registerCustomTheme(monaco: Monaco) {
   });
 
   monaco.editor.defineTheme("visulaTheme", {
-    base: "vs-dark",
+    base: "vs",
     inherit: true,
     rules: [
       {
