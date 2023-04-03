@@ -1,5 +1,4 @@
 import Logo from "@/assets/Logo";
-import { inter } from "@/assets/fonts";
 
 const Header = () => {
   return (
