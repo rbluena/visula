@@ -92,6 +92,28 @@ export function registerMonacoCompletionItem(monaco: Monaco) {
  *
  * @param monaco
  */
+/* export function registerYamlCompletionItem(monaco: Monaco) {
+  monaco.languages.registerInlineCompletionsProvider("visulaLanguage", {
+    provideInlineCompletions(model, position) {
+      let word = model.getWordUntilPosition(position);
+      let range: IRange = {
+        startLineNumber: position.lineNumber,
+        endLineNumber: position.lineNumber,
+        startColumn: word.startColumn,
+        endColumn: word.endColumn,
+      };
+
+      return {
+        items: { insertText: "hellooooooo!", range, filterText: "hell" },
+      };
+    },
+  });
+} */
+
+/**
+ *
+ * @param monaco
+ */
 export function registerMonacoSnippetCompletionItem(monaco: Monaco) {
   monaco.languages.registerCompletionItemProvider("visulaLanguage", {
     provideCompletionItems(model, position) {

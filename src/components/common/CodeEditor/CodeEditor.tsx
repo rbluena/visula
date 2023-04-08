@@ -21,6 +21,9 @@ const CodeEditor = ({ showEditor = false }: Props) => {
         showUnused: true,
         autoClosingBrackets: "always",
         autoIndent: "full",
+        inlineSuggest: {
+          enabled: true,
+        },
         tabCompletion: "on",
         formatOnPaste: true,
         formatOnType: true,
