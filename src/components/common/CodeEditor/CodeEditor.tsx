@@ -1,15 +1,19 @@
 import useMonacoEditor from "@/lib/client/hooks/useMonacoEditor";
 import Editor from "@monaco-editor/react";
 
-const CodeEditor = ({}) => {
+type Props = {
+  showEditor: boolean;
+};
+
+const CodeEditor = ({ showEditor = false }: Props) => {
   useMonacoEditor();
 
   return (
     <Editor
-      className="h-screen w-full"
       defaultLanguage="visulaLanguage"
-      // theme="vs-dark"
+      className={`${showEditor ? "" : "hidden"}`}
       options={{
+        inlayHints: { enabled: "on" },
         automaticLayout: true,
         quickSuggestions: true,
         insertSpaces: false,
@@ -17,6 +21,9 @@ const CodeEditor = ({}) => {
         showUnused: true,
         autoClosingBrackets: "always",
         autoIndent: "full",
+        inlineSuggest: {
+          enabled: true,
+        },
         tabCompletion: "on",
         formatOnPaste: true,
         formatOnType: true,

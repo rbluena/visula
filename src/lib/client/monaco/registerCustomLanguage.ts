@@ -6,7 +6,7 @@ import {
   generateSnippetCompletionSuggestions,
 } from "./generateSnippetCompletion";
 
-const colors = getColors("dark");
+const colors = getColors("light");
 
 /**
  *
@@ -29,7 +29,7 @@ export function registerCustomTheme(monaco: Monaco) {
   });
 
   monaco.editor.defineTheme("visulaTheme", {
-    base: "vs-dark",
+    base: "vs",
     inherit: true,
     rules: [
       {
@@ -87,6 +87,28 @@ export function registerMonacoCompletionItem(monaco: Monaco) {
     },
   });
 }
+
+/**
+ *
+ * @param monaco
+ */
+/* export function registerYamlCompletionItem(monaco: Monaco) {
+  monaco.languages.registerInlineCompletionsProvider("visulaLanguage", {
+    provideInlineCompletions(model, position) {
+      let word = model.getWordUntilPosition(position);
+      let range: IRange = {
+        startLineNumber: position.lineNumber,
+        endLineNumber: position.lineNumber,
+        startColumn: word.startColumn,
+        endColumn: word.endColumn,
+      };
+
+      return {
+        items: { insertText: "hellooooooo!", range, filterText: "hell" },
+      };
+    },
+  });
+} */
 
 /**
  *

@@ -4,6 +4,8 @@ import {
   registerCustomTheme,
   registerMonacoCompletionItem,
   registerMonacoSnippetCompletionItem,
+  // registerYamlCompletionItem,
+  // registerYamlSnippetCompletionItem,
 } from "@/lib/client/monaco/registerCustomLanguage";
 
 export default function useMonacoEditor() {
@@ -16,6 +18,8 @@ export default function useMonacoEditor() {
     if (monacoRef.current) {
       registerCustomTheme(monacoRef.current);
       registerMonacoCompletionItem(monacoRef.current);
+      // registerYamlCompletionItem(monacoRef.current);
+      // registerYamlSnippetCompletionItem(monacoRef.current);
       registerMonacoSnippetCompletionItem(monacoRef.current);
       monacoRef.current.editor.setTheme("visulaTheme");
     }

@@ -2,18 +2,21 @@ import { ReactNode } from "react";
 import Head from "next/head";
 import Header from "./Header";
 import { inter } from "@/assets/fonts";
+import DashboardTopBar from "./DashboardTopBar";
 
 type Props = {
   children: ReactNode;
   headTitle?: string;
   metaDescription?: string;
+  showHeader?: boolean;
 };
 
 const MainLayout = ({
   headTitle = "Visula",
   metaDescription = "",
   children,
-}: Props) => {
+}: // showHeader = true,
+Props) => {
   return (
     <>
       <Head>
@@ -23,7 +26,7 @@ const MainLayout = ({
         <link rel="icon" href="/favicon.ico" />
       </Head>
 
-      <Header />
+      {/* {showHeader ? <Header /> : <DashboardTopBar />} */}
       <main className={`bg-gray-50 ${inter.variable}`}>{children}</main>
     </>
   );
