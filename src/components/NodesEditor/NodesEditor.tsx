@@ -1,9 +1,14 @@
-import { NodesState, useNodesStore } from "@/lib/client/store/nodes";
 import { MouseEvent, useRef, useEffect, KeyboardEvent } from "react";
+import {
+  getNodeFromData,
+  getNodesFromData,
+} from "@/lib/client/common/dataAndNodes";
+import { ModelData, useNodesStore } from "@/lib/client/store/nodes";
+import { v4 as uuidV4 } from "uuid";
+
 import ReactFlow, {
   Background,
   Controls,
-  Node,
   useNodesState,
   useReactFlow,
 } from "reactflow";
@@ -12,31 +17,11 @@ type Props = {
   showEditor: boolean;
 };
 
-function getNodesFromData(data: NodesState["data"]) {
-  console.log(data);
-  return Object.keys(data).map((itemKey) => data[itemKey]);
-}
-
-const initialNodes: Node[] = [
-  {
-    id: "someidwentwell",
-    position: { x: 100, y: 50 },
-    data: {
-      label: (
-        <div>
-          <h2>Papa</h2>
-        </div>
-      ),
-    },
-  },
-];
-
 const NodeEditor = ({ showEditor }: Props) => {
-  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodes);
+  const { addNode: addNewNode, data } = useNodesStore((state) => state);
+  const initialNodesData = getNodesFromData(data);
+  const [nodes, setNodes, onNodesChange] = useNodesState(initialNodesData);
   const flowInstance = useReactFlow();
-  const initialNodesData = useNodesStore((state) =>
-    getNodesFromData(state.data)
-  );
 
   const inputRef = useRef<HTMLDivElement>(null);
 
@@ -65,19 +50,15 @@ const NodeEditor = ({ showEditor }: Props) => {
        */
       const onInputKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
         evt.preventDefault();
-        const modelName = inputRef.current?.innerText;
+        const modelName = inputRef.current?.innerText as string;
         const isBackspaceKey = event.key.toLowerCase() === "backspace";
         const isEscapeKey = event.key.toLowerCase() === "escape";
         const isEnterKey = event.key.toLowerCase() === "enter";
 
         if (isEscapeKey || (isBackspaceKey && modelName?.length === 1)) {
-          setNodes([]);
+          setNodes([...nodes]);
           return;
         }
-
-        // if (isEnterKey) {
-        //   if (modelName?.length === 2) return;
-        // }
 
         if (isEnterKey) {
           event.preventDefault();
@@ -85,12 +66,23 @@ const NodeEditor = ({ showEditor }: Props) => {
             return;
           }
 
+          const nodeData: ModelData = {
+            kind: "model",
+            id: uuidV4(),
+            position,
+            name: modelName,
+            fields: [],
+          };
+
+          addNewNode(nodeData);
+          setNodes([...nodes, getNodeFromData(nodeData)]);
+
           return;
         }
       };
 
       /**
-       *
+       * Adding an input component to the node
        */
       setNodes(() => [
         {
@@ -110,6 +102,7 @@ const NodeEditor = ({ showEditor }: Props) => {
             ),
           },
         },
+        ...nodes,
       ]);
     }
   }
