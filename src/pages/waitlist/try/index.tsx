@@ -1,7 +1,7 @@
+import { ReactFlowProvider } from "reactflow";
 import { MainLayout, NodesEditor, CodeEditor } from "@/components";
 import { useUIStore } from "@/lib/client/store/ui";
 import DashboardTopBar from "@/components/layouts/DashboardTopBar";
-import { ReactFlowProvider } from "reactflow";
 
 const Try = () => {
   const editor = useUIStore((state) => state.editor);

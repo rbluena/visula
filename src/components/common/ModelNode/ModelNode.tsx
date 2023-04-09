@@ -60,10 +60,13 @@ const ModelNode = ({ name, modelId }: Props) => {
       {/* <NodeToolbar position={Position.Top}></NodeToolbar> */}
 
       {/* START: Node header */}
-      <div className="px-2 py-3 text-lg font-medium leading-3 flex items-center justify-between">
-        <div className="flex items-center space-x-2 pl-2">
+      <div className="px-2 py-3 flex items-center justify-between">
+        <div className="space-y-1 pl-2">
           {/* <TableCellsIcon strokeWidth={1} className="text-lg w-6 h-6" /> */}
-          <span className="block">{name}</span>
+          <span className="block leading-4 text-[16px]">{name}</span>
+          <span className="block text-[10px] text-slate-400">
+            {name?.toLowerCase()}
+          </span>
         </div>
         <button
           className="text-indigo-500 active:text-indigo-300"
