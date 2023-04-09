@@ -1,4 +1,10 @@
-import { MouseEvent, useRef, useEffect, KeyboardEvent } from "react";
+import {
+  MouseEvent,
+  useRef,
+  useEffect,
+  KeyboardEvent,
+  useCallback,
+} from "react";
 import { v4 as uuidV4 } from "uuid";
 import {
   getNodeFromData,
@@ -9,8 +15,13 @@ import { ModelData, useNodesStore } from "@/lib/client/store/nodes";
 import ReactFlow, {
   Background,
   Controls,
+  addEdge,
+  useEdgesState,
   useNodesState,
   useReactFlow,
+  updateEdge,
+  Edge,
+  Connection,
 } from "reactflow";
 
 type Props = {
@@ -18,12 +29,63 @@ type Props = {
 };
 
 const NodeEditor = ({ showEditor }: Props) => {
-  const { addNode: addNewNode, data } = useNodesStore((state) => state);
+  const {
+    addNode: addNewNode,
+    deleteConnection,
+    data,
+    // connections,
+    createConnection,
+  } = useNodesStore((state) => state);
   const initialNodesData = getNodesFromData(data);
+  const initialEdgesData: any[] = [];
   const [nodes, setNodes, onNodesChange] = useNodesState(initialNodesData);
+  const [edges, setEdges, onEdgesChange] = useEdgesState(initialEdgesData);
   const flowInstance = useReactFlow();
 
+  const edgeUpdateSuccessful = useRef(false);
   const inputRef = useRef<HTMLDivElement>(null);
+
+  const onEdgeUpdateStart = useCallback(() => {
+    edgeUpdateSuccessful.current = false;
+  }, []);
+
+  const onEdgeUpdate = useCallback(
+    (oldEdge: Edge, newConnection: Connection) => {
+      edgeUpdateSuccessful.current = true;
+      setEdges((els) => updateEdge(oldEdge, newConnection, els));
+      // eslint-disable-next-line react-hooks/exhaustive-deps
+    },
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
+
+  const onEdgeUpdateEnd = useCallback((_: any, edge: Edge) => {
+    if (!edgeUpdateSuccessful.current) {
+      console.log(edge);
+      setEdges((eds) => eds.filter((e) => e.id !== edge.id));
+      deleteConnection(edge.source);
+    }
+
+    edgeUpdateSuccessful.current = true;
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
+  /**
+   *
+   */
+  const onConnect = useCallback(
+    (newEdge: any) =>
+      setEdges((edgs) => {
+        if (newEdge.target !== newEdge.source) {
+          createConnection(newEdge);
+          return addEdge(newEdge, edgs);
+        }
+
+        return edges;
+      }),
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+    []
+  );
 
   /**
    *
@@ -91,14 +153,12 @@ const NodeEditor = ({ showEditor }: Props) => {
           isConnectable: false,
           data: {
             label: (
-              <div>
-                <div
-                  contentEditable
-                  className="px-2 rounded-xl shadow-md border-none outline-none focus:outline-2 focus:border-none active:border-none  focus:outline-offset-1 focus:outline-blue-400 w-fit bg-white"
-                  ref={inputRef}
-                  onKeyDown={onInputKeyDown}
-                />
-              </div>
+              <div
+                contentEditable
+                className="px-2 rounded-xl shadow-md border-none outline-none focus:outline-2 focus:border-none active:border-none  focus:outline-offset-1 focus:outline-blue-400 w-fit bg-white"
+                ref={inputRef}
+                onKeyDown={onInputKeyDown}
+              />
             ),
           },
         },
@@ -123,8 +183,16 @@ const NodeEditor = ({ showEditor }: Props) => {
     >
       <ReactFlow
         onNodesChange={onNodesChange}
+        onEdgesChange={onEdgesChange}
+        onEdgeUpdate={onEdgeUpdate}
+        onEdgeUpdateEnd={onEdgeUpdateEnd}
+        onEdgeUpdateStart={onEdgeUpdateStart}
+        onConnect={onConnect}
         onContextMenu={onContextMenu}
         nodes={nodes}
+        edges={edges}
+        // fitView
+        attributionPosition="bottom-left"
       >
         <Controls />
         <Background />

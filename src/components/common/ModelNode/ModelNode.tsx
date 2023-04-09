@@ -14,7 +14,7 @@ export type Props = {
 };
 
 const ModelNode = ({ name, modelId }: Props) => {
-  const fields = useNodesStore((state) => state.data?.[modelId]?.fields);
+  const { fields } = useNodesStore((state) => state.data?.[modelId]);
   const addModelField = useNodesStore((state) => state.addField);
   const [showFieldInput, setShowFieldInput] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -44,6 +44,7 @@ const ModelNode = ({ name, modelId }: Props) => {
         dataType: "Relation",
         validations: [],
       });
+
       setShowFieldInput(false);
     }
   }
@@ -122,7 +123,7 @@ const ModelNode = ({ name, modelId }: Props) => {
         type="target"
         className="block bg-slate-500 rounded-full w-3 h-3 model-node__wrapper"
         position={Position.Top}
-        id="a"
+        id={modelId}
       />
     </div>
   );
