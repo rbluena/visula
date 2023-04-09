@@ -1,4 +1,5 @@
 import { ModelNode } from "@/components";
+import type { Props as ModelComponentProps } from "@/components/common/ModelNode/ModelNode";
 
 // const nodesComponents = {
 //   ModelNode,
@@ -6,8 +7,8 @@ import { ModelNode } from "@/components";
 // };
 
 export default function getNodeComponent(
-  _: "model" | "field",
-  props: { comment?: string; fields: any; name: string }
+  _: "model",
+  props: ModelComponentProps
 ) {
   // console.log(nodesComponents);
   // const Component = nodesComponents["ModelNode"];

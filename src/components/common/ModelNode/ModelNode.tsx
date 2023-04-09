@@ -1,23 +1,26 @@
 import { useState, useRef, useEffect, KeyboardEvent } from "react";
 import { Position, Handle } from "reactflow";
+import { v4 as uuidV4 } from "uuid";
 import {
   InformationCircleIcon,
   PlusSmallIcon,
 } from "@heroicons/react/24/outline";
+import { ModelField, useNodesStore } from "@/lib/client/store/nodes";
 
-type Props = {
-  fields?: any;
+export type Props = {
+  modelId: string;
   comment?: string;
   name: string;
 };
 
-const ModelNode = ({ name }: Props) => {
+const ModelNode = ({ name, modelId }: Props) => {
+  const fields = useNodesStore((state) => state.data?.[modelId]?.fields);
+  const addModelField = useNodesStore((state) => state.addField);
   const [showFieldInput, setShowFieldInput] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
   function onFieldInputKeydown(evt: KeyboardEvent<HTMLInputElement>) {
-    // evt.preventDefault();
-    const fieldInputValue = inputRef.current?.value;
+    const fieldInputValue = inputRef.current?.value as string;
     const isBackspaceKey = evt.key.toLowerCase() === "backspace";
     const isEscapeKey = evt.key.toLowerCase() === "escape";
     const isEnterKey = evt.key.toLowerCase() === "enter";
@@ -33,7 +36,14 @@ const ModelNode = ({ name }: Props) => {
 
     if (isEnterKey) {
       evt.preventDefault();
-      // console.log(fieldInputValue);
+
+      addModelField(modelId, {
+        id: uuidV4(),
+        kind: "field",
+        name: fieldInputValue,
+        dataType: "Relation",
+        validations: [],
+      });
       setShowFieldInput(false);
     }
   }
@@ -56,7 +66,7 @@ const ModelNode = ({ name }: Props) => {
         </div>
         <button
           className="text-indigo-500 active:text-indigo-300"
-          onClick={() => console.log("Something")}
+          // onClick={() => console.log("Something")}
         >
           <InformationCircleIcon strokeWidth={2} className="text-lg w-6 h-6" />
         </button>
@@ -65,27 +75,23 @@ const ModelNode = ({ name }: Props) => {
 
       {/* START: Node fields */}
       <div className="px-2 space-y-2 py-2">
-        {[{ id: "a" }, { id: "b" }, { id: "c", type: "relation" }].map(
-          (field: any) => (
-            <div key={field.id} className="relative">
-              <div className="flex justify-between items-center">
-                <span className="block text-sm">Name</span>
-                <span className="block text-xs font-semibold text-slate-500">
-                  Type
-                </span>
-              </div>
-
-              {field.type === "relation" ? (
-                <Handle
-                  id={field.id}
-                  className="block bg-slate-500 border border-green-300 rounded-full w-3 h-3 model-node__wrapper"
-                  type="source"
-                  position={Position.Right}
-                />
-              ) : null}
+        {[...fields].map((field: ModelField) => (
+          <div key={field.id} className="relative">
+            <div className="flex justify-between items-center">
+              <span className="block text-sm">{field.name}</span>
+              <span className="block text-xs font-semibold text-slate-500">
+                {field.dataType}
+              </span>
             </div>
-          )
-        )}
+
+            <Handle
+              id={field.id}
+              className="block bg-slate-500 border border-green-300 rounded-full w-3 h-3  model-node__wrapper"
+              type="source"
+              position={Position.Right}
+            />
+          </div>
+        ))}
         {/* END: Node fields */}
 
         {/* START: Input for adding a new field */}

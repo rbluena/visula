@@ -1,5 +1,5 @@
 import { Node } from "reactflow";
-import { ModelData, ModelField, NodesState } from "../store/nodes";
+import { ModelData, NodesState } from "@/lib/client/store/nodes";
 import createNodeComponent from "./createNodeComponent";
 
 export function getNodesFromData(data: NodesState["data"]) {
@@ -9,10 +9,10 @@ export function getNodesFromData(data: NodesState["data"]) {
   return nodes;
 }
 
-export function getNodeFromData(data: ModelData | ModelField): Node {
+export function getNodeFromData(data: ModelData): Node {
   const Component = createNodeComponent(data.kind, {
+    modelId: data.id,
     name: data.name,
-    fields: data.fields,
     comment: data.comment,
   });
 

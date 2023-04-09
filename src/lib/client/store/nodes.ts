@@ -3,6 +3,7 @@ import { immer } from "zustand/middleware/immer";
 
 export type ModelField = Omit<ModelData, "kind" | "position" | "fields"> & {
   kind: "field";
+  dataType: "Int" | "String" | "Decimal" | "Relation";
   validations: Object[];
 };
 
@@ -19,6 +20,7 @@ export type ModelData = {
 };
 
 export type NodesState = {
+  activeProjectId: string | null;
   data: Record<string, ModelData>;
 };
 
@@ -29,6 +31,7 @@ export type Actions = {
 
 export const useNodesStore = create(
   immer<NodesState & Actions>((set) => ({
+    activeProjectId: null,
     data: {},
     addNode: (payload) => {
       set((state) => {
