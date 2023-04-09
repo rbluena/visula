@@ -1,10 +1,10 @@
 import { MouseEvent, useRef, useEffect, KeyboardEvent } from "react";
+import { v4 as uuidV4 } from "uuid";
 import {
   getNodeFromData,
   getNodesFromData,
 } from "@/lib/client/common/dataAndNodes";
 import { ModelData, useNodesStore } from "@/lib/client/store/nodes";
-import { v4 as uuidV4 } from "uuid";
 
 import ReactFlow, {
   Background,
