@@ -1,20 +1,20 @@
 import Link from "next/link";
 import { HomeIcon } from "@heroicons/react/24/outline";
-import ToggleGroup from "@/components/form/ToggleGroup/ToggleGroup";
-import { useUIStore } from "@/lib/client/store/ui";
+// import ToggleGroup from "@/components/form/ToggleGroup/ToggleGroup";
+// import { useUIStore } from "@/lib/client/store/ui";
 
 type Props = {
   hideProjectTitle: boolean;
 };
 
 const DashboardTopBar = ({ hideProjectTitle = false }: Props) => {
-  const { editor, switchEditor } = useUIStore((state) => state);
+  // const { editor, switchEditor } = useUIStore((state) => state);
 
-  function switchModelEditor(value: string) {
-    let editorVal: "nodes-editor" | "code-editor" =
-      value === "nodes-editor" ? "nodes-editor" : "code-editor";
-    switchEditor(editorVal);
-  }
+  // function switchModelEditor(value: string) {
+  //   let editorVal: "nodes-editor" | "code-editor" =
+  //     value === "nodes-editor" ? "nodes-editor" : "code-editor";
+  //   switchEditor(editorVal);
+  // }
 
   return (
     <div className="flex justify-between items-start px-4 absolute w-full top-4 z-20 pointer-events-none">
@@ -38,7 +38,7 @@ const DashboardTopBar = ({ hideProjectTitle = false }: Props) => {
         </div>
       )}
 
-      <div className="pointer-events-auto">
+      {/* <div className="pointer-events-auto">
         <ToggleGroup
           onChange={switchModelEditor}
           value={editor}
@@ -56,7 +56,7 @@ const DashboardTopBar = ({ hideProjectTitle = false }: Props) => {
             },
           ]}
         />
-      </div>
+      </div> */}
     </div>
   );
 };

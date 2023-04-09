@@ -41,7 +41,7 @@ const ModelNode = ({ name, modelId }: Props) => {
         id: uuidV4(),
         kind: "field",
         name: fieldInputValue,
-        dataType: "Relation",
+        dataType: "String",
         validations: [],
       });
 
@@ -87,7 +87,10 @@ const ModelNode = ({ name, modelId }: Props) => {
 
             <Handle
               id={field.id}
-              className="block bg-slate-500 border border-green-300 rounded-full w-3 h-3  model-node__wrapper"
+              style={{
+                display: field.dataType !== "Relation" ? "none" : "block",
+              }}
+              className="block absolute right-[-14px] bg-slate-500 border border-green-300 rounded-full w-3 h-3  model-node__wrapper"
               type="source"
               position={Position.Right}
             />
