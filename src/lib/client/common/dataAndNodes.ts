@@ -20,7 +20,7 @@ export function getNodeFromData(data: ModelData): Node {
     id: data.id,
     position: data.position,
     className: "model-node__wrapper",
-    dragHandle: ".model-node__drag-handle",
+    // dragHandle: ".model-node__drag-handle",
     data: {
       label: Component,
     },
