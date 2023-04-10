@@ -11,6 +11,7 @@ import ReactFlow, {
   useNodesState,
   updateEdge,
   Edge,
+  Node,
   Connection,
 } from "reactflow";
 
@@ -21,6 +22,7 @@ type Props = {
 const NodeEditor = ({ showEditor }: Props) => {
   const {
     deleteConnection,
+    deleteModel,
     data,
     // connections,
     createConnection,
@@ -58,6 +60,14 @@ const NodeEditor = ({ showEditor }: Props) => {
   }, []);
 
   /**
+   * When node is deleted from the canvas
+   * @param deletedNode
+   */
+  function onNodesDeleted(deletingNode: Node[]) {
+    return deleteModel(deletingNode[0]?.id);
+  }
+
+  /**
    *
    */
   const onConnect = useCallback(
@@ -91,6 +101,7 @@ const NodeEditor = ({ showEditor }: Props) => {
       <ContextMenu>
         <ReactFlow
           onNodesChange={onNodesChange}
+          onNodesDelete={onNodesDeleted}
           onEdgesChange={onEdgesChange}
           onEdgeUpdate={onEdgeUpdate}
           onEdgeUpdateEnd={onEdgeUpdateEnd}

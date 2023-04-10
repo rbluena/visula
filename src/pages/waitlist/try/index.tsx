@@ -2,6 +2,7 @@ import { ReactFlowProvider } from "reactflow";
 import { MainLayout, NodesEditor, CodeEditor } from "@/components";
 import { useUIStore } from "@/lib/client/store/ui";
 import DashboardTopBar from "@/components/layouts/DashboardTopBar";
+import { RightPane } from "@/components";
 
 const Try = () => {
   const editor = useUIStore((state) => state.editor);
@@ -16,9 +17,7 @@ const Try = () => {
             <CodeEditor showEditor={editor === "code-editor"} />
           </section>
 
-          <aside className="w-[360px] h-screen overflow-hidden bg-white border-l border-slate-200">
-            <h2>White tale</h2>
-          </aside>
+          <RightPane />
         </div>
       </ReactFlowProvider>
     </MainLayout>

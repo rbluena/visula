@@ -15,7 +15,7 @@ export type Props = {
 };
 
 const ModelNode = ({ name, modelId, unique }: Props) => {
-  const { fields } = useNodesStore((state) => state.data?.[modelId]);
+  const { fields } = useNodesStore((state) => state.data?.[modelId] || {});
   const addModelField = useNodesStore((state) => state.addField);
   const [showFieldInput, setShowFieldInput] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -41,9 +41,11 @@ const ModelNode = ({ name, modelId, unique }: Props) => {
       addModelField(modelId, {
         id: uuidV4(),
         kind: "field",
+        selected: false,
         name: fieldInputValue,
         dataType: "String",
         validations: [],
+        data: {},
       });
 
       setShowFieldInput(false);
@@ -65,7 +67,7 @@ const ModelNode = ({ name, modelId, unique }: Props) => {
         <div className="pl-2">
           {/* <TableCellsIcon strokeWidth={1} className="text-lg w-6 h-6" /> */}
           <span className="block leading-4 text-[16px]">{name}</span>
-          <span className="block text-[10px] text-slate-400">{unique}</span>
+          <span className="block text-[10px] text-slate-500">{unique}</span>
         </div>
         <button
           className="text-indigo-500 active:text-indigo-300"
@@ -82,7 +84,7 @@ const ModelNode = ({ name, modelId, unique }: Props) => {
           <div key={field.id} className="relative">
             <div className="flex justify-between items-center">
               <span className="block text-sm">{field.name}</span>
-              <span className="block text-xs font-semibold text-slate-500">
+              <span className="block text-xs leading-4 text-slate-500">
                 {field.dataType}
               </span>
             </div>

@@ -1,8 +1,6 @@
 import { ReactNode } from "react";
 import Head from "next/head";
-import Header from "./Header";
 import { inter } from "@/assets/fonts";
-import DashboardTopBar from "./DashboardTopBar";
 
 type Props = {
   children: ReactNode;

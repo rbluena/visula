@@ -20,6 +20,7 @@ export function getNodeFromData(data: ModelData): Node {
   return {
     id: data.id,
     position: data.position,
+    selected: data.selected,
     className: "model-node__wrapper",
     // dragHandle: ".model-node__drag-handle",
     data: {

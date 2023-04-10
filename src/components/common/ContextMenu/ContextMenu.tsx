@@ -85,7 +85,9 @@ const CanvasMenu = ({ mousePosition }: MenuProps) => {
           kind: "model",
           id: uuidV4(),
           position,
+          selected: false,
           name: modelName,
+          data: {},
           fields: [],
         };
 
