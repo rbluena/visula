@@ -11,9 +11,10 @@ export type Props = {
   modelId: string;
   comment?: string;
   name: string;
+  unique?: string;
 };
 
-const ModelNode = ({ name, modelId }: Props) => {
+const ModelNode = ({ name, modelId, unique }: Props) => {
   const { fields } = useNodesStore((state) => state.data?.[modelId]);
   const addModelField = useNodesStore((state) => state.addField);
   const [showFieldInput, setShowFieldInput] = useState(false);
@@ -61,12 +62,10 @@ const ModelNode = ({ name, modelId }: Props) => {
 
       {/* START: Node header */}
       <div className="px-2 py-3 flex items-center justify-between">
-        <div className="space-y-1 pl-2">
+        <div className="pl-2">
           {/* <TableCellsIcon strokeWidth={1} className="text-lg w-6 h-6" /> */}
           <span className="block leading-4 text-[16px]">{name}</span>
-          <span className="block text-[10px] text-slate-400">
-            {name?.toLowerCase()}
-          </span>
+          <span className="block text-[10px] text-slate-400">{unique}</span>
         </div>
         <button
           className="text-indigo-500 active:text-indigo-300"

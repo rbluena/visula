@@ -1,3 +1,4 @@
+import camelCase from "lodash/camelCase";
 import { Edge } from "reactflow";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
@@ -11,6 +12,7 @@ export type ModelField = Omit<ModelData, "kind" | "position" | "fields"> & {
 export type ModelData = {
   kind: "model";
   id: string;
+  unique?: string;
   projectId?: string;
   name: string;
   description?: string;
@@ -49,6 +51,7 @@ export const useNodesStore = create(
     addNode(payload) {
       set((state) => {
         // payload.id = uuidV4();
+        payload.unique = camelCase(payload.name);
         state.data[payload.id] = payload;
       });
     },

@@ -14,6 +14,7 @@ export function getNodeFromData(data: ModelData): Node {
     modelId: data.id,
     name: data.name,
     comment: data.comment,
+    unique: data.unique,
   });
 
   return {
