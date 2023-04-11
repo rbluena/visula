@@ -1,12 +1,6 @@
 import * as ContextMenu from "@radix-ui/react-context-menu";
-import {
-  ReactNode,
-  useState,
-  useRef,
-  useEffect,
-  KeyboardEvent,
-  MouseEvent,
-} from "react";
+import camelCase from "lodash/camelCase";
+import { ReactNode, useRef, useEffect, KeyboardEvent, MouseEvent } from "react";
 import { useReactFlow } from "reactflow";
 import { v4 as uuidV4 } from "uuid";
 import { ModelData, useNodesStore } from "@/lib/client/store/nodes";
@@ -17,50 +11,23 @@ type Props = {
 };
 
 const ContextMenuComponent = ({ children }: Props) => {
-  const [mousePosition, setMousePosition] = useState({
-    clientX: 0,
-    clientY: 0,
-  });
-
-  function onContextMenu(evt: MouseEvent<HTMLSpanElement>) {
-    setMousePosition({
-      clientX: evt.clientX,
-      clientY: evt.clientY,
-    });
-  }
-
-  return (
-    <ContextMenu.Root>
-      <ContextMenu.Trigger onContextMenu={onContextMenu}>
-        {children}
-      </ContextMenu.Trigger>
-      <ContextMenu.Portal>
-        <CanvasMenu mousePosition={mousePosition} />
-      </ContextMenu.Portal>
-    </ContextMenu.Root>
-  );
-};
-
-type MenuProps = {
-  mousePosition: {
-    clientX: number;
-    clientY: number;
-  };
-};
-
-const CanvasMenu = ({ mousePosition }: MenuProps) => {
   const addNewNode = useNodesStore((state) => state.addNode);
   const flowInstance = useReactFlow();
   const inputRef = useRef<HTMLDivElement>(null);
+  const clientPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+
+  function onContextMenu(evt: MouseEvent<HTMLSpanElement>) {
+    clientPosRef.current.x = evt.clientX;
+    clientPosRef.current.y = evt.clientY;
+  }
 
   function createNewModel(evt: Event) {
-    // evt.preventDefault();
     const canvasViewPort = flowInstance.getViewport();
-    const { setNodes } = flowInstance;
+    const { setNodes, addNodes } = flowInstance;
 
     const position = {
-      x: mousePosition?.clientX - canvasViewPort.x,
-      y: mousePosition?.clientY - canvasViewPort.y,
+      x: clientPosRef.current.x - canvasViewPort.x,
+      y: clientPosRef.current.y - canvasViewPort.y,
     };
 
     const onInputKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
@@ -87,6 +54,7 @@ const CanvasMenu = ({ mousePosition }: MenuProps) => {
           position,
           selected: false,
           name: modelName,
+          unique: camelCase(modelName),
           data: {},
           fields: [],
         };
@@ -101,34 +69,44 @@ const CanvasMenu = ({ mousePosition }: MenuProps) => {
       }
     };
 
-    setNodes((nodes) => [
-      {
-        id: "newnodeinput",
-        position,
-        isConnectable: false,
-        data: {
-          label: (
-            <div
-              contentEditable
-              className="px-2 rounded-xl shadow-md text-[14px] border-none outline-none focus:outline-2 focus:border-none active:border-none  focus:outline-offset-1 focus:outline-blue-400 w-fit bg-white"
-              ref={inputRef}
-              onKeyDown={onInputKeyDown}
-            />
-          ),
-        },
+    addNodes({
+      id: "newnodeinput",
+      position,
+      data: {
+        label: (
+          <div
+            contentEditable
+            className="px-2 py-1 rounded-xl shadow-md text-[14px] min-w-[60px] border-none outline outline-blue-300 focus:outline-2 focus:border-none active:border-none  focus:outline-offset-2 focus:outline-yellow-400 focus:shadow-lg w-fit bg-white"
+            ref={inputRef}
+            onKeyDown={onInputKeyDown}
+          />
+        ),
       },
-      ...nodes,
-    ]);
+    });
   }
 
   useEffect(() => {
-    if (inputRef.current) {
-      inputRef.current.focus();
-    }
-
+    inputRef.current?.focus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [inputRef.current]);
 
+  return (
+    <ContextMenu.Root>
+      <ContextMenu.Trigger onContextMenu={onContextMenu}>
+        {children}
+      </ContextMenu.Trigger>
+      <ContextMenu.Portal>
+        <CanvasMenu createNewModel={createNewModel} />
+      </ContextMenu.Portal>
+    </ContextMenu.Root>
+  );
+};
+
+type MenuProps = {
+  createNewModel: (evt: Event) => void;
+};
+
+const CanvasMenu = ({ createNewModel }: MenuProps) => {
   return (
     <ContextMenu.Content
       className="min-w-[220px] bg-white rounded-md overflow-hidden p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]"

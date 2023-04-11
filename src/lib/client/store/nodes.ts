@@ -1,4 +1,3 @@
-import camelCase from "lodash/camelCase";
 import { Edge, Node } from "reactflow";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
@@ -53,11 +52,7 @@ export const useNodesStore = create(
     data: {},
     addNode(payload) {
       set((state) => {
-        state.data[payload.id] = {
-          ...payload,
-          unique: camelCase(payload.name),
-          selected: true,
-        };
+        state.data[payload.id] = payload;
       });
     },
     addField(modelId, payload) {
@@ -85,9 +80,6 @@ export const useNodesStore = create(
         const newData = state.data;
         delete newData[modelId];
         state.data = newData;
-
-        console.log(state.data);
-
         return state;
       });
     },
