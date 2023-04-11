@@ -26,7 +26,7 @@ const RightModelPane = ({ modelsData }: Props) => {
   function onSelectingNode(modelId: string) {
     setNodes((nodes) => {
       const selectingNode = nodes.find((item) => item.id === modelId);
-      const currSelectedNode = nodes.find((item) => item.selected === true);
+      const prevSelectedModel = nodes.find((item) => item.selected === true);
 
       if (!selectingNode) {
         return nodes;
@@ -43,18 +43,18 @@ const RightModelPane = ({ modelsData }: Props) => {
         }
       );
 
-      if (!currSelectedNode) {
+      if (!prevSelectedModel) {
         return [...nodes.filter((item) => item.id !== modelId), selectingNode];
       }
 
-      currSelectedNode.selected = false;
+      prevSelectedModel.selected = false;
 
       return [
         ...nodes.filter(
           (item) => item.id !== modelId && item.selected === true
         ),
         selectingNode,
-        currSelectedNode,
+        prevSelectedModel,
       ];
     });
   }
@@ -73,8 +73,6 @@ const RightModelPane = ({ modelsData }: Props) => {
           <div
             key={modelData.id}
             className="min-h-[80px] border border-violet-100 rounded-md p-2 space-y-3 overflow-y-scroll"
-            role={!isModelActive ? "button" : "presentation"}
-            onClick={() => onSelectingNode(modelData.id)}
           >
             <div className="flex justify-between items-center">
               <div className="w-full space-y-0">
@@ -87,7 +85,11 @@ const RightModelPane = ({ modelsData }: Props) => {
                   >
                     {modelData.name}
                   </div>
-                  <button className="border border-slate-300 rounded-full p-1">
+                  <button
+                    className="border border-slate-300 rounded-full p-1"
+                    onClick={() => onSelectingNode(modelData.id)}
+                    aria-describedby="aria-chevron-toggle"
+                  >
                     <ChevronRightIcon
                       strokeWidth={2}
                       className={`w-5 h-5 font-semibold text-violet-700 transition-transform transform ${

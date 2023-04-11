@@ -76,7 +76,7 @@ const ContextMenuComponent = ({ children }: Props) => {
         label: (
           <div
             contentEditable
-            className="px-2 py-1 rounded-xl shadow-md text-[14px] min-w-[60px] border-none outline outline-blue-300 focus:outline-2 focus:border-none active:border-none  focus:outline-offset-2 focus:outline-yellow-400 focus:shadow-lg w-fit bg-white"
+            className="px-2 py-1 rounded-xl shadow-md text-[14px] min-w-[60px] border-none outline outline-blue-300  focus:border-none active:border-none  focus:outline-offset-2 focus:outline-yellow-400 w-fit bg-white"
             ref={inputRef}
             onKeyDown={onInputKeyDown}
           />
