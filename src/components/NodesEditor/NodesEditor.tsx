@@ -64,7 +64,7 @@ const NodeEditor = ({ showEditor }: Props) => {
    * @param deletedNode
    */
   function onNodesDeleted(deletingNode: Node[]) {
-    return deleteModel(deletingNode[0]?.id);
+    deleteModel(deletingNode[0]?.id);
   }
 
   /**

@@ -15,7 +15,7 @@ export type Props = {
 };
 
 const ModelNode = ({ name, modelId, unique }: Props) => {
-  const { fields } = useNodesStore((state) => state.data?.[modelId] || {});
+  const { fields } = useNodesStore((state) => state.data?.[modelId] || []);
   const addModelField = useNodesStore((state) => state.addField);
   const [showFieldInput, setShowFieldInput] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
@@ -80,7 +80,7 @@ const ModelNode = ({ name, modelId, unique }: Props) => {
 
       {/* START: Node fields */}
       <div className="px-2 space-y-2 py-2">
-        {[...fields].map((field: ModelField) => (
+        {fields?.map((field: ModelField) => (
           <div key={field.id} className="relative">
             <div className="flex justify-between items-center">
               <span className="block text-sm">{field.name}</span>
