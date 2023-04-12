@@ -23,3 +23,26 @@
 .react-flow__node-group:focus-visible {
   border: none;
 }
+
+.react-flow__node-default.selected .model-node__wrapper,
+.react-flow__node-default:focus .model-node__wrapper,
+.react-flow__node-default:focus-visible .model-node__wrapper,
+.react-flow__node-input.selected .model-node__wrapper,
+.react-flow__node-input:focus .model-node__wrapper,
+.react-flow__node-input:focus-visible .model-node__wrapper,
+.react-flow__node-output.selected .model-node__wrapper,
+.react-flow__node-output:focus .model-node__wrapper,
+.react-flow__node-output:focus-visible .model-node__wrapper,
+.react-flow__node-group.selected .model-node__wrapper,
+.react-flow__node-group:focus .model-node__wrapper,
+.react-flow__node-group:focus-visible .model-node__wrapper {
+  border-color: #08a3fa;
+}
+
+.react-flow__handle {
+  display: none;
+}
+
+.react-flow__handle.model-node__wrapper {
+  display: block;
+}
