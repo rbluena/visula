@@ -93,11 +93,11 @@ const Model = ({
 
         {/* START: Adding new field */}
         {showFieldInput ? (
-          <div className="flex items-center space-x-1 pt-2 w-full bg-gray-50">
+          <div className="flex justify-start items-center space-x-1 pt-2 w-full">
             <input
               ref={inputRef}
               type="text"
-              placeholder="Field name"
+              placeholder="New field"
               className="bg-slate-50 text-xs p-1 border border-slate-200 rounded-md"
             />
 
