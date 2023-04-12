@@ -5,7 +5,8 @@ import {
   InformationCircleIcon,
   PlusSmallIcon,
 } from "@heroicons/react/24/outline";
-import { ModelField, useNodesStore } from "@/lib/client/store/nodes";
+import { useNodesStore } from "@/lib/client/store/nodes";
+import type { ModelField } from "@/types";
 
 export type Props = {
   modelId: string;
@@ -41,11 +42,9 @@ const ModelNode = ({ name, modelId, unique }: Props) => {
       addModelField(modelId, {
         id: uuidV4(),
         kind: "field",
-        selected: false,
         name: fieldInputValue,
         dataType: "String",
         validations: [],
-        data: {},
       });
 
       setShowFieldInput(false);

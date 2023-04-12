@@ -1,25 +1,8 @@
-import { Edge, Node } from "reactflow";
+import { Edge } from "reactflow";
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 
-export type ModelField = Omit<ModelData, "kind" | "position" | "fields"> & {
-  kind: "field";
-  dataType: "Int" | "String" | "Decimal" | "Relation";
-  validations: Object[];
-};
-
-export type ModelData = Node & {
-  kind: "model";
-  id: string;
-  unique?: string;
-  projectId?: string;
-  name: string;
-  description?: string;
-  comment?: string;
-  position: { x: number; y: number };
-  updateAt?: string;
-  fields: ModelField[] | any[];
-};
+import type { ModelField, ModelData } from "@/types";
 
 export type ConnectionEdge = Edge & {
   sourceModelId: string;
@@ -37,8 +20,9 @@ export type NodesState = {
 export type Actions = {
   addNode: (payload: ModelData) => void;
   deleteModel: (modelId: string) => void;
-  addField: (modelId: ModelData["id"], payload: ModelField) => void;
-  deleteField?: (fieldId: string) => void;
+  addField: (modelId: string, payload: ModelField) => void;
+  updateField: (modelId: string, payload: ModelField) => void;
+  deleteField: (modelId: string, fieldId: string) => void;
   createConnection: (payload: ConnectionEdge) => void;
   deleteConnection: (connectionId: string) => void;
   setActiveModel: (modelId: string) => void;
@@ -55,9 +39,51 @@ export const useNodesStore = create(
         state.data[payload.id] = payload;
       });
     },
+    deleteModel(modelId) {
+      set((state) => {
+        const newData = state.data;
+        delete newData[modelId];
+        state.data = newData;
+        return state;
+      });
+    },
     addField(modelId, payload) {
       set((state) => {
-        state.data[modelId]?.fields.push(payload);
+        state.data[modelId].fields.push(payload);
+      });
+    },
+    updateField(modelId, payload) {
+      // If model exists and field exists, we update the field
+      set((state) => {
+        const newFields = state.data?.[modelId]?.fields?.map((item) => {
+          if (item.id === payload.id) {
+            return {
+              ...item,
+              ...payload,
+            };
+          }
+
+          return item;
+        });
+
+        if (state.data?.[modelId]) {
+          state.data[modelId].fields = newFields;
+        }
+      });
+      // If model exists and field not, we add field
+    },
+    deleteField(modelId, fieldId) {
+      set((state) => {
+        if (!state.data?.[modelId]) {
+          // Throw an error
+          return state;
+        }
+
+        const newFields = state.data?.[modelId]?.fields?.filter(
+          (item) => item.id !== fieldId
+        );
+
+        state.data[modelId].fields = newFields;
       });
     },
     createConnection(payload) {
@@ -73,14 +99,6 @@ export const useNodesStore = create(
     deleteConnection(connectionId) {
       set((state) => {
         delete state.connections[connectionId];
-      });
-    },
-    deleteModel(modelId) {
-      set((state) => {
-        const newData = state.data;
-        delete newData[modelId];
-        state.data = newData;
-        return state;
       });
     },
     setActiveModel(modelId) {
