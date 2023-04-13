@@ -15,6 +15,7 @@ export type NodesState = {
   activeModelId: string | null;
   connections: Record<string, ConnectionEdge>;
   data: Record<string, ModelData>;
+  modelIds: string[];
 };
 
 export type Actions = {
@@ -34,9 +35,11 @@ export const useNodesStore = create(
     activeModelId: null,
     connections: {},
     data: {},
+    modelIds: [],
     addNode(payload) {
       set((state) => {
         state.data[payload.id] = payload;
+        state.modelIds.push(payload.id);
       });
     },
     deleteModel(modelId) {
@@ -44,6 +47,7 @@ export const useNodesStore = create(
         const newData = state.data;
         delete newData[modelId];
         state.data = newData;
+        state.modelIds.filter((id) => id !== modelId);
         return state;
       });
     },

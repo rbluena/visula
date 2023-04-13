@@ -1,5 +1,11 @@
 import { Node } from "reactflow";
 
+export type ModelID = {
+  id: string;
+  unique?: string;
+  name: string;
+};
+
 export type ModelField = {
   kind: "field";
   id: string;
