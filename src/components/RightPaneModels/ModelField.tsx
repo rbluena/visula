@@ -12,6 +12,7 @@ import {
 import { DataTypes, ModelField } from "@/types";
 import dataTypes from "@/data/dataTypes";
 // import useRelationalModel from "@/lib/client/hooks/useRelationalModels";
+import { validationType, validations } from "@/data/validations";
 import ValidationsPopover from "./ValidationsPopover";
 
 type Props = {
@@ -113,7 +114,7 @@ const ModelField = ({
           {/* END: Relation */}
 
           {/* START: validation popover trigger */}
-          <ValidationsPopover>
+          <ValidationsPopover dataType={dataType}>
             <PopoverTrigger asChild>
               <button className="border border-slate-300 rounded-full p-1 bg-slate-50 hover:bg-slate-200 shadow-sm text-slate-700">
                 <Cog8ToothIcon strokeWidth={1.3} className="w-4 h-4" />

@@ -35,4 +35,6 @@ export type DataTypes =
   | "Text"
   | "RichText"
   | "Media"
+  | "Date"
+  | "Array"
   | "Relation";
