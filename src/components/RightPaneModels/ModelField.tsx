@@ -1,6 +1,6 @@
 import { useState } from "react";
 import { Trigger as PopoverTrigger } from "@radix-ui/react-popover";
-import { Trigger as DropdownTrigger } from "@radix-ui/react-dropdown-menu";
+// import { Trigger as DropdownTrigger } from "@radix-ui/react-dropdown-menu";
 import { v4 as uuidV4 } from "uuid";
 import camelCase from "lodash/camelCase";
 import isEmpty from "lodash/isEmpty";
@@ -11,7 +11,7 @@ import {
 } from "@heroicons/react/24/outline";
 import { DataTypes, ModelField } from "@/types";
 import dataTypes from "@/data/dataTypes";
-import useRelationalModel from "@/lib/client/hooks/useRelationalModels";
+// import useRelationalModel from "@/lib/client/hooks/useRelationalModels";
 import ValidationsPopover from "./ValidationsPopover";
 
 type Props = {
@@ -62,6 +62,9 @@ const ModelField = ({
       dataType: dataType,
       validations: [],
     });
+
+    setFieldName("");
+    setDataType("String");
   }
 
   return (
