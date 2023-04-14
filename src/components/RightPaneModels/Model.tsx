@@ -1,17 +1,17 @@
 import { useEffect, useState, useRef } from "react";
-import { v4 as uuidV4 } from "uuid";
+// import { v4 as uuidV4 } from "uuid";
 import {
   TrashIcon,
   ChevronRightIcon,
   PlusSmallIcon,
-  XMarkIcon,
+  // XMarkIcon,
 } from "@heroicons/react/24/outline";
 import useModelField from "@/lib/client/hooks/useModelFields";
-import { ModelData, DataTypes } from "@/types";
-import dataTypes from "@/data/dataTypes";
+import { ModelData } from "@/types";
+// import dataTypes from "@/data/dataTypes";
 
 import ModelFieldComponent from "./ModelField";
-import { camelCase } from "lodash";
+// import { camelCase } from "lodash";
 
 type Props = {
   modelData: ModelData;
@@ -27,7 +27,7 @@ const Model = ({
   onDeletingModel,
 }: Props) => {
   const [showFieldInput, setShowFieldInput] = useState(false);
-  const [fieldDataType, setFieldDataType] = useState<DataTypes>("String");
+  // const [fieldDataType, setFieldDataType] = useState<DataTypes>("String");
   const { updateModelField, deleteModelField, createModelField } =
     useModelField();
   const inputRef = useRef<HTMLInputElement>(null);
@@ -42,8 +42,10 @@ const Model = ({
     <div
       key={modelData.id}
       className={`${
-        isThisModelActive ? "border-violet-400" : ""
-      } min-h-[80px] border border-violet-100 rounded-md p-2 space-y-3`}
+        isThisModelActive
+          ? "border-blue-400 border-2"
+          : "border border-blue-100"
+      } min-h-[80px] rounded-md p-2 space-y-3`}
     >
       <div className="flex justify-between items-center">
         <div className="w-full space-y-0">
