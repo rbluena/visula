@@ -41,8 +41,8 @@ const ModelField = ({
   );
   const [fieldID, setFieldID] = useState(data?.fieldID || "");
 
-  const [updatedValidations, setUpdatedValidations] = useState<any[]>(
-    data?.validations.length ? data?.validations : []
+  const [updatedValidations, setUpdatedValidations] = useState<Object>(
+    data?.validations.length ? data?.validations : {}
   );
 
   const { validations, fieldValidationDefaultValues } = useFieldValidations(
@@ -63,7 +63,7 @@ const ModelField = ({
         name: fieldName,
         fieldID,
         unique: "",
-        validations: updatedValidations || {},
+        validations: updatedValidations,
       });
 
       return;
@@ -77,7 +77,7 @@ const ModelField = ({
       fieldID,
       unique: "",
       dataType: dataType,
-      validations: {},
+      validations: updatedValidations,
     });
 
     setFieldName("");

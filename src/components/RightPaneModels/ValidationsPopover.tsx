@@ -1,7 +1,7 @@
-import { ReactNode } from "react";
+import { ReactNode, useEffect, useState } from "react";
 import * as Popover from "@radix-ui/react-popover";
 import { Controller, useForm } from "react-hook-form";
-import { XCircleIcon } from "@heroicons/react/24/outline";
+// import { XCircleIcon } from "@heroicons/react/24/outline";
 import { DataType, ValidationItem } from "@/types";
 import { Switch } from "@/components/form";
 import { camelCase } from "lodash";
@@ -26,10 +26,12 @@ const ValidationsPopover = ({
   setUpdatedValidations,
   setFieldID,
 }: Props) => {
+  const [open, setOpen] = useState(false);
   const {
     register,
     handleSubmit,
     control,
+    setValue,
     formState: { isDirty, isValid },
   } = useForm<FormProps>({
     defaultValues: {
@@ -39,15 +41,21 @@ const ValidationsPopover = ({
   });
 
   function onSubmit(data: any) {
-    if (!isDirty && isValid) {
+    if (isDirty && isValid) {
       setFieldID(camelCase(data.fieldID));
       delete data.fieldId;
       setUpdatedValidations?.(data);
     }
+
+    setOpen(false);
   }
 
+  useEffect(() => {
+    setValue("fieldID", fieldID);
+  }, [fieldID, setValue]);
+
   return (
-    <Popover.Root>
+    <Popover.Root modal open={open} onOpenChange={setOpen}>
       {children}
 
       {/* START: popover content container */}
@@ -67,7 +75,7 @@ const ValidationsPopover = ({
               {...register("fieldID")}
               className="w-full p-1 inline-flex items-center justify-center flex-1 rounded px-2.5 text-[13px] leading-none text-violet-800 shadow-[0_0_0_1px] shadow-violet7 h-[25px] focus:shadow-[0_0_0_2px] focus:shadow-violet-800 outline-none"
               placeholder="Change field ID"
-              value={fieldID}
+              defaultValue={fieldID}
               onError={(error) => console.log(error)}
               required
               pattern="^\S*$"
@@ -122,12 +130,12 @@ const ValidationsPopover = ({
           </form>
 
           {/* START: Main content */}
-          <Popover.Close
+          {/* <Popover.Close
             className="rounded-full h-[25px] w-[25px] inline-flex items-center justify-center text-violet11 absolute top-[5px] right-[5px] hover:bg-violet4 focus:shadow-[0_0_0_2px] focus:shadow-violet7 outline-none cursor-default"
             aria-label="Close"
           >
             <XCircleIcon />
-          </Popover.Close>
+          </Popover.Close> */}
           <Popover.Arrow className="fill-white" />
         </Popover.Content>
       </Popover.Portal>
