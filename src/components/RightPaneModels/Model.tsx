@@ -46,6 +46,10 @@ const Model = ({
           ? "border-blue-400 border-2"
           : "border border-blue-100"
       } min-h-[80px] rounded-md p-2 space-y-3`}
+      onMouseDown={() => {
+        if (isThisModelActive) return;
+        onSelectingModel(modelData.id);
+      }}
     >
       <div className="flex justify-between items-center">
         <div className="w-full space-y-0">
@@ -58,18 +62,18 @@ const Model = ({
             >
               {modelData.name}
             </div>
-            <button
+            {/* <button
               className="border border-slate-300 rounded-full p-1"
               onClick={() => onSelectingModel(modelData.id)}
               aria-describedby="aria-chevron-toggle"
-            >
-              <ChevronRightIcon
-                strokeWidth={2}
-                className={`w-5 h-5 font-semibold text-violet-700 transition-transform transform ${
-                  isThisModelActive ? "rotate-90" : ""
-                }`}
-              />
-            </button>
+            > */}
+            <ChevronRightIcon
+              strokeWidth={2}
+              className={`w-5 h-5 font-semibold text-violet-700 transition-transform transform ${
+                isThisModelActive ? "rotate-90" : ""
+              }`}
+            />
+            {/* </button> */}
           </div>
 
           <span className="block text-[12px] text-slate-600">
@@ -118,6 +122,7 @@ const Model = ({
           onClick={() => onDeletingModel(modelData)}
           className="border border-slate-300 rounded-full p-1 bg-red-50 hover:bg-red-100 text-red-700"
           aria-describedby="aria-model-delete"
+          title="Delete this model"
         >
           <span id="aria-model-delete" className="sr-only">
             Delete model {modelData.name}
