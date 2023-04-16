@@ -1,9 +1,17 @@
 import * as ContextMenu from "@radix-ui/react-context-menu";
 import camelCase from "lodash/camelCase";
-import { ReactNode, useRef, useEffect, KeyboardEvent, MouseEvent } from "react";
+import {
+  ReactNode,
+  useRef,
+  useEffect,
+  KeyboardEvent,
+  MouseEvent,
+  forwardRef,
+} from "react";
 import { useReactFlow } from "reactflow";
 import { v4 as uuidV4 } from "uuid";
-import { ModelData, useNodesStore } from "@/lib/client/store/nodes";
+import { ModelData } from "@/types";
+import { useNodesStore } from "@/lib/client/store/nodes";
 import { getNodeFromData } from "@/lib/client/common/dataAndNodes";
 
 type Props = {
@@ -106,12 +114,13 @@ type MenuProps = {
   createNewModel: (evt: Event) => void;
 };
 
-const CanvasMenu = ({ createNewModel }: MenuProps) => {
+const CanvasMenu = forwardRef<any, MenuProps>(({ createNewModel }, ref) => {
   return (
     <ContextMenu.Content
       className="min-w-[220px] bg-white rounded-md overflow-hidden p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]"
       // align="end"
       alignOffset={5}
+      ref={ref}
     >
       <ContextMenu.Item
         onSelect={createNewModel}
@@ -137,6 +146,8 @@ const CanvasMenu = ({ createNewModel }: MenuProps) => {
       </ContextMenu.Item> */}
     </ContextMenu.Content>
   );
-};
+});
+
+CanvasMenu.displayName = "CanvasMenuComponent";
 
 export default ContextMenuComponent;

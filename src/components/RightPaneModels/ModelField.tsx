@@ -81,6 +81,7 @@ const ModelField = ({
     });
 
     setFieldName("");
+    setFieldID("");
     setDataType("String");
     setUpdatedValidations([]);
   }
@@ -104,13 +105,13 @@ const ModelField = ({
                   setFieldID(camelCase(evt.target.value));
                 }
               }}
+              required
             />
           </div>
 
           <select
             className="bg-slate-50 text-xs p-1 border border-slate-200 rounded-md"
             value={dataType}
-            defaultValue={data?.dataType || ""}
             onChange={(evt) => {
               setDataType(evt.target.value as DataType);
               // setShowRelationModels(true);
