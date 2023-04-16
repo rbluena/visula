@@ -1,7 +1,7 @@
 import type { ModelData } from "@/types";
 
 import { useNodesStore } from "@/lib/client/store/nodes";
-import { useOnSelectionChange, useReactFlow } from "reactflow";
+import { Node, useOnSelectionChange, useReactFlow } from "reactflow";
 import Model from "./Model";
 
 type Props = {
@@ -17,39 +17,70 @@ const RightModelPane = ({ modelsData }: Props) => {
   });
 
   function onSelectingModel(modelId: string) {
-    setNodes((nodes) => {
-      const selectingNode = nodes.find((item) => item.id === modelId);
-      const prevSelectedModel = nodes.find((item) => item.selected === true);
+    let currSelectingNode;
 
-      if (!selectingNode) {
+    setNodes((nodes) => {
+      return nodes.map((item) => {
+        if (modelId === item.id && !item.selected) {
+          item.selected = true;
+          currSelectingNode = item as Node;
+        } else {
+          item.selected = false;
+        }
+
+        return item;
+      });
+    });
+
+    if (currSelectingNode) {
+      setCenter(
+        Number(currSelectingNode!.position.x + 200),
+        currSelectingNode!.position.y,
+        {
+          duration: 500,
+          zoom: getZoom(),
+        }
+      );
+    }
+
+    /*  setNodes((nodes) => {
+
+
+      const currSelectedNode = nodes.find((item) => item.id === modelId);
+      const nextSelectingNode = nodes.find((item) => item.selected === true);
+
+      if (!currSelectedNode) {
         return nodes;
       }
 
-      selectingNode.selected = true;
+      currSelectedNode.selected = true;
 
       setCenter(
-        Number(selectingNode.position.x + 200),
-        selectingNode.position.y,
+        Number(currSelectedNode.position.x + 200),
+        currSelectedNode.position.y,
         {
           duration: 500,
           zoom: getZoom(),
         }
       );
 
-      if (!prevSelectedModel) {
-        return [...nodes.filter((item) => item.id !== modelId), selectingNode];
+      if (!nextSelectingNode) {
+        return [
+          ...nodes.filter((item) => item.id !== modelId),
+          currSelectedNode,
+        ];
       }
 
-      prevSelectedModel.selected = false;
+      nextSelectingNode.selected = false;
 
       return [
         ...nodes.filter(
           (item) => item.id !== modelId && item.selected === true
         ),
-        selectingNode,
-        prevSelectedModel,
+        currSelectedNode,
+        nextSelectingNode,
       ];
-    });
+    }); */
   }
 
   /**
