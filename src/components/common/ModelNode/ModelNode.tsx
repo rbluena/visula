@@ -1,6 +1,7 @@
 import { useState, useRef, useEffect, KeyboardEvent } from "react";
 import { Position, Handle } from "reactflow";
 import { v4 as uuidV4 } from "uuid";
+import camelCase from "lodash/camelCase";
 import {
   InformationCircleIcon,
   PlusSmallIcon,
@@ -43,6 +44,7 @@ const ModelNode = ({ name, modelId, unique }: Props) => {
         id: uuidV4(),
         kind: "field",
         name: fieldInputValue,
+        fieldID: camelCase(fieldInputValue),
         dataType: "String",
         validations: [],
       });
