@@ -84,7 +84,7 @@ const Model = ({
           !isThisModelActive ? "h-0" : "h-auto py-2"
         }`}
       >
-        {modelData?.fields?.map((field) => (
+        {modelData?.fields.map((field) => (
           <ModelFieldComponent
             key={field.id}
             data={field}

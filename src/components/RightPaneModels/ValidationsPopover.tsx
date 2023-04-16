@@ -1,27 +1,41 @@
-import { FormEvent, ReactNode } from "react";
+import { ReactNode } from "react";
 import * as Popover from "@radix-ui/react-popover";
-import { XCircleIcon } from "@heroicons/react/24/outline";
-import useFieldValidations from "@/lib/client/hooks/useFieldValidations";
-import { DataTypes } from "@/types";
-import { Switch } from "@/components/form";
 import { Controller, useForm } from "react-hook-form";
+import { XCircleIcon } from "@heroicons/react/24/outline";
+import { DataType, ValidationItem } from "@/types";
+import { Switch } from "@/components/form";
+import { camelCase } from "lodash";
+
+type FormProps = any;
 
 type Props = {
-  dataType: DataTypes;
+  dataType: DataType;
+  fieldID: string;
+  validations: ValidationItem[];
+  validationDefaultValues: any;
   children: ReactNode;
-  modelId: string;
-  fieldId: string;
+  setUpdatedValidations?: Function;
+  setFieldID: Function;
 };
-const ValidationsPopover = ({ children, dataType }: Props) => {
-  const { validations } = useFieldValidations(dataType);
-  const { register, handleSubmit, control } = useForm();
+
+const ValidationsPopover = ({
+  children,
+  dataType,
+  fieldID,
+  validations,
+  validationDefaultValues,
+  setUpdatedValidations,
+  setFieldID,
+}: Props) => {
+  const { register, handleSubmit, control } = useForm<FormProps>({
+    defaultValues: { fieldID, ...(validationDefaultValues || {}) },
+  });
 
   function onSubmit(data: any) {
-    // const formData = new FormData(evt.target);
-
     console.log(data);
-
-    // console.log(evt.target);
+    setFieldID(camelCase(data.fieldID));
+    // delete data.fieldId;
+    // setUpdatedValidations(data);
   }
 
   return (
@@ -36,133 +50,72 @@ const ValidationsPopover = ({ children, dataType }: Props) => {
         >
           <form
             onSubmit={handleSubmit(onSubmit)}
-            className="flex flex-col gap-2.5"
+            className="flex flex-col gap-1.5"
           >
-            <p className="text-slate-700 text-[15px] leading-[19px] font-medium">
+            <p className="text-slate-700 text-[14px] leading-[19px] font-medium">
               Field ID
             </p>
             <input
-              {...register("fieldId")}
-              className="w-full p-2 inline-flex items-center justify-center flex-1 rounded px-2.5 text-[13px] leading-none text-violet-800 shadow-[0_0_0_1px] shadow-violet7 h-[25px] focus:shadow-[0_0_0_2px] focus:shadow-violet-800 outline-none"
-              // defaultValue={validation.default}
+              {...register("fieldID")}
+              className="w-full p-1 inline-flex items-center justify-center flex-1 rounded px-2.5 text-[13px] leading-none text-violet-800 shadow-[0_0_0_1px] shadow-violet7 h-[25px] focus:shadow-[0_0_0_2px] focus:shadow-violet-800 outline-none"
               pattern="^\S*$"
               placeholder="Change field ID"
+              onError={(error) => console.log(error)}
             />
-            <p className="text-slate-700 text-[15px] leading-[19px] font-medium mb-2.5">
+            <p className="text-slate-700 text-[14px] leading-[19px] font-medium mb-1">
               Validations
             </p>
-            {validations.map((validation) => {
-              return (
-                <fieldset
-                  key={validation.id}
-                  className="flex gap-5 items-center"
-                >
-                  <label
-                    className="text-[13px] text-violet-700 w-[75px]"
-                    htmlFor={validation.id}
+
+            {/* START: Creating validations */}
+            <div className="max-h-[120px] overflow-y-auto flex flex-col gap-1.5 pr-2 py-2">
+              {validations.map((validation) => {
+                return (
+                  <fieldset
+                    key={validation.id}
+                    className="flex gap-5 items-center"
                   >
-                    {validation.name}
-                  </label>
-                  {validation.type === "boolean" ? (
-                    <Controller
-                      control={control}
-                      render={({ field: { onChange, value } }) => {
-                        console.log(value);
+                    <label
+                      className="text-[13px] text-violet-700 w-[75px]"
+                      htmlFor={validation.id}
+                    >
+                      {validation.name}
+                    </label>
+                    {validation.type === "boolean" ? (
+                      <Controller
+                        control={control}
+                        render={({ field: { onChange, value } }) => {
+                          return (
+                            <Switch
+                              onChange={onChange}
+                              checked={value}
+                              defaultChecked={!!validation.default}
+                            />
+                          );
+                        }}
+                        name={validation.id}
+                      />
+                    ) : null}
 
-                        return (
-                          <Switch
-                            onChange={onChange}
-                            defaultCheck={false}
-                            checked={value}
-                          />
-                        );
-                      }}
-                      name={validation.id}
-                    />
-                  ) : null}
-                  {validation.type === "text" ? (
-                    <input
-                      {...register(validation.id)}
-                      name={validation.id}
-                      className="w-full inline-flex items-center justify-center flex-1 rounded px-2.5 text-[13px] leading-none text-violet-800 shadow-[0_0_0_1px] shadow-violet7 h-[25px] focus:shadow-[0_0_0_2px] focus:shadow-violet-800 outline-none"
-                      defaultValue={validation.default}
-                    />
-                  ) : null}
-
-                  {/* <input
-                    className="w-full inline-flex items-center justify-center flex-1 rounded px-2.5 text-[13px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 h-[25px] focus:shadow-[0_0_0_2px] focus:shadow-violet8 outline-none"
-                    id="width"
-                    defaultValue="100%"
-                  /> */}
-                </fieldset>
-              );
-            })}
+                    {validation.type === "text" ? (
+                      <input
+                        {...register(validation.id)}
+                        name={validation.id}
+                        className="w-full inline-flex items-center justify-center flex-1 rounded px-2.5 text-[13px] leading-none text-violet-800 shadow-[0_0_0_1px] shadow-violet7 h-[25px] focus:shadow-[0_0_0_2px] focus:shadow-violet-800 outline-none"
+                      />
+                    ) : null}
+                  </fieldset>
+                );
+              })}
+            </div>
+            {/* END: Creating validations */}
 
             <button
               type="submit"
-              className="px-4 py-2 rounded mt-4 bg-slate-600 hover:bg-opacity-70 text-white text-sm leading-4"
+              className="px-4 py-2 rounded  bg-slate-600 hover:bg-opacity-70 text-white text-sm leading-4"
             >
               Done
             </button>
           </form>
-          {/* START: Main content */}
-          {/* <div className="flex flex-col gap-2.5">
-            <p className="text-slate-700 text-[15px] leading-[19px] font-medium mb-2.5">
-              Validations
-            </p>
-            <fieldset className="flex gap-5 items-center">
-              <label
-                className="text-[13px] text-violet-700 w-[75px]"
-                htmlFor="width"
-              >
-                Width
-              </label>
-              <input
-                className="w-full inline-flex items-center justify-center flex-1 rounded px-2.5 text-[13px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 h-[25px] focus:shadow-[0_0_0_2px] focus:shadow-violet8 outline-none"
-                id="width"
-                defaultValue="100%"
-              />
-            </fieldset>
-            <fieldset className="flex gap-5 items-center">
-              <label
-                className="text-[13px] text-violet11 w-[75px]"
-                htmlFor="maxWidth"
-              >
-                Max. width
-              </label>
-              <input
-                className="w-full inline-flex items-center justify-center flex-1 rounded px-2.5 text-[13px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 h-[25px] focus:shadow-[0_0_0_2px] focus:shadow-violet8 outline-none"
-                id="maxWidth"
-                defaultValue="300px"
-              />
-            </fieldset>
-            <fieldset className="flex gap-5 items-center">
-              <label
-                className="text-[13px] text-violet11 w-[75px]"
-                htmlFor="height"
-              >
-                Height
-              </label>
-              <input
-                className="w-full inline-flex items-center justify-center flex-1 rounded px-2.5 text-[13px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 h-[25px] focus:shadow-[0_0_0_2px] focus:shadow-violet8 outline-none"
-                id="height"
-                defaultValue="25px"
-              />
-            </fieldset>
-            <fieldset className="flex gap-5 items-center">
-              <label
-                className="text-[13px] text-violet11 w-[75px]"
-                htmlFor="maxHeight"
-              >
-                Max. height
-              </label>
-              <input
-                className="w-full inline-flex items-center justify-center flex-1 rounded px-2.5 text-[13px] leading-none text-violet11 shadow-[0_0_0_1px] shadow-violet7 h-[25px] focus:shadow-[0_0_0_2px] focus:shadow-violet8 outline-none"
-                id="maxHeight"
-                defaultValue="none"
-              />
-            </fieldset>
-          </div> */}
 
           {/* START: Main content */}
           <Popover.Close

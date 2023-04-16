@@ -9,11 +9,11 @@ import {
   XMarkIcon,
   Cog8ToothIcon,
 } from "@heroicons/react/24/outline";
-import { DataTypes, ModelField } from "@/types";
+import { DataType, ModelField } from "@/types";
 import dataTypes from "@/data/dataTypes";
 // import useRelationalModel from "@/lib/client/hooks/useRelationalModels";
-import { validationType, validations } from "@/data/validations";
 import ValidationsPopover from "./ValidationsPopover";
+import useFieldValidations from "@/lib/client/hooks/useFieldValidations";
 
 type Props = {
   modelId: string;
@@ -34,24 +34,39 @@ const ModelField = ({
 }: Props) => {
   // const { targetModel } = useRelationalModel(modelId);
   // const [showRelationModels, setShowRelationModels] = useState(false);
+  const isNewFieldInput = isEmpty(data); // Are we creating new field?
   const [fieldName, setFieldName] = useState<string>(() => data?.name || "");
-  const [dataType, setDataType] = useState<DataTypes | "">(
-    () => data?.dataType || ""
+  const [dataType, setDataType] = useState<DataType | "String">(
+    () => data?.dataType || "String"
+  );
+  const [fieldID, setFieldID] = useState(data?.fieldID || "");
+
+  // const [updatedValidations, setUpdatedValidations] = useState<any[]>(
+  //   data?.validations.length ? data?.validations : []
+  // );
+
+  const { validations } = useFieldValidations(
+    dataType,
+    data?.validations,
+    isNewFieldInput
   );
   // const [selectedRelationModel, setSelectedRelationModel] = useState<
   //   string | null
   // >(null);
 
-  const isNewField = isEmpty(data);
-
   function createOrUpdateField() {
-    if (!isNewField) {
+    if (!isNewFieldInput) {
       // Update existing model
       updateModelField?.(modelId, {
         ...data,
         dataType,
         name: fieldName,
+        fieldID,
+        unique: "",
+        validations: {},
       });
+
+      return;
     }
 
     // Creating a new fresh field
@@ -59,13 +74,15 @@ const ModelField = ({
       id: uuidV4(),
       kind: "field",
       name: fieldName as string,
-      unique: camelCase(fieldName),
+      fieldID,
+      unique: "",
       dataType: dataType,
-      validations: [],
+      validations: {},
     });
 
     setFieldName("");
     setDataType("String");
+    // setUpdatedValidations([]);
   }
 
   return (
@@ -74,14 +91,19 @@ const ModelField = ({
         <div className="flex items-end space-x-1 space-y-3">
           <div className="">
             <span className="block text-[10px] text-sla e-500 pl-1">
-              {isNewField ? camelCase(fieldName) : ""}
+              {fieldID}
             </span>
             <input
               type="text"
               placeholder="Field name"
               className="bg-slate-50 text-xs p-1 border border-slate-200 rounded-md"
               value={fieldName}
-              onChange={(evt) => setFieldName(evt.target.value)}
+              onChange={(evt) => {
+                setFieldName(evt.target.value);
+                if (isNewFieldInput) {
+                  setFieldID(camelCase(evt.target.value));
+                }
+              }}
             />
           </div>
 
@@ -90,7 +112,7 @@ const ModelField = ({
             value={dataType}
             defaultValue={data?.dataType || ""}
             onChange={(evt) => {
-              setDataType(evt.target.value as DataTypes);
+              setDataType(evt.target.value as DataType);
               // setShowRelationModels(true);
             }}
           >
@@ -114,7 +136,14 @@ const ModelField = ({
           {/* END: Relation */}
 
           {/* START: validation popover trigger */}
-          <ValidationsPopover dataType={dataType}>
+          <ValidationsPopover
+            dataType={dataType}
+            fieldID={fieldID}
+            validations={validations}
+            validationDefaultValues={data?.validations}
+            // setUpdatedValidations={setUpdatedValidations}
+            setFieldID={setFieldID}
+          >
             <PopoverTrigger asChild>
               <button className="border border-slate-300 rounded-full p-1 bg-slate-50 hover:bg-slate-200 shadow-sm text-slate-700">
                 <Cog8ToothIcon strokeWidth={1.3} className="w-4 h-4" />
@@ -131,7 +160,7 @@ const ModelField = ({
           </button>
         </div>
 
-        {isNewField ? (
+        {isNewFieldInput ? (
           <button
             onClick={() => setShowFieldInput?.(false)}
             className="border border-slate-300 rounded-full p-1 bg-red-50 hover:bg-red-100 text-red-700 ml-auto"
