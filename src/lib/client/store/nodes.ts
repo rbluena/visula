@@ -26,6 +26,7 @@ export type Actions = {
   deleteField: (modelId: string, fieldId: string) => void;
   createConnection: (payload: ConnectionEdge) => void;
   deleteConnection: (connectionId: string) => void;
+  updateFieldValidations?: (modelId: string, fieldId: string) => void;
   setActiveModel: (modelId: string) => void;
 };
 
@@ -110,5 +111,10 @@ export const useNodesStore = create(
         state.activeModelId = modelId;
       });
     },
+    // updateFieldValidations(modelId, fieldId) {
+    //   set((state) => {
+    //     const model = state.data[modelId].
+    //   })
+    // }
   }))
 );

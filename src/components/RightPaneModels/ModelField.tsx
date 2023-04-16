@@ -41,11 +41,11 @@ const ModelField = ({
   );
   const [fieldID, setFieldID] = useState(data?.fieldID || "");
 
-  // const [updatedValidations, setUpdatedValidations] = useState<any[]>(
-  //   data?.validations.length ? data?.validations : []
-  // );
+  const [updatedValidations, setUpdatedValidations] = useState<any[]>(
+    data?.validations.length ? data?.validations : []
+  );
 
-  const { validations } = useFieldValidations(
+  const { validations, fieldValidationDefaultValues } = useFieldValidations(
     dataType,
     data?.validations,
     isNewFieldInput
@@ -63,7 +63,7 @@ const ModelField = ({
         name: fieldName,
         fieldID,
         unique: "",
-        validations: {},
+        validations: updatedValidations || {},
       });
 
       return;
@@ -82,7 +82,7 @@ const ModelField = ({
 
     setFieldName("");
     setDataType("String");
-    // setUpdatedValidations([]);
+    setUpdatedValidations([]);
   }
 
   return (
@@ -137,11 +137,12 @@ const ModelField = ({
 
           {/* START: validation popover trigger */}
           <ValidationsPopover
-            dataType={dataType}
             fieldID={fieldID}
             validations={validations}
-            validationDefaultValues={data?.validations}
-            // setUpdatedValidations={setUpdatedValidations}
+            validationDefaultValues={
+              data?.validations ?? fieldValidationDefaultValues
+            }
+            setUpdatedValidations={setUpdatedValidations}
             setFieldID={setFieldID}
           >
             <PopoverTrigger asChild>
@@ -167,7 +168,7 @@ const ModelField = ({
             aria-describedby="aria-close-new-field"
           >
             <span id="aria-close-new-field" className="sr-only">
-              Close feild input
+              Close field input
             </span>
             <XMarkIcon strokeWidth={1.3} className="w-4 h-4" />
           </button>

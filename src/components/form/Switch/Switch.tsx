@@ -4,23 +4,22 @@ import * as Switch from "@radix-ui/react-switch";
 type Props = {
   name?: string;
   checked?: boolean;
-  defaultCheck?: boolean;
+  defaultChecked?: boolean;
   onChange?: (checked: boolean) => void;
 };
 
 const SwitchComponent = forwardRef<any, Props>(
-  ({ onChange, defaultCheck, checked, ...props }, ref) => {
+  ({ onChange, defaultChecked, checked, ...props }, ref) => {
     return (
       <Switch.Root
         ref={ref}
         {...props}
         onCheckedChange={onChange}
-        defaultChecked={defaultCheck}
+        defaultChecked={defaultChecked}
         checked={checked}
-        className="w-[42px] h-[25px] bg-slate-300 rounded-full relative  data-[state=checked]:bg-slate-700 outline-none cursor-default"
-        // style={{ "-webkit-tap-highlight-color": "rgba(0, 0, 0, 0)" }}
+        className="w-[38px] h-[20px] bg-slate-300 rounded-full relative  data-[state=checked]:bg-slate-700 outline-none cursor-default"
       >
-        <Switch.Thumb className="block w-[21px] h-[21px] bg-white rounded-full shadow-[0_2px_2px] shadow-blackA7 transition-transform duration-100 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[19px]" />
+        <Switch.Thumb className="block w-[18px] h-[18px] bg-white rounded-full shadow-[0_2px_2px] shadow-blackA7 transition-transform duration-100 translate-x-0.5 will-change-transform data-[state=checked]:translate-x-[19px]" />
       </Switch.Root>
     );
   }

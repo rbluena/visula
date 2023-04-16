@@ -9,7 +9,7 @@ import { camelCase } from "lodash";
 type FormProps = any;
 
 type Props = {
-  dataType: DataType;
+  dataType?: DataType;
   fieldID: string;
   validations: ValidationItem[];
   validationDefaultValues: any;
@@ -20,22 +20,30 @@ type Props = {
 
 const ValidationsPopover = ({
   children,
-  dataType,
   fieldID,
   validations,
   validationDefaultValues,
   setUpdatedValidations,
   setFieldID,
 }: Props) => {
-  const { register, handleSubmit, control } = useForm<FormProps>({
-    defaultValues: { fieldID, ...(validationDefaultValues || {}) },
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { isDirty, isValid },
+  } = useForm<FormProps>({
+    defaultValues: {
+      fieldID,
+      ...(validationDefaultValues && { ...validationDefaultValues }),
+    },
   });
 
   function onSubmit(data: any) {
-    console.log(data);
-    setFieldID(camelCase(data.fieldID));
-    // delete data.fieldId;
-    // setUpdatedValidations(data);
+    if (!isDirty && isValid) {
+      setFieldID(camelCase(data.fieldID));
+      delete data.fieldId;
+      setUpdatedValidations?.(data);
+    }
   }
 
   return (
@@ -58,9 +66,11 @@ const ValidationsPopover = ({
             <input
               {...register("fieldID")}
               className="w-full p-1 inline-flex items-center justify-center flex-1 rounded px-2.5 text-[13px] leading-none text-violet-800 shadow-[0_0_0_1px] shadow-violet7 h-[25px] focus:shadow-[0_0_0_2px] focus:shadow-violet-800 outline-none"
-              pattern="^\S*$"
               placeholder="Change field ID"
+              value={fieldID}
               onError={(error) => console.log(error)}
+              required
+              pattern="^\S*$"
             />
             <p className="text-slate-700 text-[14px] leading-[19px] font-medium mb-1">
               Validations
@@ -84,13 +94,7 @@ const ValidationsPopover = ({
                       <Controller
                         control={control}
                         render={({ field: { onChange, value } }) => {
-                          return (
-                            <Switch
-                              onChange={onChange}
-                              checked={value}
-                              defaultChecked={!!validation.default}
-                            />
-                          );
+                          return <Switch onChange={onChange} checked={value} />;
                         }}
                         name={validation.id}
                       />

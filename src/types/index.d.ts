@@ -9,12 +9,12 @@ export type ModelID = {
 export type ModelField = {
   kind: "field";
   id: string;
-  unique?: string;
+  fieldID: string;
   name: string;
   description?: string;
   comment?: string;
-  dataType: DataTypes;
-  validations: Object[];
+  dataType: DataType;
+  validations: Partial<ValidationItem>[];
 };
 
 export type ModelData = Node & {
@@ -28,7 +28,7 @@ export type ModelData = Node & {
   fields: ModelField[];
 };
 
-export type DataTypes =
+export type DataType =
   | "Int"
   | "Decimal"
   | "String"
@@ -37,4 +37,13 @@ export type DataTypes =
   | "Media"
   | "Date"
   | "Array"
+  | "List"
   | "Relation";
+
+export type ValidationItem = {
+  id: "required" | "unique" | "minLength" | "maxLength" | "localized";
+  name: string;
+  description: string;
+  default: string | boolean;
+  type: "text" | "boolean" | "options";
+};

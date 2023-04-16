@@ -1,34 +1,36 @@
 import { useMemo } from "react";
-import { validations, validationType } from "@/data/validations";
-import { DataTypes } from "@/types";
+import {
+  getFieldValidationDefaultValues,
+  validations,
+  validationType,
+} from "@/data/validations";
+import { DataType, ValidationItem } from "@/types";
 
-type ValidationItem = {
-  id:
-    | "required"
-    | "localize"
-    | "unique"
-    | "minLength"
-    | "maxLength"
-    | "localized";
-  name: string;
-  description: string;
-  default: any;
-  type: "text" | "boolean" | "options";
-};
-
-export default function useFieldValidations(dataType: DataTypes) {
-  const fieldValidations = useMemo(() => {
-    if (dataType.length < 2) {
-      return [];
-    }
-
-    return validations[dataType];
-  }, [dataType]);
+export default function useFieldValidations(
+  dataType: DataType,
+  currValidations: Object | undefined,
+  isNewFieldInput: boolean
+) {
+  const dataTypeValidationKeys = useMemo(
+    () => validations[dataType],
+    [dataType]
+  );
 
   return {
-    validations: fieldValidations.map((item) => {
+    validationKeys: dataTypeValidationKeys,
+    fieldValidationDefaultValues: getFieldValidationDefaultValues(
+      dataTypeValidationKeys
+    ),
+    validations: dataTypeValidationKeys.map((key) => {
       // @ts-ignore
-      return validationType[item] as ValidationItem;
+      const valid = validationType[key] as ValidationItem;
+
+      if (!isNewFieldInput) {
+        // @ts-ignore
+        valid.default = currValidations?.[key] ?? valid.default;
+      }
+
+      return valid;
     }),
   };
 }

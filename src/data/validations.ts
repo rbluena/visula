@@ -1,3 +1,5 @@
+import { DataType } from "@/types";
+
 export const required = {
   id: "required",
   name: "Required",
@@ -51,7 +53,7 @@ export const validationType = {
   lengthSize,
 };
 
-export const validations = {
+export const validations: Record<DataType, string[]> = {
   String: ["required", "unique", "minLength", "maxLength", "localized"],
   Text: ["required", "unique", "minLength", "maxLength", "localized"],
   RichText: ["required", "unique", "minLength", "maxLength", "localized"],
@@ -63,3 +65,12 @@ export const validations = {
   Date: ["required"],
   Array: ["required"],
 };
+
+export function getFieldValidationDefaultValues(validationKeys: string[]) {
+  return validationKeys.reduce((acc: Record<string, Object>, key) => {
+    // @ts-ignore
+    acc[key] = validationType[key].default;
+
+    return acc;
+  }, {});
+}
