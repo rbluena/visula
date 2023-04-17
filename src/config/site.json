@@ -1,0 +1,17 @@
+{
+  "site": {
+    "title": "Visula | Easy content modeling for CMS",
+    "base_url": "/",
+    "favicon": "/favicon.ico",
+    "logo": "src/assets/logo.png",
+    "logo_white": "/images/logo-light.png",
+    "logo_width": "150",
+    "logo_height": "39",
+    "logo_text": "Visula"
+  },
+  "metadata": {
+    "meta_author": "Visula",
+    "meta_image": "/images/favicon-32x32.png",
+    "meta_description": "Geeky Nextjs Personal Blog Template"
+  }
+}
