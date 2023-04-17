@@ -1,4 +1,4 @@
-import { Node } from "reactflow";
+import { Edge, Node } from "reactflow";
 
 export type ModelID = {
   id: string;
@@ -47,3 +47,12 @@ export type ValidationItem = {
   default: string | boolean;
   type: "text" | "boolean" | "options";
 };
+
+export type ModelRelation = {
+  sourceModelId: string;
+  sourceFieldId: string;
+  targetModelId: string;
+  label?: string;
+};
+
+export type ModelRelationNode = Node & ModelRelation;

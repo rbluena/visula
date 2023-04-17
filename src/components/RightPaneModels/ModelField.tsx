@@ -44,6 +44,7 @@ const ModelField = ({
   const [updatedValidations, setUpdatedValidations] = useState<Object>(
     data?.validations.length ? data?.validations : {}
   );
+  const [relationType, setRelationType] = useState("hasOne");
 
   const { validations, fieldValidationDefaultValues } = useFieldValidations(
     dataType,
@@ -114,7 +115,6 @@ const ModelField = ({
             value={dataType}
             onChange={(evt) => {
               setDataType(evt.target.value as DataType);
-              // setShowRelationModels(true);
             }}
           >
             {dataTypes.map((item) => (
@@ -123,6 +123,17 @@ const ModelField = ({
               </option>
             ))}
           </select>
+
+          {dataType === "Relation" ? (
+            <select
+              value={relationType}
+              className="bg-slate-50 text-xs p-1 border border-slate-200 rounded-md"
+              onChange={(evt) => setRelationType(evt.target.value)}
+            >
+              <option value="hasOne">Only one</option>
+              <option value="hasMany">Has many</option>
+            </select>
+          ) : null}
 
           {/* START: Relation */}
           {/* {dataType === "Relation" ? (
