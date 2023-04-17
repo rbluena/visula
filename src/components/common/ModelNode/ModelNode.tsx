@@ -105,21 +105,22 @@ const ModelNode = ({ name, modelId, unique }: Props) => {
 
         {/* START: Input for adding a new field */}
         <div>
-          {showFieldInput ? (
-            <input
-              ref={inputRef}
-              type="text"
-              className="w-full rounded-xl pl-2 shadow-md border-2  border-slate-400"
-              onKeyDown={onFieldInputKeydown}
-            />
-          ) : (
-            <button
-              className="absolute bottom-[-12px] left-[-8px] rounded-full bg-blue-600 text-white"
-              onClick={() => setShowFieldInput(true)}
-            >
-              <PlusSmallIcon strokeWidth={2} className="text-lg w-6 h-6" />
-            </button>
-          )}
+          {
+            showFieldInput ? (
+              <input
+                ref={inputRef}
+                type="text"
+                className="w-full rounded-xl pl-2 shadow-md border-2  border-slate-400"
+                onKeyDown={onFieldInputKeydown}
+              />
+            ) : null
+            // <button
+            //   className="absolute bottom-[-12px] left-[-8px] rounded-full bg-blue-600 text-white"
+            //   onClick={() => setShowFieldInput(true)}
+            // >
+            //   <PlusSmallIcon strokeWidth={2} className="text-lg w-6 h-6" />
+            // </button>
+          }
         </div>
         {/* END: Input for adding a new field */}
       </div>

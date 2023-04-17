@@ -59,6 +59,7 @@ const Model = ({
               className="block w-full"
               lang="ghmkd"
               spellCheck={false}
+              suppressContentEditableWarning
             >
               {modelData.name}
             </div>
