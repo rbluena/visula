@@ -1,21 +1,24 @@
 import Link from "next/link";
 import { HomeIcon } from "@heroicons/react/24/outline";
+import Spinner from "@/components/common/Spinner/Spinner";
+import { getRelativeTime } from "@/lib/client/common/getTimeAgo";
 // import ToggleGroup from "@/components/form/ToggleGroup/ToggleGroup";
 // import { useUIStore } from "@/lib/client/store/ui";
 
 type Props = {
   hideProjectTitle: boolean;
+  showLoader?: boolean;
+  project?: {
+    title?: string;
+    lastUpdated?: Date;
+  };
 };
 
-const DashboardTopBar = ({ hideProjectTitle = false }: Props) => {
-  // const { editor, switchEditor } = useUIStore((state) => state);
-
-  // function switchModelEditor(value: string) {
-  //   let editorVal: "nodes-editor" | "code-editor" =
-  //     value === "nodes-editor" ? "nodes-editor" : "code-editor";
-  //   switchEditor(editorVal);
-  // }
-
+const DashboardTopBar = ({
+  hideProjectTitle = false,
+  showLoader = true,
+  project = {},
+}: Props) => {
   return (
     <div className="flex justify-between items-start px-4 absolute w-full top-4 z-20 pointer-events-none">
       {hideProjectTitle ? (
@@ -24,17 +27,25 @@ const DashboardTopBar = ({ hideProjectTitle = false }: Props) => {
         <div className="flex items-start space-x-2 pointer-events-auto">
           <Link
             href="/"
-            className="bg-slate-200 flex items-center justify-center rounded p-2"
+            className="bg-slate-100  flex items-center justify-center rounded p-2"
           >
             <HomeIcon className="text-lg w-6 h-6 font-semibold" />
           </Link>
 
-          <div className="flex flex-col items-start py-2 px-4 space-y-0 bg-slate-100 rounded-md border-2 border-slate-300">
-            <h1 className="text-lg">Project Name</h1>
-            <div className="text-slate-700 text-xs">
-              <strong>Last update: </strong>June 2, 2023&nbsp;&nbsp;10:00am
+          {showLoader ? (
+            <Spinner className="w-6 h-6" />
+          ) : (
+            <div className="flex flex-col items-start py-2 px-4 space-y-0 bg-slate-100 rounded-md border-2 border-violet-400">
+              <h1 className="text-md font-semibold text-slate-600 w-[120px] overflow-clip whitespace-nowrap overflow-ellipsis">
+                {project?.title}
+              </h1>
+              <div className="text-violet-700 text-xs">
+                {/* June 2, 2023&nbsp;&nbsp;10:00am */}
+                <strong>Update:</strong>&nbsp;
+                {getRelativeTime(project.lastUpdated)}
+              </div>
             </div>
-          </div>
+          )}
         </div>
       )}
 

@@ -9,20 +9,31 @@ export type UserProject = {
 };
 
 export type ProjectsState = {
+  activeProjectId: string | null;
+  projectIds: string[];
   data: Record<string, UserProject>;
 };
 
 export type Actions = {
   addProject: (payload: UserProject) => void;
+  setActiveProject: (payload: string) => void;
   setLastUpdate: (projectId: string, date: Date) => void;
 };
 
 export const useProjectsStore = create(
   immer<ProjectsState & Actions>((set) => ({
+    activeProjectId: null,
+    projectIds: [],
     data: {},
     addProject(payload) {
       set((state) => {
         state.data[payload.id] = payload;
+        state.projectIds.push(payload.id);
+      });
+    },
+    setActiveProject(projectId) {
+      set((state) => {
+        state.activeProjectId = projectId;
       });
     },
     setLastUpdate(projectId, payload) {
