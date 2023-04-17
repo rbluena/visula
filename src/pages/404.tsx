@@ -4,7 +4,7 @@ import { HomeModernIcon } from "@heroicons/react/24/outline";
 
 const NotFound = () => {
   return (
-    <MainLayout>
+    <MainLayout headTitle="Visula | Not Found">
       <div className="w-screen h-screen grid place-items-center">
         <div className="space-y-4">
           <h1 className="text-4xl text-violet-700 font-bold">404: Not Found</h1>
