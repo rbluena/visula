@@ -14,6 +14,7 @@ import dataTypes from "@/data/dataTypes";
 // import useRelationalModel from "@/lib/client/hooks/useRelationalModels";
 import ValidationsPopover from "./ValidationsPopover";
 import useFieldValidations from "@/lib/client/hooks/useFieldValidations";
+import { useModelRelationStore } from "@/lib/client/store/relations";
 
 type Props = {
   modelId: string;
@@ -44,13 +45,16 @@ const ModelField = ({
   const [updatedValidations, setUpdatedValidations] = useState<Object>(
     data?.validations.length ? data?.validations : {}
   );
-  const [relationType, setRelationType] = useState("hasOne");
+  const [relationType, setRelationType] = useState<"hasOne" | "hasMany">(
+    "hasOne"
+  );
 
   const { validations, fieldValidationDefaultValues } = useFieldValidations(
     dataType,
     data?.validations,
     isNewFieldInput
   );
+  const addRelation = useModelRelationStore((state) => state.addRelation);
   // const [selectedRelationModel, setSelectedRelationModel] = useState<
   //   string | null
   // >(null);
@@ -70,9 +74,11 @@ const ModelField = ({
       return;
     }
 
+    const id = uuidV4();
+
     // Creating a new fresh field
     createModelField?.(modelId, {
-      id: uuidV4(),
+      id,
       kind: "field",
       name: fieldName as string,
       fieldID,
@@ -80,6 +86,15 @@ const ModelField = ({
       dataType: dataType,
       validations: updatedValidations,
     });
+
+    if (dataType === "Relation") {
+      addRelation({
+        sourceModelId: modelId,
+        sourceFieldId: id,
+        targetModelId: null,
+        hasMany: relationType === "hasMany",
+      });
+    }
 
     setFieldName("");
     setFieldID("");

@@ -14,6 +14,7 @@ import ReactFlow, {
   Node,
   Connection,
 } from "reactflow";
+import { useModelsRelation } from "@/lib/client/hooks/useModelsRelation";
 
 type Props = {
   showEditor: boolean;
@@ -27,6 +28,7 @@ const NodeEditor = ({ showEditor }: Props) => {
     // connections,
     createConnection,
   } = useNodesStore((state) => state);
+  const { onNodeConnect } = useModelsRelation();
   const initialNodesData = getNodesFromData(data);
   const initialEdgesData: any[] = [];
   const [nodes, _, onNodesChange] = useNodesState(initialNodesData);
@@ -106,7 +108,7 @@ const NodeEditor = ({ showEditor }: Props) => {
           onEdgeUpdate={onEdgeUpdate}
           onEdgeUpdateEnd={onEdgeUpdateEnd}
           onEdgeUpdateStart={onEdgeUpdateStart}
-          onConnect={onConnect}
+          onConnect={onNodeConnect}
           nodes={nodes}
           edges={edges}
           // fitView

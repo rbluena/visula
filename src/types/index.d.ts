@@ -51,7 +51,8 @@ export type ValidationItem = {
 export type ModelRelation = {
   sourceModelId: string;
   sourceFieldId: string;
-  targetModelId: string;
+  targetModelId: string | null;
+  hasMany: boolean;
   label?: string;
 };
 

@@ -92,7 +92,7 @@ const RightModelPane = ({ modelsData }: Props) => {
   }
 
   return (
-    <div className="p-4 space-y-4 overflow-y-auto h-[calc(100vh-60px)] relative">
+    <div className="p-4 space-y-4 overflow-y-auto overflow-x-hidden h-[calc(100vh-60px)] relative">
       {modelsData?.map((modelData) => (
         <Model
           key={modelData.id}
