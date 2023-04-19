@@ -1,12 +1,25 @@
-import { useCallback } from "react";
-import { addEdge, useReactFlow, Edge, MarkerType } from "reactflow";
+/* eslint-disable react-hooks/exhaustive-deps */
+import { useCallback, useRef } from "react";
+import {
+  addEdge,
+  updateEdge,
+  useReactFlow,
+  Edge,
+  MarkerType,
+  Connection,
+} from "reactflow";
 import { useModelRelationStore } from "@/lib/client/store/relations";
 
 export function useModelsRelation() {
-  const { updateRelation, data } = useModelRelationStore();
   const { setEdges } = useReactFlow();
+  const { updateRelation, removeRelation, data } = useModelRelationStore();
+  const edgeUpdateSuccessful = useRef(false);
 
-  const onNodeConnect = useCallback((edge: Edge) => {
+  const onEdgeUpdateStart = useCallback(() => {
+    edgeUpdateSuccessful.current = false;
+  }, []);
+
+  const onNodeConnect = useCallback((edge: any) => {
     // Add edge to the canvas
     setEdges((edges) => {
       // Avoid connectiong field to itself
@@ -26,22 +39,49 @@ export function useModelsRelation() {
         fillOpacity: 0.7,
         strokeWidth: 30,
       };
-      edge.type = "step";
+      edge.type = "smoothstep";
       edge.interactionWidth = 25;
-      edge.label = relationData.hasMany ? "Only one" : "Has many";
+      edge.label = relationData.hasMany ? "Has many" : "Has one";
       edge.labelBgPadding = [8, 4];
-      edge.labelBgBorderRadius = 4;
-      edge.markerEnd = {
-        type: MarkerType.ArrowClosed,
-      };
+      edge.labelBgBorderRadius = 8;
+
+      if (relationData.hasMany) {
+        edge.markerEnd = {
+          type: MarkerType.ArrowClosed,
+        };
+      }
 
       return addEdge(edge, edges);
     });
+  }, []);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+  const onEdgeUpdate = useCallback(
+    (oldEdge: Edge, newConnection: Connection) => {
+      edgeUpdateSuccessful.current = true;
+      const sourceFieldId = oldEdge!.sourceHandle || "";
+      const targetModelId = newConnection.target;
+
+      const relationData = { ...data[sourceFieldId], targetModelId };
+      updateRelation(sourceFieldId, relationData);
+
+      setEdges((els) => updateEdge(oldEdge, newConnection, els));
+    },
+    [setEdges]
+  );
+
+  const onEdgeUpdateEnd = useCallback((_: any, edge: Edge) => {
+    if (!edgeUpdateSuccessful.current) {
+      setEdges((eds) => eds.filter((e) => e.id !== edge.id));
+      removeRelation(edge.source);
+    }
+
+    edgeUpdateSuccessful.current = true;
   }, []);
 
   return {
+    onEdgeUpdateStart,
     onNodeConnect,
+    onEdgeUpdate,
+    onEdgeUpdateEnd,
   };
 }
