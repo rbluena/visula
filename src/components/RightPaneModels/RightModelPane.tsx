@@ -6,9 +6,10 @@ import Model from "./Model";
 
 type Props = {
   modelsData: ModelData[];
+  showMultipleModels: boolean;
 };
 
-const RightModelPane = ({ modelsData }: Props) => {
+const RightModelPane = ({ modelsData, showMultipleModels }: Props) => {
   const { setActiveModel, activeModelId } = useNodesStore((state) => state);
   const { setNodes, setCenter, getZoom, deleteElements } = useReactFlow();
 
@@ -93,15 +94,17 @@ const RightModelPane = ({ modelsData }: Props) => {
 
   return (
     <div className="p-4 space-y-4 overflow-y-auto overflow-x-hidden h-[calc(100vh-60px)] relative">
-      {modelsData?.map((modelData) => (
-        <Model
-          key={modelData.id}
-          modelData={modelData}
-          onSelectingModel={onSelectingModel}
-          onDeletingModel={onDeletingModel}
-          activeModelId={activeModelId}
-        />
-      ))}
+      {showMultipleModels
+        ? modelsData?.map((modelData) => (
+            <Model
+              key={modelData.id}
+              modelData={modelData}
+              onSelectingModel={onSelectingModel}
+              onDeletingModel={onDeletingModel}
+              activeModelId={activeModelId}
+            />
+          ))
+        : null}
     </div>
   );
 };
