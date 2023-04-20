@@ -14,7 +14,7 @@ export type ModelRelationState = {
 export type Actions = {
   addRelation: (payload: ModelRelation) => void;
   updateRelation: (fieldId: string, payload: ModelRelation) => void;
-  removeRelation: (fieldId: string) => void;
+  removeRelationFromStore: (fieldId: string) => void;
 };
 
 export const useModelRelationStore = create(
@@ -27,18 +27,19 @@ export const useModelRelationStore = create(
       set((state) => {
         state.data[payload.sourceFieldId] = payload;
         state.relationIds.push(payload.sourceFieldId);
+        return state;
       });
     },
     updateRelation(fieldId, payload) {
       set((state) => {
         if (!state.data[fieldId]) return;
-
         state.data[fieldId] = payload;
       });
     },
-    removeRelation(fieldId) {
+    removeRelationFromStore(fieldId) {
       set((state) => {
         delete state.data[fieldId];
+        state.relationIds = state.relationIds.filter((id) => id !== fieldId);
       });
     },
   }))

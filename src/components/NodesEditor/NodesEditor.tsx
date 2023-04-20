@@ -8,6 +8,7 @@ import ReactFlow, {
   useEdgesState,
   useNodesState,
   Node,
+  Edge,
 } from "reactflow";
 import { useModelsRelation } from "@/lib/client/hooks/useModelsRelation";
 
@@ -17,8 +18,13 @@ type Props = {
 
 const NodeEditor = ({ showEditor }: Props) => {
   const { deleteModel, data } = useNodesStore((state) => state);
-  const { onNodeConnect, onEdgeUpdate, onEdgeUpdateEnd, onEdgeUpdateStart } =
-    useModelsRelation();
+  const {
+    onNodeConnect,
+    onEdgeUpdate,
+    onEdgeUpdateEnd,
+    onEdgeUpdateStart,
+    // deleteRelation,
+  } = useModelsRelation();
   const initialNodesData = getNodesFromData(data);
   const initialEdgesData: any[] = [];
   const [nodes, _, onNodesChange] = useNodesState(initialNodesData);
@@ -32,6 +38,12 @@ const NodeEditor = ({ showEditor }: Props) => {
     deleteModel(deletingNode[0]?.id);
   }
 
+  function onEdgesDeleted(edges: Edge[]) {
+    if (edges.length) {
+      // edges.forEach((edge) => deleteRelation(edge));
+    }
+  }
+
   return (
     <div
       className={`${
@@ -42,6 +54,7 @@ const NodeEditor = ({ showEditor }: Props) => {
         <ReactFlow
           onNodesChange={onNodesChange}
           onNodesDelete={onNodesDeleted}
+          onEdgesDelete={onEdgesDeleted}
           onEdgesChange={onEdgesChange}
           onEdgeUpdate={onEdgeUpdate}
           onEdgeUpdateEnd={onEdgeUpdateEnd}

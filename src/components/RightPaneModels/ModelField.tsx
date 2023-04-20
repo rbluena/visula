@@ -33,21 +33,18 @@ const ModelField = ({
   deleteModelField,
   setShowFieldInput,
 }: Props) => {
-  // const { targetModel } = useRelationalModel(modelId);
-  // const [showRelationModels, setShowRelationModels] = useState(false);
   const isNewFieldInput = isEmpty(data); // Are we creating new field?
   const [fieldName, setFieldName] = useState<string>(() => data?.name || "");
   const [dataType, setDataType] = useState<DataType | "String">(
     () => data?.dataType || "String"
   );
   const [fieldID, setFieldID] = useState(data?.fieldID || "");
-
   const [updatedValidations, setUpdatedValidations] = useState<Object>(
     data?.validations.length ? data?.validations : {}
   );
-  const [relationType, setRelationType] = useState<"hasOne" | "hasMany">(
-    "hasOne"
-  );
+  const [relationType, setRelationType] = useState<
+    "hasOne" | "hasMany" | string
+  >("hasOne");
 
   const { validations, fieldValidationDefaultValues } = useFieldValidations(
     dataType,
@@ -55,9 +52,6 @@ const ModelField = ({
     isNewFieldInput
   );
   const addRelation = useModelRelationStore((state) => state.addRelation);
-  // const [selectedRelationModel, setSelectedRelationModel] = useState<
-  //   string | null
-  // >(null);
 
   function createOrUpdateField() {
     if (!isNewFieldInput) {
@@ -70,6 +64,17 @@ const ModelField = ({
         unique: "",
         validations: updatedValidations,
       });
+
+      // if (dataType === "Relation") {
+      //   addRelation({
+      //     sourceModelId: modelId,
+      //     sourceFieldId: data.id,
+      //     targetModelId: null,
+      //     hasMany: relationType === "hasMany",
+      //   });
+      // } else {
+      //   // Delete the relation if exists
+      // }
 
       return;
     }
@@ -105,11 +110,11 @@ const ModelField = ({
   return (
     <div className="">
       <div className="flex items-end justify-between w-full">
-        <div className="flex items-end space-x-1 space-y-3">
+        <div className="flex items-end space-x-1 space-y-2">
           <div className="">
-            <span className="block text-[10px] text-sla e-500 pl-1">
+            {/* <span className="block text-[10px] text-sla e-500 pl-1">
               {fieldID}
-            </span>
+            </span> */}
             <input
               type="text"
               placeholder="Field name"
@@ -132,11 +137,19 @@ const ModelField = ({
               setDataType(evt.target.value as DataType);
             }}
           >
-            {dataTypes.map((item) => (
-              <option key={item.value} value={item.value}>
-                {item.label}
-              </option>
-            ))}
+            {dataTypes.map((item) => {
+              const disableRelationOnUpdate =
+                item.value === "Relation" && !isNewFieldInput;
+              return (
+                <option
+                  key={item.value}
+                  value={item.value}
+                  disabled={disableRelationOnUpdate}
+                >
+                  {item.label}
+                </option>
+              );
+            })}
           </select>
 
           {dataType === "Relation" ? (
@@ -182,33 +195,34 @@ const ModelField = ({
 
           <button
             onClick={createOrUpdateField}
-            className="bg-blue-700 text-white text-xs font-semibold px-2 py-1 rounded-md"
+            className="bg-blue-700 text-white text-xs font-semibold px-2 py-1 rounded-md disabled:bg-blue-300"
+            disabled={fieldName.length < 1 || fieldID.length < 1}
           >
-            Save
+            {isNewFieldInput ? "Add" : "Save"}
           </button>
         </div>
 
-        {isNewFieldInput ? (
-          <button
-            onClick={() => setShowFieldInput?.(false)}
-            className="border border-slate-300 rounded-full p-1 bg-red-50 hover:bg-red-100 text-red-700 ml-auto"
-            aria-describedby="aria-close-new-field"
-          >
-            <span id="aria-close-new-field" className="sr-only">
-              Close field input
-            </span>
-            <XMarkIcon strokeWidth={1.3} className="w-4 h-4" />
-          </button>
-        ) : (
-          <div className="space-x-[4px]">
+        <div className="space-x-[4px]">
+          {isNewFieldInput ? (
+            <button
+              onClick={() => setShowFieldInput?.(false)}
+              className="border border-slate-300 rounded-full p-1 bg-red-50 hover:bg-red-100 text-red-700 ml-auto"
+              aria-describedby="aria-close-new-field"
+            >
+              <span id="aria-close-new-field" className="sr-only">
+                Close field input
+              </span>
+              <XMarkIcon strokeWidth={1.3} className="w-4 h-4" />
+            </button>
+          ) : (
             <button
               onClick={() => deleteModelField?.(modelId, data.id)}
               className="border border-slate-300 rounded-full p-1 bg-red-50 hover:bg-red-100 text-red-700 shadow-sm"
             >
               <TrashIcon strokeWidth={1.2} className="w-4 h-4" />
             </button>
-          </div>
-        )}
+          )}
+        </div>
       </div>
     </div>
   );

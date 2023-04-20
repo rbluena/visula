@@ -2,12 +2,11 @@ import { useState, useRef, useEffect, KeyboardEvent } from "react";
 import { Position, Handle } from "reactflow";
 import { v4 as uuidV4 } from "uuid";
 import camelCase from "lodash/camelCase";
-import {
-  InformationCircleIcon,
-  PlusSmallIcon,
-} from "@heroicons/react/24/outline";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { useNodesStore } from "@/lib/client/store/nodes";
 import type { ModelField } from "@/types";
+import NodeField from "./NodeField";
+import { useModelsRelation } from "@/lib/client/hooks/useModelsRelation";
 
 export type Props = {
   modelId: string;
@@ -19,6 +18,8 @@ export type Props = {
 const ModelNode = ({ name, modelId, unique }: Props) => {
   const { fields } = useNodesStore((state) => state.data?.[modelId] || []);
   const addModelField = useNodesStore((state) => state.addField);
+  const { checkFieldIsConnected, checkTargetModelIsConnected } =
+    useModelsRelation();
   const [showFieldInput, setShowFieldInput] = useState(false);
   const inputRef = useRef<HTMLInputElement>(null);
 
@@ -80,26 +81,13 @@ const ModelNode = ({ name, modelId, unique }: Props) => {
       {/* END: Node header */}
 
       {/* START: Node fields */}
-      <div className="px-2 space-y-2 py-2">
+      <div className="px-2 space-y-2 py-2 relative">
         {fields?.map((field: ModelField) => (
-          <div key={field.id} className="relative">
-            <div className="flex justify-between items-center">
-              <span className="block text-sm">{field.name}</span>
-              <span className="block text-xs leading-4 text-slate-500">
-                {field.dataType}
-              </span>
-            </div>
-
-            <Handle
-              id={field.id}
-              style={{
-                display: field.dataType !== "Relation" ? "none" : "block",
-              }}
-              className="block absolute right-[-14px] bg-slate-500 border border-green-300 rounded-full w-3 h-3  model-node__wrapper"
-              type="source"
-              position={Position.Right}
-            />
-          </div>
+          <NodeField
+            key={field.id}
+            field={field}
+            checkFieldIsConnected={checkFieldIsConnected}
+          />
         ))}
         {/* END: Node fields */}
 
@@ -130,7 +118,9 @@ const ModelNode = ({ name, modelId, unique }: Props) => {
 
       <Handle
         type="target"
-        className="block bg-slate-500 rounded-full w-3 h-3 model-node__wrapper"
+        className={`block ${
+          checkTargetModelIsConnected(modelId) ? "bg-blue-600" : "bg-slate-500"
+        } rounded-full w-3 h-3 model-node__wrapper`}
         position={Position.Top}
         id={modelId}
       />
