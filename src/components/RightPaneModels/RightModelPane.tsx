@@ -3,6 +3,7 @@ import type { ModelData } from "@/types";
 import { useNodesStore } from "@/lib/client/store/nodes";
 import { Node, useOnSelectionChange, useReactFlow } from "reactflow";
 import Model from "./Model";
+import { useMemo } from "react";
 
 type Props = {
   showMultipleModels: boolean;
@@ -14,7 +15,10 @@ const RightModelPane = ({ showMultipleModels }: Props) => {
   );
   const { setNodes, setCenter, getZoom, deleteElements } = useReactFlow();
 
-  const modelsData = Object.keys(data).map((key) => data[key]);
+  const modelsData = useMemo(
+    () => Object.keys(data).map((key) => data[key]),
+    [data]
+  );
 
   useOnSelectionChange({
     onChange: ({ nodes, edges: _ }) => setActiveModel(nodes[0]?.id),
