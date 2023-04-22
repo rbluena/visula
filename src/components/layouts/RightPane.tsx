@@ -4,7 +4,7 @@ import RightPaneTemplates from "../RightPageTemplates/RightPaneTemplates";
 import { ChevronDoubleLeftIcon } from "@heroicons/react/24/outline";
 
 const RightPane = () => {
-  const [toggleSidebarExpansion, setToggleSidebarExpansion] = useState(false);
+  const [toggleSidebarExpansion, setToggleSidebarExpansion] = useState(true);
   const [showMultipleModels, setshowMultipleModels] = useState(true);
 
   const [paneSwitch, setPaneSwitch] = useState<

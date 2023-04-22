@@ -11,7 +11,7 @@ import {
 import { useModelRelationStore } from "@/lib/client/store/relations";
 
 export function useModelsRelation() {
-  const { setEdges } = useReactFlow();
+  const { setEdges, deleteElements } = useReactFlow();
   const {
     updateRelation,
     removeRelationFromStore,
@@ -29,7 +29,7 @@ export function useModelsRelation() {
     (edge: Edge) => {
       // Add edge to the canvas
       setEdges((edges) => {
-        // Avoid connectiong field to its parent model
+        // Avoid connection field to its parent model
         if (edge.target === edge.source) {
           return edges;
         }
@@ -68,7 +68,12 @@ export function useModelsRelation() {
             };
           }
 
-          return addEdge(edge, edges);
+          return addEdge(
+            edge,
+            // One field should only be connected to one model,
+            // Now replacing one model to the other.
+            edges.filter((item) => item.sourceHandle !== edge.sourceHandle)
+          );
         }
 
         return edges;
@@ -80,6 +85,7 @@ export function useModelsRelation() {
   const onEdgeUpdate = useCallback(
     (oldEdge: Edge, newConnection: Connection) => {
       edgeUpdateSuccessful.current = true;
+
       const sourceFieldId = oldEdge.sourceHandle || "";
       const targetModelId = newConnection.target;
 
@@ -94,13 +100,10 @@ export function useModelsRelation() {
   const onEdgeUpdateEnd = useCallback(
     (_: any, edge: Edge) => {
       if (!edgeUpdateSuccessful.current) {
-        setEdges((eds) => eds.filter((e) => e.id !== edge.id));
-        removeRelationFromStore(edge.source);
+        deleteElements({ edges: [edge] });
       }
-
-      edgeUpdateSuccessful.current = true;
     },
-    [setEdges, removeRelationFromStore]
+    [deleteElements]
   );
 
   const deleteRelation = (edge: Edge) => {
