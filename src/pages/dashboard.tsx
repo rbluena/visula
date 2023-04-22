@@ -1,6 +1,5 @@
 import { useState } from "react";
-import { MainLayout, CodeEditor } from "@/components";
-import NodesEditor from "@/components/NodesEditor";
+import { MainLayout, CodeEditor, NodesEditor } from "@/components";
 
 const dashboard = () => {
   // eslint-disable-next-line react-hooks/rules-of-hooks

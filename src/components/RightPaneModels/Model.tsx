@@ -45,13 +45,13 @@ const Model = ({
         isThisModelActive
           ? "border-blue-400 border-2"
           : "border border-blue-100"
-      } min-h-[80px] rounded-md p-2 space-y-3`}
+      } min-h-[80px] rounded-md p-2 space-y-3 bg-white shadow-sm`}
       onMouseDown={() => {
         if (isThisModelActive) return;
         onSelectingModel(modelData.id);
       }}
     >
-      <div className="flex justify-between items-center">
+      <div className="flex justify-between items-center border-b border-b-slate-200">
         <div className="w-full space-y-0">
           <div className="flex items-center space-x-2">
             <div
@@ -85,7 +85,7 @@ const Model = ({
 
       {/* START: fields */}
       <div
-        className={`transition-all overflow-y-hidden space-y-1 pl-2  ${
+        className={`transition-all overflow-y-hidden space-y-1 pl-2 ${
           !isThisModelActive ? "h-0" : "h-auto py-2"
         }`}
       >

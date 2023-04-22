@@ -5,12 +5,16 @@ import { Node, useOnSelectionChange, useReactFlow } from "reactflow";
 import Model from "./Model";
 
 type Props = {
-  modelsData: ModelData[];
+  showMultipleModels: boolean;
 };
 
-const RightModelPane = ({ modelsData }: Props) => {
-  const { setActiveModel, activeModelId } = useNodesStore((state) => state);
+const RightModelPane = ({ showMultipleModels }: Props) => {
+  const { setActiveModel, activeModelId, data, modelIds } = useNodesStore(
+    (state) => state
+  );
   const { setNodes, setCenter, getZoom, deleteElements } = useReactFlow();
+
+  const modelsData = modelIds.map((key) => data[key]);
 
   useOnSelectionChange({
     onChange: ({ nodes, edges: _ }) => setActiveModel(nodes[0]?.id),
@@ -92,16 +96,18 @@ const RightModelPane = ({ modelsData }: Props) => {
   }
 
   return (
-    <div className="p-4 space-y-4 overflow-y-auto h-[calc(100vh-60px)] relative">
-      {modelsData?.map((modelData) => (
-        <Model
-          key={modelData.id}
-          modelData={modelData}
-          onSelectingModel={onSelectingModel}
-          onDeletingModel={onDeletingModel}
-          activeModelId={activeModelId}
-        />
-      ))}
+    <div className="p-4 space-y-4 overflow-y-auto overflow-x-hidden h-[calc(100vh-60px)] relative">
+      {showMultipleModels
+        ? modelsData?.map((modelData) => (
+            <Model
+              key={modelData.id}
+              modelData={modelData}
+              onSelectingModel={onSelectingModel}
+              onDeletingModel={onDeletingModel}
+              activeModelId={activeModelId}
+            />
+          ))
+        : null}
     </div>
   );
 };

@@ -1,5 +1,6 @@
 import * as ContextMenu from "@radix-ui/react-context-menu";
 import camelCase from "lodash/camelCase";
+import { toPng, toSvg } from "html-to-image";
 import {
   ReactNode,
   useRef,
@@ -7,12 +8,17 @@ import {
   KeyboardEvent,
   MouseEvent,
   forwardRef,
+  useState,
 } from "react";
 import { useReactFlow } from "reactflow";
 import { v4 as uuidV4 } from "uuid";
 import { ModelData } from "@/types";
 import { useNodesStore } from "@/lib/client/store/nodes";
 import { getNodeFromData } from "@/lib/client/common/dataAndNodes";
+
+// react-flow__renderer
+// react-flow__pane
+// react-flow__viewport
 
 type Props = {
   children: ReactNode;
@@ -23,10 +29,117 @@ const ContextMenuComponent = ({ children }: Props) => {
   const flowInstance = useReactFlow();
   const inputRef = useRef<HTMLDivElement>(null);
   const clientPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
+  const [menuItems, setMenuItems] = useState<any[]>([]);
+  const modelIdRef = useRef();
 
-  function onContextMenu(evt: MouseEvent<HTMLSpanElement>) {
+  function onContextMenu(evt: MouseEvent<HTMLElement>) {
     clientPosRef.current.x = evt.clientX;
     clientPosRef.current.y = evt.clientY;
+    modelIdRef.current = evt.target
+      //@ts-ignore
+      ?.closest("[data-id]")
+      ?.getAttribute("data-id");
+
+    flowInstance.setNodes((nodes) =>
+      nodes.filter((nodeItem) => nodeItem.id !== "newnodeinput")
+    );
+
+    // @ts-ignore
+    if (evt.target?.classList.contains("react-flow__pane")) {
+      setMenuItems([
+        {
+          key: 12322,
+          label: "Model",
+          action: null,
+          shortcut: "",
+          type: "label",
+        },
+        {
+          key: 23000,
+          label: "Add",
+          action: createNewModel,
+          shortcut: "⌘+N",
+          type: "item",
+        },
+        {
+          key: "477734",
+          label: "",
+          type: "divider",
+        },
+        {
+          key: 122,
+          label: "Migration",
+          action: null,
+          shortcut: "",
+          type: "label",
+        },
+        {
+          key: 230990,
+          label: "Create",
+          action: createNewModel,
+          shortcut: "",
+          type: "item",
+        },
+        {
+          key: 4777347666,
+          label: "",
+          type: "divider",
+        },
+        {
+          key: 12345,
+          label: "Export",
+          action: null,
+          shortcut: "",
+          type: "label",
+        },
+        {
+          key: 2306120,
+          label: "Download SVG",
+          action: downloadImage(evt.target, "svg"),
+          shortcut: "",
+          type: "item",
+        },
+        {
+          key: 23069020,
+          label: "Download PNG",
+          action: downloadImage(evt.target, "png"),
+          shortcut: "",
+          type: "item",
+        },
+      ]);
+    } else {
+      setMenuItems([
+        {
+          key: 12222,
+          label: "Model",
+          action: null,
+          shortcut: "⌘+N",
+          type: "label",
+        },
+        {
+          key: 535555,
+          label: "Delete",
+          action: deleteCurrentModel,
+          type: "item",
+        },
+        {
+          key: 576555,
+          label: "Copy",
+          action: deleteCurrentModel,
+          type: "item",
+        },
+      ]);
+    }
+
+    // console.log(evt.target);
+  }
+
+  function deleteCurrentModel() {
+    const model = flowInstance.getNode(modelIdRef.current || "");
+
+    if (model) {
+      flowInstance.deleteElements({ nodes: [model] });
+    }
   }
 
   function createNewModel(evt: Event) {
@@ -93,6 +206,50 @@ const ContextMenuComponent = ({ children }: Props) => {
     });
   }
 
+  function downloadImage(
+    canvasElement: any,
+    type: "png" | "pdf" | "svg" = "png"
+  ) {
+    if (!canvasElement) {
+      return;
+    }
+
+    return async () => {
+      try {
+        if (type === "png") {
+          const dataURL = await toPng(canvasElement, { cacheBust: true });
+
+          let image = new Image();
+          image.src = dataURL;
+          image.setAttribute("crossorigin", "anonymous");
+          let fakeLink = window.document.createElement("a");
+          fakeLink.download = `schema.png`;
+          fakeLink.href = dataURL;
+          fakeLink.setAttribute("crossorigin", "anonymous");
+          fakeLink.click();
+        }
+
+        if (type === "svg") {
+          const dataURL = await toSvg(canvasElement, {
+            cacheBust: true,
+            filter: (node) => node.tagName !== "i",
+          });
+
+          let image = new Image();
+          image.setAttribute("crossorigin", "anonymous");
+          image.src = dataURL;
+          let fakeLink = window.document.createElement("a");
+          fakeLink.download = `schema-${uuidV4()}.svg`;
+          fakeLink.href = dataURL;
+          fakeLink.setAttribute("crossorigin", "anonymous");
+          fakeLink.click();
+        }
+      } catch (error) {
+        console.log("Error: ", error);
+      }
+    };
+  }
+
   useEffect(() => {
     inputRef.current?.focus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -104,17 +261,17 @@ const ContextMenuComponent = ({ children }: Props) => {
         {children}
       </ContextMenu.Trigger>
       <ContextMenu.Portal>
-        <CanvasMenu createNewModel={createNewModel} />
+        <CanvasMenu menuItems={menuItems} />
       </ContextMenu.Portal>
     </ContextMenu.Root>
   );
 };
 
 type MenuProps = {
-  createNewModel: (evt: Event) => void;
+  menuItems: { label: string; action: string }[];
 };
 
-const CanvasMenu = forwardRef<any, MenuProps>(({ createNewModel }, ref) => {
+const CanvasMenu = forwardRef<any, MenuProps>(({ menuItems }, ref) => {
   return (
     <ContextMenu.Content
       className="min-w-[220px] bg-white rounded-md overflow-hidden p-[5px] shadow-[0px_10px_38px_-10px_rgba(22,_23,_24,_0.35),_0px_10px_20px_-15px_rgba(22,_23,_24,_0.2)]"
@@ -122,15 +279,46 @@ const CanvasMenu = forwardRef<any, MenuProps>(({ createNewModel }, ref) => {
       alignOffset={5}
       ref={ref}
     >
-      <ContextMenu.Item
-        onSelect={createNewModel}
-        className="group text-[13px] leading-none text-violet-800 rounded-[3px] flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet-600 data-[highlighted]:text-white"
-      >
-        Add model
-        {/* <div className="ml-auto pl-5 text-violet-800 group-data-[highlighted]:text-white group-data-[disabled]:text-slate-400">
-          ⌘+[
+      {menuItems.map((item: any) => {
+        if (item.type === "label") {
+          return (
+            <ContextMenu.Label
+              key={item.key}
+              className="pl-[25px] text-xs leading-[25px] text-slate-400"
+            >
+              {item.label}
+            </ContextMenu.Label>
+          );
+        }
+
+        if (item.type === "divider") {
+          return (
+            <ContextMenu.Separator
+              key={item.key}
+              className="h-[1px] bg-violet-400 m-[5px]"
+            />
+          );
+        }
+
+        return (
+          <ContextMenu.Item
+            key={item.key}
+            onSelect={item.action}
+            className="group text-[14px] leading-none text-violet-800 rounded-[3px] flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:text-violet-400 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet-600 data-[highlighted]:text-white"
+          >
+            {item.label}
+
+            <span className="block ml-auto pl-5 text-violet-800 group-data-[highlighted]:text-white">
+              {item?.shortcut ? item.shortcut : null}
+            </span>
+
+            {/* <div className="ml-auto pl-5 text-violet-800 group-data-[highlighted]:text-white group-data-[disabled]:text-slate-400">
+
         </div> */}
-      </ContextMenu.Item>
+          </ContextMenu.Item>
+        );
+      })}
+
       {/* <ContextMenu.Item className="group text-[13px] leading-none text-violet-800 rounded-[3px] flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:text-mauve8 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet-600 data-[highlighted]:text-white">
         Add comment
       </ContextMenu.Item>

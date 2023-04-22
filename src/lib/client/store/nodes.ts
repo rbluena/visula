@@ -48,7 +48,7 @@ export const useNodesStore = create(
         const newData = state.data;
         delete newData[modelId];
         state.data = newData;
-        state.modelIds.filter((id) => id !== modelId);
+        state.modelIds = state.modelIds.filter((id) => id !== modelId);
         return state;
       });
     },
