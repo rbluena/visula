@@ -1,5 +1,6 @@
 import * as ContextMenu from "@radix-ui/react-context-menu";
 import camelCase from "lodash/camelCase";
+import { toPng, toSvg } from "html-to-image";
 import {
   ReactNode,
   useRef,
@@ -14,6 +15,10 @@ import { v4 as uuidV4 } from "uuid";
 import { ModelData } from "@/types";
 import { useNodesStore } from "@/lib/client/store/nodes";
 import { getNodeFromData } from "@/lib/client/common/dataAndNodes";
+
+// react-flow__renderer
+// react-flow__pane
+// react-flow__viewport
 
 type Props = {
   children: ReactNode;
@@ -31,6 +36,7 @@ const ContextMenuComponent = ({ children }: Props) => {
     clientPosRef.current.x = evt.clientX;
     clientPosRef.current.y = evt.clientY;
     modelIdRef.current = evt.target
+      //@ts-ignore
       ?.closest("[data-id]")
       ?.getAttribute("data-id");
 
@@ -38,13 +44,14 @@ const ContextMenuComponent = ({ children }: Props) => {
       nodes.filter((nodeItem) => nodeItem.id !== "newnodeinput")
     );
 
+    // @ts-ignore
     if (evt.target?.classList.contains("react-flow__pane")) {
       setMenuItems([
         {
           key: 12322,
           label: "Model",
           action: null,
-          shortcut: "⌘+N",
+          shortcut: "",
           type: "label",
         },
         {
@@ -52,6 +59,51 @@ const ContextMenuComponent = ({ children }: Props) => {
           label: "Add",
           action: createNewModel,
           shortcut: "⌘+N",
+          type: "item",
+        },
+        {
+          key: "477734",
+          label: "",
+          type: "divider",
+        },
+        {
+          key: 122,
+          label: "Migration",
+          action: null,
+          shortcut: "",
+          type: "label",
+        },
+        {
+          key: 230990,
+          label: "Create",
+          action: createNewModel,
+          shortcut: "",
+          type: "item",
+        },
+        {
+          key: 4777347666,
+          label: "",
+          type: "divider",
+        },
+        {
+          key: 12345,
+          label: "Export",
+          action: null,
+          shortcut: "",
+          type: "label",
+        },
+        {
+          key: 2306120,
+          label: "Download SVG",
+          action: downloadImage(evt.target, "svg"),
+          shortcut: "",
+          type: "item",
+        },
+        {
+          key: 23069020,
+          label: "Download PNG",
+          action: downloadImage(evt.target, "png"),
+          shortcut: "",
           type: "item",
         },
       ]);
@@ -64,7 +116,18 @@ const ContextMenuComponent = ({ children }: Props) => {
           shortcut: "⌘+N",
           type: "label",
         },
-        { key: 535555, label: "Delete", action: deleteCurrentModel },
+        {
+          key: 535555,
+          label: "Delete",
+          action: deleteCurrentModel,
+          type: "item",
+        },
+        {
+          key: 576555,
+          label: "Copy",
+          action: deleteCurrentModel,
+          type: "item",
+        },
       ]);
     }
 
@@ -143,6 +206,50 @@ const ContextMenuComponent = ({ children }: Props) => {
     });
   }
 
+  function downloadImage(
+    canvasElement: any,
+    type: "png" | "pdf" | "svg" = "png"
+  ) {
+    if (!canvasElement) {
+      return;
+    }
+
+    return async () => {
+      try {
+        if (type === "png") {
+          const dataURL = await toPng(canvasElement, { cacheBust: true });
+
+          let image = new Image();
+          image.src = dataURL;
+          image.setAttribute("crossorigin", "anonymous");
+          let fakeLink = window.document.createElement("a");
+          fakeLink.download = `schema.png`;
+          fakeLink.href = dataURL;
+          fakeLink.setAttribute("crossorigin", "anonymous");
+          fakeLink.click();
+        }
+
+        if (type === "svg") {
+          const dataURL = await toSvg(canvasElement, {
+            cacheBust: true,
+            filter: (node) => node.tagName !== "i",
+          });
+
+          let image = new Image();
+          image.setAttribute("crossorigin", "anonymous");
+          image.src = dataURL;
+          let fakeLink = window.document.createElement("a");
+          fakeLink.download = `schema-${uuidV4()}.svg`;
+          fakeLink.href = dataURL;
+          fakeLink.setAttribute("crossorigin", "anonymous");
+          fakeLink.click();
+        }
+      } catch (error) {
+        console.log("Error: ", error);
+      }
+    };
+  }
+
   useEffect(() => {
     inputRef.current?.focus();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -184,11 +291,20 @@ const CanvasMenu = forwardRef<any, MenuProps>(({ menuItems }, ref) => {
           );
         }
 
+        if (item.type === "divider") {
+          return (
+            <ContextMenu.Separator
+              key={item.key}
+              className="h-[1px] bg-violet-400 m-[5px]"
+            />
+          );
+        }
+
         return (
           <ContextMenu.Item
             key={item.key}
             onSelect={item.action}
-            className="group text-[13px] leading-none text-violet-800 rounded-[3px] flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:text-violet-400 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet-600 data-[highlighted]:text-white"
+            className="group text-[14px] leading-none text-violet-800 rounded-[3px] flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:text-violet-400 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet-600 data-[highlighted]:text-white"
           >
             {item.label}
 

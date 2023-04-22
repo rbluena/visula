@@ -52,6 +52,9 @@ dependencies:
   eslint-config-next:
     specifier: 13.2.4
     version: 13.2.4(eslint@8.37.0)(typescript@5.0.3)
+  html-to-image:
+    specifier: ^1.11.11
+    version: 1.11.11
   immer:
     specifier: ^9.0.21
     version: 9.0.21
@@ -2345,6 +2348,10 @@ packages:
     engines: {node: '>= 0.4.0'}
     dependencies:
       function-bind: 1.1.1
+
+  /html-to-image@1.11.11:
+    resolution: {integrity: sha512-9gux8QhvjRO/erSnDPv28noDZcPZmYE7e1vFsBLKLlRlKDSqNJYebj6Qz1TGd5lsRV+X+xYyjCKjuZdABinWjA==}
+    dev: false
 
   /ignore@5.2.4:
     resolution: {integrity: sha512-MAb38BcSbH0eHNBxn7ql2NH/kX33OkB3lZ1BNdh7ENeRChHTYsTvWrMubiIAMNS2llXEEgZ1MUOBtXChP3kaFQ==}
