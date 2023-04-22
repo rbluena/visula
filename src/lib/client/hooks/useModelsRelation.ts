@@ -1,4 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
+// /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useRef } from "react";
 import {
   addEdge,
@@ -12,8 +12,13 @@ import { useModelRelationStore } from "@/lib/client/store/relations";
 
 export function useModelsRelation() {
   const { setEdges } = useReactFlow();
-  const { updateRelation, removeRelationFromStore, relationIds, data } =
-    useModelRelationStore((state) => state);
+  const {
+    updateRelation,
+    removeRelationFromStore,
+    removeRelationTarget,
+    relationIds,
+    data,
+  } = useModelRelationStore((state) => state);
   const edgeUpdateSuccessful = useRef(false);
 
   const onEdgeUpdateStart = useCallback(() => {
@@ -37,21 +42,29 @@ export function useModelsRelation() {
 
           updateRelation(sourceFieldId, relationData);
 
-          edge.labelBgStyle = {
-            fill: "#FFCC00",
-            color: "#fff",
-            fillOpacity: 0.7,
-            strokeWidth: 30,
-          };
           edge.type = "smoothstep";
           edge.interactionWidth = 25;
+          edge.style = {
+            strokeWidth: 2.5,
+            stroke: "#08a3fa",
+          };
           edge.label = relationData.hasMany ? "Has many" : "Has one";
           edge.labelBgPadding = [8, 4];
           edge.labelBgBorderRadius = 8;
+          edge.labelBgStyle = {
+            fill: "#08a3fa",
+            fillOpacity: 0.7,
+          };
+          edge.labelStyle = {
+            color: "#ffffff",
+          };
 
           if (relationData.hasMany) {
             edge.markerEnd = {
               type: MarkerType.ArrowClosed,
+              height: 10,
+              width: 10,
+              color: "#08a3fa",
             };
           }
 
@@ -61,7 +74,7 @@ export function useModelsRelation() {
         return edges;
       });
     },
-    [data]
+    [data, setEdges, updateRelation]
   );
 
   const onEdgeUpdate = useCallback(
@@ -75,17 +88,20 @@ export function useModelsRelation() {
 
       setEdges((els) => updateEdge(oldEdge, newConnection, els));
     },
-    [setEdges]
+    [setEdges, data, updateRelation]
   );
 
-  const onEdgeUpdateEnd = useCallback((_: any, edge: Edge) => {
-    if (!edgeUpdateSuccessful.current) {
-      setEdges((eds) => eds.filter((e) => e.id !== edge.id));
-      removeRelationFromStore(edge.source);
-    }
+  const onEdgeUpdateEnd = useCallback(
+    (_: any, edge: Edge) => {
+      if (!edgeUpdateSuccessful.current) {
+        setEdges((eds) => eds.filter((e) => e.id !== edge.id));
+        removeRelationFromStore(edge.source);
+      }
 
-    edgeUpdateSuccessful.current = true;
-  }, []);
+      edgeUpdateSuccessful.current = true;
+    },
+    [setEdges, removeRelationFromStore]
+  );
 
   const deleteRelation = (edge: Edge) => {
     const sourceFieldId = edge.sourceHandle || "";
@@ -106,6 +122,18 @@ export function useModelsRelation() {
       eds.filter((e) => e.sourceHandle !== relationData.sourceFieldId)
     );
   };
+
+  const onEdgesDeleted = useCallback(
+    (edges: Edge[]) => {
+      if (edges.length) {
+        edges.forEach((edge: Edge) => {
+          const sourceHandle = edge.sourceHandle || "";
+          removeRelationTarget(sourceHandle);
+        });
+      }
+    },
+    [removeRelationTarget]
+  );
 
   // Check connections
   function checkFieldIsConnected(sourceFieldId: string) {
@@ -132,6 +160,7 @@ export function useModelsRelation() {
     onEdgeUpdateEnd,
     deleteRelation,
     onDeleteRelation,
+    onEdgesDeleted,
     checkTargetModelIsConnected,
     checkFieldIsConnected,
   };

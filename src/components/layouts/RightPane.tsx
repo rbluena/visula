@@ -1,15 +1,12 @@
 import { useState } from "react";
-import { useNodesStore } from "@/lib/client/store/nodes";
 import RightModelPane from "../RightPaneModels/RightModelPane";
 import RightPaneTemplates from "../RightPageTemplates/RightPaneTemplates";
 import { ChevronDoubleLeftIcon } from "@heroicons/react/24/outline";
 
 const RightPane = () => {
   const [toggleSidebarExpansion, setToggleSidebarExpansion] = useState(false);
-  const [showMultipleModels, setshowMultipleModels] = useState(false);
+  const [showMultipleModels, setshowMultipleModels] = useState(true);
 
-  const { data } = useNodesStore((state) => state);
-  const modelsData = Object.keys(data).map((key) => data[key]);
   const [paneSwitch, setPaneSwitch] = useState<
     "models" | "templates" | "documentation" | string
   >("models");
@@ -33,14 +30,8 @@ const RightPane = () => {
           </select>
         </div>
       </div>
-      {paneSwitch === "templates" ? (
-        <RightPaneTemplates />
-      ) : (
-        <RightModelPane
-          modelsData={modelsData}
-          showMultipleModels={showMultipleModels}
-        />
-      )}
+      {paneSwitch === "templates" ? <RightPaneTemplates /> : null}
+      <RightModelPane showMultipleModels={showMultipleModels} />
 
       <div className="absolute top-0 h-screen w-[60px] left-[-60px] overflow-hidden">
         <button

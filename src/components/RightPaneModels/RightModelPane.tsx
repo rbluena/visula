@@ -5,13 +5,16 @@ import { Node, useOnSelectionChange, useReactFlow } from "reactflow";
 import Model from "./Model";
 
 type Props = {
-  modelsData: ModelData[];
   showMultipleModels: boolean;
 };
 
-const RightModelPane = ({ modelsData, showMultipleModels }: Props) => {
-  const { setActiveModel, activeModelId } = useNodesStore((state) => state);
+const RightModelPane = ({ showMultipleModels }: Props) => {
+  const { setActiveModel, activeModelId, data } = useNodesStore(
+    (state) => state
+  );
   const { setNodes, setCenter, getZoom, deleteElements } = useReactFlow();
+
+  const modelsData = Object.keys(data).map((key) => data[key]);
 
   useOnSelectionChange({
     onChange: ({ nodes, edges: _ }) => setActiveModel(nodes[0]?.id),
