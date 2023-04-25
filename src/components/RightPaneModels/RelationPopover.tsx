@@ -1,7 +1,6 @@
 import React from "react";
 import * as Popover from "@radix-ui/react-popover";
 import * as ToggleGroup from "@radix-ui/react-toggle-group";
-import { CheckIcon } from "@heroicons/react/24/outline";
 
 type ConnModel = {
   id: string;

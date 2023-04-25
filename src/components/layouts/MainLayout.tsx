@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import Head from "next/head";
 import { inter } from "@/assets/fonts";
+import MigrationModal from "@/components/MigrationModal";
 
 type Props = {
   children: ReactNode;
@@ -25,7 +26,10 @@ Props) => {
       </Head>
 
       {/* {showHeader ? <Header /> : <DashboardTopBar />} */}
-      <main className={`bg-gray-50 ${inter.variable}`}>{children}</main>
+      <main className={`bg-gray-50 ${inter.variable}`}>
+        {children}
+        <MigrationModal />
+      </main>
     </>
   );
 };
