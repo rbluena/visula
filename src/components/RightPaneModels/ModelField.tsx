@@ -1,6 +1,5 @@
 import { useState } from "react";
 import { Trigger as PopoverTrigger } from "@radix-ui/react-popover";
-// import { Trigger as DropdownTrigger } from "@radix-ui/react-dropdown-menu";
 import { v4 as uuidV4 } from "uuid";
 import camelCase from "lodash/camelCase";
 import isEmpty from "lodash/isEmpty";
@@ -35,7 +34,7 @@ const ModelField = ({
 }: Props) => {
   const isNewFieldInput = isEmpty(data); // Are we creating new field?
   const [fieldName, setFieldName] = useState<string>(() => data?.name || "");
-  const [dataType, setDataType] = useState<DataType | "String">(
+  const [dataType, setDataType] = useState<DataType>(
     () => data?.dataType || "String"
   );
   const [fieldID, setFieldID] = useState(data?.fieldID || "");
@@ -43,6 +42,9 @@ const ModelField = ({
     data?.validations.length ? data?.validations : {}
   );
   const [relationType, setRelationType] = useState<
+    "hasOne" | "hasMany" | string
+  >("hasOne");
+  const [mediaAcceptedSize, setMediaAcceptedSize] = useState<
     "hasOne" | "hasMany" | string
   >("hasOne");
 
@@ -54,6 +56,9 @@ const ModelField = ({
   const addRelation = useModelRelationStore((state) => state.addRelation);
 
   function createOrUpdateField() {
+    const hasManyAssets =
+      dataType === "Media" && mediaAcceptedSize === "hasMany";
+
     if (!isNewFieldInput) {
       // Update existing model
       updateModelField?.(modelId, {
@@ -62,6 +67,7 @@ const ModelField = ({
         name: fieldName,
         fieldID,
         unique: "",
+        hasManyAssets,
         validations: updatedValidations,
       });
 
@@ -89,6 +95,7 @@ const ModelField = ({
       fieldID,
       unique: "",
       dataType: dataType,
+      hasManyAssets,
       validations: updatedValidations,
     });
 
@@ -103,6 +110,7 @@ const ModelField = ({
 
     setFieldName("");
     setFieldID("");
+    setMediaAcceptedSize("hasOne");
     setDataType("String");
     setUpdatedValidations([]);
   }
@@ -112,7 +120,7 @@ const ModelField = ({
       <div className="flex items-end justify-between w-full">
         <div className="flex items-end space-x-1 space-y-2">
           <div className="">
-            {/* <span className="block text-[10px] text-sla e-500 pl-1">
+            {/* <span className="block text-[10px] text-slate-600 pl-1">
               {fieldID}
             </span> */}
             <input
@@ -163,17 +171,18 @@ const ModelField = ({
             </select>
           ) : null}
 
-          {/* START: Relation */}
-          {/* {dataType === "Relation" ? (
-            <RelationDropdown targetModel={targetModel}>
-              <DropdownTrigger asChild>
-                <button className="text-blue-700 border border-blue-500 hover:bg-blue-50 bg-white text-xs font-semibold p-1 rounded-full">
-                  <EllipsisVerticalIcon strokeWidth={2} className="w-4 h-4" />
-                </button>
-              </DropdownTrigger>
-            </RelationDropdown>
-          ) : null} */}
-          {/* END: Relation */}
+          {/* START: Media */}
+          {dataType === "Media" ? (
+            <select
+              value={mediaAcceptedSize}
+              className="bg-slate-50 text-xs p-1 border border-slate-200 rounded-md"
+              onChange={(evt) => setMediaAcceptedSize(evt.target.value)}
+            >
+              <option value="hasOne">One asset</option>
+              <option value="hasMany">Many assets</option>
+            </select>
+          ) : null}
+          {/* END: Media */}
 
           {/* START: validation popover trigger */}
           <ValidationsPopover

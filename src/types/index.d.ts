@@ -14,6 +14,7 @@ export type ModelField = {
   description?: string;
   comment?: string;
   dataType: DataType;
+  hasManyAssets?: boolean; // If dataType is media, media can accept one or more than one asset
   validations: Validations;
 };
 
@@ -38,16 +39,16 @@ export type DataType =
   | "Text"
   | "RichText"
   | "Boolean"
-  | "Coordinates"
+  | "Location"
   | "Media"
   | "Date"
   | "Array"
-  | "JSON"
+  | "Object"
   | "List"
   | "Relation";
 
 export type ValidationItem = {
-  id: "required" | "unique" | "minLength" | "maxLength" | "localized";
+  id: "required" | "unique" | "max" | "min" | "localized";
   name: string;
   description?: string;
   default: string | boolean;
@@ -62,8 +63,5 @@ export type ModelRelation = {
   label?: string;
 };
 
-export type Validations = {
-  [ValidationItem[id]]?: string | boolean | number;
-};
-
+export type Validations = any;
 export type ModelRelationNode = Node & ModelRelation;

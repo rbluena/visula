@@ -3,18 +3,19 @@ export const environmentId = "dev";
 export const accessToken = "CFPAT-6mxbx5vJv4bjpVPgeihcZ6dY74ab1tZKFcN5JHzX3EY";
 
 export const dataTypeMap = {
-  String: "Symbol",
+  String: "Symbol", // { "type": "Symbol" }
   Text: "Text",
   Int: "Integer",
   Decimal: "Number",
   RichText: "RichText",
   Boolean: "Boolean",
-  Coordinates: "Location",
-  Media: "Link",
+  Location: "Location",
   Date: "Date",
+  Object: "Object",
   Array: "Array",
-  List: "Array",
-  Relation: "Link",
+  List: "Array", // { "type": "Array", "items": { "type": "Symbol" } }
+  Media: "Link", // { "type": "Array", "items": { "type": "Link", "linkType": "Asset" } }
+  Relation: "Link", // { "type": "Array", "items": { "type": "Link", "linkType": "Entry" } }
 };
 
 export const validationMap = {
@@ -40,7 +41,7 @@ export const validationMap = {
     max: 20,
   },
   dateRange: {
-    // Used with Data
+    // Used with Date
     min: "",
     max: "",
   },
