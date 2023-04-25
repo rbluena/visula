@@ -32,6 +32,7 @@ const ModelField = ({
   deleteModelField,
   setShowFieldInput,
 }: Props) => {
+  // TODO: Moving to reducer instead of using too many state
   const isNewFieldInput = isEmpty(data); // Are we creating new field?
   const [fieldName, setFieldName] = useState<string>(() => data?.name || "");
   const [dataType, setDataType] = useState<DataType>(
@@ -43,21 +44,25 @@ const ModelField = ({
   );
   const [relationType, setRelationType] = useState<
     "hasOne" | "hasMany" | string
-  >("hasOne");
+  >(data?.relationHasMany ? "hasMany" : "hasOne");
+
   const [mediaAcceptedSize, setMediaAcceptedSize] = useState<
     "hasOne" | "hasMany" | string
-  >("hasOne");
+  >(data?.hasManyAssets ? "hasMany" : "hasOne");
 
   const { validations, fieldValidationDefaultValues } = useFieldValidations(
     dataType,
     data?.validations,
     isNewFieldInput
   );
+
   const addRelation = useModelRelationStore((state) => state.addRelation);
 
   function createOrUpdateField() {
     const hasManyAssets =
       dataType === "Media" && mediaAcceptedSize === "hasMany";
+    const relationHasMany =
+      dataType === "Relation" && relationType === "hasMany";
 
     if (!isNewFieldInput) {
       // Update existing model
@@ -68,6 +73,7 @@ const ModelField = ({
         fieldID,
         unique: "",
         hasManyAssets,
+        relationHasMany,
         validations: updatedValidations,
       });
 
@@ -96,6 +102,7 @@ const ModelField = ({
       unique: "",
       dataType: dataType,
       hasManyAssets,
+      relationHasMany,
       validations: updatedValidations,
     });
 

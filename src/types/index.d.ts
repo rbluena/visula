@@ -15,6 +15,7 @@ export type ModelField = {
   comment?: string;
   dataType: DataType;
   hasManyAssets?: boolean; // If dataType is media, media can accept one or more than one asset
+  relationHasMany?: boolean; // If dataType is media, media can accept one or more than one asset
   validations: Validations;
 };
 
@@ -33,18 +34,18 @@ export type ModelData = Node & {
 export type ModelNode = Node & ModelData;
 
 export type DataType =
-  | "Int"
-  | "Decimal"
   | "String"
   | "Text"
+  | "Int"
+  | "Decimal"
   | "RichText"
   | "Boolean"
   | "Location"
-  | "Media"
   | "Date"
-  | "Array"
+  // | "Array"
   | "Object"
   | "List"
+  | "Media"
   | "Relation";
 
 export type ValidationItem = {

@@ -22,25 +22,25 @@ export const localized = {
   type: "boolean",
 };
 
-export const minLength = {
-  id: "minLength",
-  name: "Minimum length",
-  description: "Minimum length of characters",
+export const min = {
+  id: "min",
+  name: "Min",
+  description: "",
   default: 0,
   type: "text",
 };
 
-export const maxLength = {
-  id: "maxLength",
-  name: "Maximum length",
-  description: "Maximum length of characters",
+export const max = {
+  id: "max",
+  name: "Max",
+  description: "",
   default: 16000,
   type: "text",
 };
 
 export const lengthSize = {
-  minLength,
-  maxLength,
+  min,
+  max,
   type: "range",
 };
 
@@ -48,22 +48,24 @@ export const validationType = {
   required,
   unique,
   localized,
-  maxLength,
-  minLength,
-  lengthSize,
+  min,
+  max,
 };
 
 export const validations: Record<DataType, string[]> = {
-  String: ["required", "unique", "minLength", "maxLength", "localized"],
-  Text: ["required", "unique", "minLength", "maxLength", "localized"],
-  RichText: ["required", "unique", "minLength", "maxLength", "localized"],
-  Int: ["required", "unique", "localized"],
-  Decimal: ["required", "unique", "localized"],
-  List: ["required", "localized"],
-  Media: ["required"], // Allowed media types
-  Relation: ["required"],
-  Date: ["required"],
-  Array: ["required"],
+  Int: ["required", "unique", "min", "max", "localized"],
+  Decimal: ["required", "unique", "min", "max", "localized"],
+  String: ["required", "unique", "min", "max", "localized"],
+  Text: ["required", "max", "min", "localized"],
+  RichText: ["required", "unique", "min", "max", "localized"],
+  Boolean: ["required", "localized"],
+  Location: ["required", "localized"],
+  Object: ["required", "localized"],
+  // Array: ["required", "min", "max", "localized"],
+  List: ["required", "min", "max", "localized"],
+  Media: ["required", "min", "max", "localized"], // Allowed media types
+  Relation: ["required", "localized"],
+  Date: ["required", "min", "max", "localized"],
 };
 
 export function getFieldValidationDefaultValues(validationKeys: string[]) {
