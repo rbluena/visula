@@ -31,29 +31,81 @@ export function createMigrationCode(
     // TODO: Fixing relation when deleting field
     // TODO: Currently we don't support default values and complex validations like regex.
     // TODO: Review validationssss
+    // TODO: Make edges draggable around
 
-    model.fields.forEach((field) => {
-      const fieldType = `
-      // Creating field for "${model.name}"
-      ${modelContentType}
+    const fieldSourceCode = model.fields
+      .map((field) => {
+        let fieldType = `
+        // Creating field for "${model.name}"
+        ${modelContentType}
         .createField("${field.fieldID}", {
           type: "${dataTypeMap[field.dataType]}",
           required: ${field.validations?.required || false},
           localized: ${field.validations?.localized || false},
-        })`;
+        })
+        `;
 
-      const generatedValidations = `
-        ${fieldType}${getAttachingValidations(
-        field.dataType,
-        field.validations
-      )}`;
+        // Creating links for assets and references.
+        if (field.dataType === "Media") {
+          const items = field.hasManyAssets
+            ? `
+            .items({
+              type: "Array",
+              linkType: "Asset",
+            })
+          `
+            : `
+              .linkType("Asset")
+          `;
 
-      script += `
-        ${generatedValidations}
-      `;
-    });
+          fieldType = `
+          ${fieldType}
+          ${items}
+        `;
+        }
 
-    return script;
+        if (field.dataType === "Relation") {
+          const targetId = relations[field.id].targetModelId;
+          const targetModelUniqueIdentity =
+            models[targetId || ""]?.unique || "";
+
+          const items = field.relationHasMany
+            ? `
+            .items({
+              type: "Array",
+              linkType: "Entry",
+            })
+          `
+            : `
+              .linkType("Entry")
+          `;
+
+          fieldType = `
+            ${fieldType}
+            ${items}
+            .validations([
+              { linkContentType: ["${targetModelUniqueIdentity}"]},
+              ${getAttachingValidations(field.dataType, field.validations)}
+            ])
+          `;
+
+          return fieldType;
+        }
+
+        fieldType = `
+            ${fieldType}.validations([
+              ${getAttachingValidations(field.dataType, field.validations)}
+          ])
+        `;
+
+        return fieldType;
+      })
+      .join("");
+
+    return `
+      ${script}
+      ${fieldSourceCode}
+    `;
   });
 
   return `module.exports = function(migration){${contentTypeCodes.join(" ")}}`;
