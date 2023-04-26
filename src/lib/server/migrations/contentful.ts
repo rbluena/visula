@@ -14,6 +14,7 @@ export function createMigrationCode(
     const modelContentType = `${model.unique}Type`;
 
     let script = `
+      // Creating ${model.name}
       const ${modelContentType}  = migration
             .createContentType("${model.unique}")
             .name("${model.name}")
@@ -24,6 +25,7 @@ export function createMigrationCode(
     // TODO: Instead of max and min length, we should use { size: {min, max} }. (:checked)
     // TODO: Remove fieldID from validation from client side. (:checked)
     // TODO: Add JSON object as data type on the client. (:checked)
+    // TODO: Show generated code on the client side
     // TODO: Adding relationship to fields.
     // TODO: Editing modelId and modelName on the client side.
     // TODO: Fixing relation when deleting field
@@ -31,17 +33,17 @@ export function createMigrationCode(
     // TODO: Review validationssss
 
     model.fields.forEach((field) => {
-      const fieldType = `${modelContentType}
-                            .createField("${field.fieldID}", {
-                              type: "${dataTypeMap[field.dataType]}",
-                              required: ${field.validations?.required || false},
-                              localized: ${
-                                field.validations?.localized || false
-                              },
-                            })`;
+      const fieldType = `
+      // Creating field for "${model.name}"
+      ${modelContentType}
+        .createField("${field.fieldID}", {
+          type: "${dataTypeMap[field.dataType]}",
+          required: ${field.validations?.required || false},
+          localized: ${field.validations?.localized || false},
+        })`;
 
       const generatedValidations = `
-                              ${fieldType}${getAttachingValidations(
+        ${fieldType}${getAttachingValidations(
         field.dataType,
         field.validations
       )}`;
@@ -54,5 +56,5 @@ export function createMigrationCode(
     return script;
   });
 
-  return contentTypeCodes;
+  return `module.exports = function(migration){${contentTypeCodes.join(" ")}}`;
 }

@@ -37,8 +37,7 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
     code: 201,
     error: false,
     message: "Migration was created successfully",
-    results: data,
-    migrationCode,
+    data: migrationCode,
   });
 }
 

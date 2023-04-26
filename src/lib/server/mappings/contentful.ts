@@ -55,49 +55,56 @@ export function getAttachingValidations(
   validations: any
 ) {
   return `
-    .validations(${formatValidations(type, validations)})
+    .validations(${JSON.stringify(formatValidations(type, validations))})
   `;
 }
 
 function formatValidations(type: keyof typeof dataTypeMap, validations: any) {
-  return Object.keys(validations)
-    .map((key) => {
-      if (
-        ["required", "localized"].includes(key) ||
-        !validations[key].toString().length
-      ) {
+  return (
+    Object.keys(validations)
+      .map((key) => {
+        if (
+          ["required", "localized"].includes(key) ||
+          !validations[key].toString().length
+        ) {
+          return null;
+        }
+
+        if (key === "unique") {
+          return { unique: validations[key] };
+        }
+
+        if (key === "min") {
+          if (type === "Date") {
+            return {
+              dateRange: { min: validations["min"], max: validations["max"] },
+            };
+          }
+
+          if (type === "Decimal" || type === "Int") {
+            return {
+              range: { min: validations["min"], max: validations["max"] },
+            };
+          }
+
+          if (type === "Media") {
+            return {
+              assetFileSize: {
+                min: validations["min"],
+                max: validations["max"],
+              },
+            };
+          }
+
+          if (["String", "Text", "RichText", "Array"].includes(type)) {
+            return {
+              size: { min: validations["min"], max: validations["max"] },
+            };
+          }
+        }
+
         return null;
-      }
-
-      if (key === "unique") {
-        return { unique: validations[key] };
-      }
-
-      if (key === "min") {
-        if (type === "Date") {
-          return {
-            dateRange: { min: validations["min"], max: validations["max"] },
-          };
-        }
-
-        if (type === "Decimal" || type === "Int") {
-          return {
-            range: { min: validations["min"], max: validations["max"] },
-          };
-        }
-
-        if (type === "Media") {
-          return {
-            assetFileSize: { min: validations["min"], max: validations["max"] },
-          };
-        }
-
-        if (["String", "Text", "RichText", "Array"].includes(type)) {
-          return { size: { min: validations["min"], max: validations["max"] } };
-        }
-      }
-
-      return null;
-    })
-    .filter((item) => item !== null);
+      })
+      .filter((item) => item !== null) || "[]"
+  );
 }
