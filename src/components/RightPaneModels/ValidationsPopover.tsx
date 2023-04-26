@@ -1,10 +1,11 @@
 import { ReactNode, useEffect, useState } from "react";
+
 import * as Popover from "@radix-ui/react-popover";
 import { Controller, useForm } from "react-hook-form";
 // import { XCircleIcon } from "@heroicons/react/24/outline";
 import { DataType, ValidationItem } from "@/types";
 import { Switch } from "@/components/form";
-import { camelCase } from "lodash";
+import camelCase from "lodash/camelCase";
 
 type FormProps = any;
 
@@ -36,14 +37,14 @@ const ValidationsPopover = ({
   } = useForm<FormProps>({
     defaultValues: {
       fieldID,
-      ...(validationDefaultValues && { ...validationDefaultValues }),
+      ...validationDefaultValues,
     },
   });
 
   function onSubmit(data: any) {
     if (isDirty && isValid) {
       setFieldID(camelCase(data.fieldID));
-      delete data.fieldId;
+      delete data.fieldID;
       setUpdatedValidations?.(data);
     }
 
@@ -68,11 +69,15 @@ const ValidationsPopover = ({
             onSubmit={handleSubmit(onSubmit)}
             className="flex flex-col gap-1.5"
           >
-            <p className="text-slate-700 text-[14px] leading-[19px] font-medium">
+            <label
+              htmlFor="fieldID"
+              className="text-slate-700 text-[14px] leading-[19px] font-medium"
+            >
               Field ID
-            </p>
+            </label>
             <input
               {...register("fieldID")}
+              id="fieldID"
               className="w-full p-1 inline-flex items-center justify-center flex-1 rounded px-2.5 text-[13px] leading-none text-violet-800 shadow-[0_0_0_1px] shadow-violet7 h-[25px] focus:shadow-[0_0_0_2px] focus:shadow-violet-800 outline-none"
               placeholder="Change field ID"
               defaultValue={fieldID}
@@ -95,6 +100,7 @@ const ValidationsPopover = ({
                     <label
                       className="text-[13px] text-violet-700 w-[75px]"
                       htmlFor={validation.id}
+                      title={validation.description}
                     >
                       {validation.name}
                     </label>
@@ -108,9 +114,12 @@ const ValidationsPopover = ({
                       />
                     ) : null}
 
-                    {validation.type === "text" ? (
+                    {validation.type === "text" ||
+                    validation.type === "number" ? (
                       <input
                         {...register(validation.id)}
+                        id={validation.id}
+                        type={validation.type}
                         name={validation.id}
                         className="w-full inline-flex items-center justify-center flex-1 rounded px-2.5 text-[13px] leading-none text-violet-800 shadow-[0_0_0_1px] shadow-violet7 h-[25px] focus:shadow-[0_0_0_2px] focus:shadow-violet-800 outline-none"
                       />
@@ -123,7 +132,8 @@ const ValidationsPopover = ({
 
             <button
               type="submit"
-              className="px-4 py-2 rounded  bg-slate-600 hover:bg-opacity-70 text-white text-sm leading-4"
+              disabled={!isValid || !isDirty}
+              className="px-4 py-2 rounded  bg-slate-800 hover:bg-opacity-70 disabled:bg-slate-400 disabled:opacity-30 text-white text-sm leading-4"
             >
               Done
             </button>

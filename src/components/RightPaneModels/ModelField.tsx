@@ -50,10 +50,11 @@ const ModelField = ({
     "hasOne" | "hasMany" | string
   >(data?.hasManyAssets ? "hasMany" : "hasOne");
 
-  const { validations, fieldValidationDefaultValues } = useFieldValidations(
-    dataType,
-    data?.validations,
-    isNewFieldInput
+  const { validations, fieldValidationsDefaultValues } =
+    useFieldValidations(dataType);
+
+  const [validationDefaultValues, setValidationDefaultValues] = useState(
+    data?.validations ?? fieldValidationsDefaultValues
   );
 
   const addRelation = useModelRelationStore((state) => state.addRelation);
@@ -120,6 +121,7 @@ const ModelField = ({
     setMediaAcceptedSize("hasOne");
     setDataType("String");
     setUpdatedValidations([]);
+    setValidationDefaultValues({});
   }
 
   return (
@@ -195,9 +197,7 @@ const ModelField = ({
           <ValidationsPopover
             fieldID={fieldID}
             validations={validations}
-            validationDefaultValues={
-              data?.validations ?? fieldValidationDefaultValues
-            }
+            validationDefaultValues={validationDefaultValues}
             setUpdatedValidations={setUpdatedValidations}
             setFieldID={setFieldID}
           >

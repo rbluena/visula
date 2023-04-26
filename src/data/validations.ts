@@ -1,9 +1,10 @@
-import { DataType } from "@/types";
+import { DataType, ValidationItem } from "@/types";
 
 export const required = {
   id: "required",
   name: "Required",
   default: false,
+  description: "Make this field required.",
   type: "boolean",
 };
 
@@ -11,13 +12,14 @@ export const unique = {
   id: "unique",
   name: "Unique",
   default: false,
+  description: "Avoid duplicate contents for this field.",
   type: "boolean",
 };
 
 export const localized = {
   id: "localized",
-  name: "Localize",
-  description: "Allow to localize this field",
+  name: "Locale",
+  description: "Allow content of this field to be localized.",
   default: false,
   type: "boolean",
 };
@@ -26,16 +28,16 @@ export const min = {
   id: "min",
   name: "Min",
   description: "",
-  default: 0,
-  type: "text",
+  default: "",
+  type: "number",
 };
 
 export const max = {
   id: "max",
   name: "Max",
   description: "",
-  default: 16000,
-  type: "text",
+  default: "",
+  type: "number",
 };
 
 export const lengthSize = {
@@ -68,11 +70,30 @@ export const validations: Record<DataType, string[]> = {
   Date: ["required", "min", "max", "localized"],
 };
 
-export function getFieldValidationDefaultValues(validationKeys: string[]) {
-  return validationKeys.reduce((acc: Record<string, Object>, key) => {
-    // @ts-ignore
-    acc[key] = validationType[key].default;
+export function getInputFieldValidationsData(fieldDataType: DataType) {
+  if (!fieldDataType?.length) {
+    throw new Error("Field data type should be provided!");
+  }
 
-    return acc;
-  }, {});
+  const validationKeys = validations[fieldDataType];
+
+  const fieldValidationsDefaultValues = validationKeys.reduce(
+    (acc: Record<string, Object>, key) => {
+      // @ts-ignore
+      acc[key] = validationType[key].default;
+      return acc;
+    },
+    {}
+  );
+
+  const fieldInputValidations = validationKeys.map((key: string) => {
+    // @ts-ignore
+    return validationType[key] as ValidationItem;
+  });
+
+  return {
+    fieldValidationsDefaultValues,
+    validationKeys,
+    fieldInputValidations,
+  };
 }

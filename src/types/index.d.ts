@@ -53,7 +53,7 @@ export type ValidationItem = {
   name: string;
   description?: string;
   default: string | boolean;
-  type: "text" | "boolean" | "options";
+  type: "text" | "number" | "boolean" | "options";
 };
 
 export type ModelRelation = {
