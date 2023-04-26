@@ -12,7 +12,7 @@ export const dataTypeMap = {
   Location: "Location",
   Date: "Date",
   Object: "Object",
-  Array: "Array",
+  // Array: "Array",
   List: "Array", // { "type": "Array", "items": { "type": "Symbol" } }
   Media: "Link", // { "type": "Array", "items": { "type": "Link", "linkType": "Asset" } }
   Relation: "Link", // { "type": "Array", "items": { "type": "Link", "linkType": "Entry" } }
@@ -21,7 +21,7 @@ export const dataTypeMap = {
 export const validationMap = {
   unique: {
     // Used with:
-    // - String
+    // - Symbol
     // - Interger
     // - Number
   },
@@ -29,7 +29,6 @@ export const validationMap = {
     // Used only with:
     // - Text
     // - Symbol
-    // - Rich
     // - Array
     // - RichText
     min: 0,
@@ -42,6 +41,10 @@ export const validationMap = {
   },
   dateRange: {
     // Used with Date
+    min: "",
+    max: "",
+  },
+  assetFileSize: {
     min: "",
     max: "",
   },
@@ -59,7 +62,10 @@ export function getAttachingValidations(
 function formatValidations(type: keyof typeof dataTypeMap, validations: any) {
   return Object.keys(validations)
     .map((key) => {
-      if (["required", "localized", "fieldID"].includes(key)) {
+      if (
+        ["required", "localized"].includes(key) ||
+        !validations[key].toString().length
+      ) {
         return null;
       }
 
@@ -67,17 +73,27 @@ function formatValidations(type: keyof typeof dataTypeMap, validations: any) {
         return { unique: validations[key] };
       }
 
-      if (key === "size") {
+      if (key === "min") {
         if (type === "Date") {
-          return { dateRange: validations[key] };
+          return {
+            dateRange: { min: validations["min"], max: validations["max"] },
+          };
         }
 
         if (type === "Decimal" || type === "Int") {
-          return { range: validations[key] };
+          return {
+            range: { min: validations["min"], max: validations["max"] },
+          };
+        }
+
+        if (type === "Media") {
+          return {
+            assetFileSize: { min: validations["min"], max: validations["max"] },
+          };
         }
 
         if (["String", "Text", "RichText", "Array"].includes(type)) {
-          return { size: validations[key] };
+          return { size: { min: validations["min"], max: validations["max"] } };
         }
       }
 
