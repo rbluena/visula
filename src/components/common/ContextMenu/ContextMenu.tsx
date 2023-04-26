@@ -23,7 +23,8 @@ type Props = {
 };
 
 const ContextMenuComponent = ({ children }: Props) => {
-  const setMigrationModal = useGlobalStore((state) => state.setMigrationModal);
+  const { setMigrationModal, setGeneratedCode, openGeneratedCode } =
+    useGlobalStore((state) => state);
   const { addNode: addNewNode, data: models } = useNodesStore((state) => state);
   const relations = useModelRelationStore((state) => state.data);
   const flowInstance = useReactFlow();
@@ -263,6 +264,8 @@ const ContextMenuComponent = ({ children }: Props) => {
 
   async function generateMigrationCode() {
     try {
+      setGeneratedCode("");
+
       const response = await fetch(`/api/migrations`, {
         method: "POST",
         headers: {
@@ -271,7 +274,9 @@ const ContextMenuComponent = ({ children }: Props) => {
         body: JSON.stringify({ models, relations }),
       });
 
-      await response.json();
+      const result = await response.json();
+      setGeneratedCode(result?.data || "");
+      openGeneratedCode(true);
     } catch (error) {
       console.log(error);
     }

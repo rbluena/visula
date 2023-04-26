@@ -1,11 +1,14 @@
 import { useState } from "react";
-import RightModelPane from "../RightPaneModels/RightModelPane";
-import RightPaneTemplates from "../RightPageTemplates/RightPaneTemplates";
+import RightModelPane from "../RightPaneModels";
+import RightPaneTemplates from "../RightPageTemplates";
+import RightPaneGeneratedCode from "../RightPaneGeneratedCode";
 import { ChevronDoubleLeftIcon } from "@heroicons/react/24/outline";
+import { useGlobalStore } from "@/lib/client/store/global";
 
 const RightPane = () => {
   const [toggleSidebarExpansion, setToggleSidebarExpansion] = useState(true);
   const [showMultipleModels, setshowMultipleModels] = useState(true);
+  const { isGeneratedCodeOpen } = useGlobalStore((state) => state);
 
   const [paneSwitch, setPaneSwitch] = useState<
     "models" | "templates" | "documentation" | string
@@ -17,21 +20,29 @@ const RightPane = () => {
         toggleSidebarExpansion ? "right-[0px]" : "right-[-450px]"
       } h-screen bg-slate-100 border-l border-slate-200 shadow-xl transition-all`}
     >
-      <div className="min-h-[50px] bg-white border-b border-b-violet-100">
-        <div className="p-2 px-4 flex items-center">
-          {/* <div>{paneSwitch === "models" ? "Models" : "Templates"}</div> */}
-          <select
-            className="bg-slate-100 py-1 text-sm rounded-md border text-slate-800"
-            onChange={(evt) => setPaneSwitch(evt.target.value)}
-          >
-            <option value="models">Models</option>
-            <option value="templates">Templates</option>
-            {/* <option value="docume">Documentation</option> */}
-          </select>
+      {!isGeneratedCodeOpen ? (
+        <div className="min-h-[50px] bg-white border-b border-b-violet-100">
+          <div className="p-2 px-4 flex items-center">
+            {/* <div>{paneSwitch === "models" ? "Models" : "Templates"}</div> */}
+            <select
+              className="bg-slate-100 py-1 text-sm rounded-md border text-slate-800"
+              onChange={(evt) => setPaneSwitch(evt.target.value)}
+            >
+              <option value="models">Models</option>
+              <option value="templates">Templates</option>
+              {/* <option value="docume">Documentation</option> */}
+            </select>
+          </div>
         </div>
-      </div>
-      {paneSwitch === "templates" ? <RightPaneTemplates /> : null}
-      <RightModelPane showMultipleModels={showMultipleModels} />
+      ) : null}
+
+      {isGeneratedCodeOpen ? <RightPaneGeneratedCode /> : null}
+      {paneSwitch === "templates" && !isGeneratedCodeOpen ? (
+        <RightPaneTemplates />
+      ) : null}
+      {paneSwitch === "models" && !isGeneratedCodeOpen ? (
+        <RightModelPane showMultipleModels={showMultipleModels} />
+      ) : null}
 
       <div className="absolute top-0 h-screen w-[60px] left-[-60px] overflow-hidden">
         <button
