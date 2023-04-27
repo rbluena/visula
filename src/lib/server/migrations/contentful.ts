@@ -21,18 +21,6 @@ export function createMigrationCode(
             .description(${model?.description || '""'});
     `;
 
-    // TODO: Media should support one or many assets (:checked)
-    // TODO: Instead of max and min length, we should use { size: {min, max} }. (:checked)
-    // TODO: Remove fieldID from validation from client side. (:checked)
-    // TODO: Add JSON object as data type on the client. (:checked)
-    // TODO: Show generated code on the client side
-    // TODO: Adding relationship to fields.
-    // TODO: Editing modelId and modelName on the client side.
-    // TODO: Fixing relation when deleting field
-    // TODO: Currently we don't support default values and complex validations like regex.
-    // TODO: Review validationssss
-    // TODO: Make edges draggable around
-
     const fieldSourceCode = model.fields
       .map((field) => {
         let fieldType = `

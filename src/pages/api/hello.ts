@@ -44,8 +44,6 @@ export default async function handler(
 
     // const response = await runMigration({
     //   migrationFunction: (migration) => {
-    //     console.log("Context: ", OS.platform());
-
     //     const blogType = migration
     //       .createContentType("blog")
     //       .name("Blog post")
@@ -57,6 +55,13 @@ export default async function handler(
     //         localized: true,
     //         required: false,
     //       })
+    //       // .items({ type: 'Symbol' })
+    //       .items({
+    //         type: "Link",
+    //         linkType: "Asset",
+    //         validations: [{ linkContentType: [""] }],
+    //       })
+    //       .linkType("Entry")
     //       .required(false)
     //       .validations([{ unique: true }, { size: { min: 0, max: 9 } }]);
     //   },
