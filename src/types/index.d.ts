@@ -14,13 +14,16 @@ export type ModelField = {
   description?: string;
   comment?: string;
   dataType: DataType;
-  validations: Partial<ValidationItem>[];
+  hasManyAssets?: boolean; // If dataType is media, media can accept one or more than one asset
+  relationHasMany?: boolean; // If dataType is media, media can accept one or more than one asset
+  validations: Validations;
 };
 
 export type ModelData = Node & {
   kind: "model";
   id: string;
   unique?: string;
+  modelId?: string;
   name: string;
   selected: Boolean;
   description?: string;
@@ -28,24 +31,29 @@ export type ModelData = Node & {
   fields: ModelField[];
 };
 
+export type ModelNode = Node & ModelData;
+
 export type DataType =
-  | "Int"
-  | "Decimal"
   | "String"
   | "Text"
+  | "Int"
+  | "Decimal"
   | "RichText"
-  | "Media"
+  | "Boolean"
+  | "Location"
   | "Date"
-  | "Array"
+  // | "Array"
+  | "Object"
   | "List"
+  | "Media"
   | "Relation";
 
 export type ValidationItem = {
-  id: "required" | "unique" | "minLength" | "maxLength" | "localized";
+  id: "required" | "unique" | "max" | "min" | "localized";
   name: string;
-  description: string;
+  description?: string;
   default: string | boolean;
-  type: "text" | "boolean" | "options";
+  type: "text" | "number" | "boolean" | "options";
 };
 
 export type ModelRelation = {
@@ -56,4 +64,5 @@ export type ModelRelation = {
   label?: string;
 };
 
+export type Validations = any;
 export type ModelRelationNode = Node & ModelRelation;

@@ -1,6 +1,6 @@
 import { ModelField } from "@/types";
 import { useNodesStore } from "@/lib/client/store/nodes";
-import { useModelsRelation } from "./useModelsRelation";
+// import { useModelsRelation } from "./useModelsRelation";
 
 export default function useModelField() {
   const {
@@ -8,7 +8,7 @@ export default function useModelField() {
     addField: creatNewField,
     deleteField,
   } = useNodesStore((state) => state);
-  const { onDeleteRelation } = useModelsRelation();
+  // const { onDeleteRelation } = useModelsRelation();
 
   /**
    *
@@ -30,7 +30,7 @@ export default function useModelField() {
 
   function deleteModelField(modelId: string, fieldId: string) {
     deleteField(modelId, fieldId);
-    onDeleteRelation(fieldId);
+    // onDeleteRelation(fieldId);
   }
 
   return {

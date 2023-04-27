@@ -1,5 +1,6 @@
 import { Node } from "reactflow";
-import { ModelData, NodesState } from "@/lib/client/store/nodes";
+import { NodesState } from "@/lib/client/store/nodes";
+import { ModelData } from "@/types";
 import createNodeComponent from "./createNodeComponent";
 
 export function getNodesFromData(data: NodesState["data"]) {

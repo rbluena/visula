@@ -15,17 +15,18 @@ import { v4 as uuidV4 } from "uuid";
 import { ModelData } from "@/types";
 import { useNodesStore } from "@/lib/client/store/nodes";
 import { getNodeFromData } from "@/lib/client/common/dataAndNodes";
-
-// react-flow__renderer
-// react-flow__pane
-// react-flow__viewport
+import { useGlobalStore } from "@/lib/client/store/global";
+import { useModelRelationStore } from "@/lib/client/store/relations";
 
 type Props = {
   children: ReactNode;
 };
 
 const ContextMenuComponent = ({ children }: Props) => {
-  const addNewNode = useNodesStore((state) => state.addNode);
+  const { setMigrationModal, setGeneratedCode, openGeneratedCode } =
+    useGlobalStore((state) => state);
+  const { addNode: addNewNode, data: models } = useNodesStore((state) => state);
+  const relations = useModelRelationStore((state) => state.data);
   const flowInstance = useReactFlow();
   const inputRef = useRef<HTMLDivElement>(null);
   const clientPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -75,8 +76,15 @@ const ContextMenuComponent = ({ children }: Props) => {
         },
         {
           key: 230990,
-          label: "Create",
-          action: createNewModel,
+          label: "Deploy to contentful",
+          action: openMigrationModal,
+          shortcut: "",
+          type: "item",
+        },
+        {
+          key: 236550990,
+          label: "Generate migration",
+          action: generateMigrationCode,
           shortcut: "",
           type: "item",
         },
@@ -248,6 +256,30 @@ const ContextMenuComponent = ({ children }: Props) => {
         console.log("Error: ", error);
       }
     };
+  }
+
+  function openMigrationModal() {
+    setMigrationModal(true);
+  }
+
+  async function generateMigrationCode() {
+    try {
+      setGeneratedCode("");
+
+      const response = await fetch(`/api/migrations`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ models, relations }),
+      });
+
+      const result = await response.json();
+      setGeneratedCode(result?.data || "");
+      openGeneratedCode(true);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   useEffect(() => {

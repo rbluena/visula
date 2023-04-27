@@ -12,6 +12,7 @@ export default function useRelationalModel(activeModelId: string) {
     .map((id) => ({
       id,
       unique: data[id].unique as string,
+      modelId: data[id].unique as string,
       name: data[id].name,
     }));
 

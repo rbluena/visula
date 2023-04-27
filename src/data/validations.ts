@@ -1,9 +1,10 @@
-import { DataType } from "@/types";
+import { DataType, ValidationItem } from "@/types";
 
 export const required = {
   id: "required",
   name: "Required",
   default: false,
+  description: "Make this field required.",
   type: "boolean",
 };
 
@@ -11,36 +12,37 @@ export const unique = {
   id: "unique",
   name: "Unique",
   default: false,
+  description: "Avoid duplicate contents for this field.",
   type: "boolean",
 };
 
 export const localized = {
   id: "localized",
-  name: "Localize",
-  description: "Allow to localize this field",
+  name: "Locale",
+  description: "Allow content of this field to be localized.",
   default: false,
   type: "boolean",
 };
 
-export const minLength = {
-  id: "minLength",
-  name: "Minimum length",
-  description: "Minimum length of characters",
-  default: 0,
-  type: "text",
+export const min = {
+  id: "min",
+  name: "Min",
+  description: "",
+  default: "",
+  type: "number",
 };
 
-export const maxLength = {
-  id: "maxLength",
-  name: "Maximum length",
-  description: "Maximum length of characters",
-  default: 16000,
-  type: "text",
+export const max = {
+  id: "max",
+  name: "Max",
+  description: "",
+  default: "",
+  type: "number",
 };
 
 export const lengthSize = {
-  minLength,
-  maxLength,
+  min,
+  max,
   type: "range",
 };
 
@@ -48,29 +50,50 @@ export const validationType = {
   required,
   unique,
   localized,
-  maxLength,
-  minLength,
-  lengthSize,
+  min,
+  max,
 };
 
 export const validations: Record<DataType, string[]> = {
-  String: ["required", "unique", "minLength", "maxLength", "localized"],
-  Text: ["required", "unique", "minLength", "maxLength", "localized"],
-  RichText: ["required", "unique", "minLength", "maxLength", "localized"],
-  Int: ["required", "unique", "localized"],
-  Decimal: ["required", "unique", "localized"],
-  List: ["required", "localized"],
-  Media: ["required"], // Allowed media types
-  Relation: ["required"],
-  Date: ["required"],
-  Array: ["required"],
+  Int: ["required", "unique", "min", "max", "localized"],
+  Decimal: ["required", "unique", "min", "max", "localized"],
+  String: ["required", "unique", "min", "max", "localized"],
+  Text: ["required", "max", "min", "localized"],
+  RichText: ["required", "unique", "min", "max", "localized"],
+  Boolean: ["required", "localized"],
+  Location: ["required", "localized"],
+  Object: ["required", "localized"],
+  // Array: ["required", "min", "max", "localized"],
+  List: ["required", "min", "max", "localized"],
+  Media: ["required", "min", "max", "localized"], // Allowed media types
+  Relation: ["required", "localized"],
+  Date: ["required", "min", "max", "localized"],
 };
 
-export function getFieldValidationDefaultValues(validationKeys: string[]) {
-  return validationKeys.reduce((acc: Record<string, Object>, key) => {
-    // @ts-ignore
-    acc[key] = validationType[key].default;
+export function getInputFieldValidationsData(fieldDataType: DataType) {
+  if (!fieldDataType?.length) {
+    throw new Error("Field data type should be provided!");
+  }
 
-    return acc;
-  }, {});
+  const validationKeys = validations[fieldDataType];
+
+  const fieldValidationsDefaultValues = validationKeys.reduce(
+    (acc: Record<string, Object>, key) => {
+      // @ts-ignore
+      acc[key] = validationType[key].default;
+      return acc;
+    },
+    {}
+  );
+
+  const fieldInputValidations = validationKeys.map((key: string) => {
+    // @ts-ignore
+    return validationType[key] as ValidationItem;
+  });
+
+  return {
+    fieldValidationsDefaultValues,
+    validationKeys,
+    fieldInputValidations,
+  };
 }
