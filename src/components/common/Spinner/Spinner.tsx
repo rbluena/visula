@@ -1,4 +1,4 @@
-const Spinner = ({ className }: { className: string }) => {
+const Spinner = ({ className = "" }: { className?: string }) => {
   return (
     <div role="status" className={className}>
       <svg

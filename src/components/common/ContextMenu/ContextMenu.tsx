@@ -298,23 +298,7 @@ const ContextMenuComponent = ({ children }: Props) => {
   }
 
   async function generateMigrationCode() {
-    try {
-      setGeneratedCode("");
-
-      const response = await fetch(`/api/migrations`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ models, relations }),
-      });
-
-      const result = await response.json();
-      setGeneratedCode(result?.data || "");
-      openGeneratedCode(true);
-    } catch (error) {
-      console.log(error);
-    }
+    openMigrationModal();
   }
 
   useEffect(() => {

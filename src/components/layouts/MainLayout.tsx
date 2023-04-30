@@ -29,7 +29,6 @@ Props) => {
       {/* {showHeader ? <Header /> : <DashboardTopBar />} */}
       <main className={`bg-gray-50 ${inter.variable}`}>
         {children}
-        <MigrationModal />
         <Toaster
           toastOptions={{
             success: {
@@ -40,6 +39,7 @@ Props) => {
           containerClassName="w-[60%]"
         />
       </main>
+      <MigrationModal />
     </>
   );
 };
