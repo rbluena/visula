@@ -27,7 +27,7 @@ const DashboardTopBar = ({
         <div className="flex items-start space-x-2 pointer-events-auto">
           <Link
             href="/"
-            className="bg-slate-100  flex items-center justify-center rounded p-2"
+            className="bg-slate-100  flex items-center justify-center rounded p-2 hover:bg-violet-100"
           >
             <HomeIcon className="text-lg w-6 h-6 font-semibold" />
           </Link>
@@ -35,16 +35,18 @@ const DashboardTopBar = ({
           {showLoader ? (
             <Spinner className="w-6 h-6" />
           ) : (
-            <div className="flex flex-col items-start py-2 px-4 space-y-0 bg-slate-100 rounded-md border-2 border-violet-400">
-              <h1 className="text-md font-semibold text-slate-600 w-[120px] overflow-clip whitespace-nowrap overflow-ellipsis">
-                {project?.title}
-              </h1>
-              <div className="text-violet-700 text-xs">
-                {/* June 2, 2023&nbsp;&nbsp;10:00am */}
-                <strong>Update:</strong>&nbsp;
-                {getRelativeTime(project.lastUpdated)}
-              </div>
-            </div>
+            <>
+              <button className="flex flex-col items-start py-2 px-4 space-y-0 bg-slate-100 hover:bg-violet-100 rounded-md border-2 border-violet-400">
+                <h1 className="text-md font-semibold text-slate-600 w-[120px] overflow-clip whitespace-nowrap overflow-ellipsis">
+                  {project?.title}
+                </h1>
+                <div className="text-violet-700 text-xs">
+                  {/* June 2, 2023&nbsp;&nbsp;10:00am */}
+                  <strong>Update:</strong>&nbsp;
+                  {getRelativeTime(project.lastUpdated)}
+                </div>
+              </button>
+            </>
           )}
         </div>
       )}
