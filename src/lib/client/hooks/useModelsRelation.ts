@@ -112,19 +112,14 @@ export function useModelsRelation() {
   };
 
   /**
-   * When field is deleted, we delete relation
+   * When field is deleted, we delete relation associated to it
    * @param fieldId
    */
-  // const onDeleteRelation = (fieldId: string) => {
-  //   // If field has relation, then delete the field relation from the store
-  //   const relationData = data[fieldId];
-
-  //   removeRelationFromStore(fieldId);
-  //   // Delete edge from canvas
-  //   setEdges((eds) =>
-  //     eds.filter((e) => e.sourceHandle !== relationData.sourceFieldId)
-  //   );
-  // };
+  const onDeletingConnectedField = (fieldId: string) => {
+    removeRelationFromStore(fieldId);
+    // Delete edge from canvas
+    setEdges((eds) => eds.filter((e) => e.sourceHandle !== fieldId));
+  };
 
   const onEdgesDeleted = useCallback(
     (edges: Edge[]) => {
@@ -162,7 +157,7 @@ export function useModelsRelation() {
     onEdgeUpdate,
     onEdgeUpdateEnd,
     deleteRelation,
-    // onDeleteRelation,
+    onDeletingConnectedField,
     onEdgesDeleted,
     checkTargetModelIsConnected,
     checkFieldIsConnected,

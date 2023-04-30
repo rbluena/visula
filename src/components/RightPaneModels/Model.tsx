@@ -99,6 +99,7 @@ const Model = ({
           />
         ))}
         {/* END: fields */}
+
         {/* START: Input for creating a new field */}
         {showFieldInput ? (
           <ModelFieldComponent
