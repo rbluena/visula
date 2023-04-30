@@ -129,9 +129,9 @@ const ModelField = ({
       <div className="flex items-end justify-between w-full">
         <div className="flex items-end space-x-1 space-y-2">
           <div className="">
-            {/* <span className="block text-[10px] text-slate-600 pl-1">
+            <span className="block text-[10px] text-slate-600 pl-1">
               {fieldID}
-            </span> */}
+            </span>
             <input
               type="text"
               placeholder="Field name"
