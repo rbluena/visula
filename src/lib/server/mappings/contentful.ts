@@ -54,7 +54,7 @@ export function getAttachingValidations(
   type: keyof typeof dataTypeMap,
   validations: any
 ) {
-  return JSON.stringify(formatValidations(type, validations)).slice(1, -1);
+  return JSON.stringify(formatValidations(type, validations));
 }
 
 function formatValidations(type: keyof typeof dataTypeMap, validations: any) {
@@ -80,22 +80,28 @@ function formatValidations(type: keyof typeof dataTypeMap, validations: any) {
 
         if (type === "Decimal" || type === "Int") {
           return {
-            range: { min: validations["min"], max: validations["max"] },
+            range: {
+              min: parseInt(validations["min"], 10) || 0,
+              max: parseInt(validations["max"], 10),
+            },
           };
         }
 
         if (type === "Media") {
           return {
             assetFileSize: {
-              min: validations["min"],
-              max: validations["max"],
+              min: parseInt(validations["min"], 10) || 0,
+              max: parseInt(validations["max"], 10),
             },
           };
         }
 
         if (["String", "Text", "RichText", "Array"].includes(type)) {
           return {
-            size: { min: validations["min"], max: validations["max"] },
+            size: {
+              min: parseInt(validations["min"], 10) || 0,
+              max: parseInt(validations["max"], 10),
+            },
           };
         }
       }
