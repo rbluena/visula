@@ -1,5 +1,5 @@
-import * as ContextMenu from "@radix-ui/react-context-menu";
 import camelCase from "lodash/camelCase";
+import * as ContextMenu from "@radix-ui/react-context-menu";
 import { toPng, toSvg } from "html-to-image";
 import {
   ReactNode,
@@ -77,7 +77,8 @@ const ContextMenuComponent = ({ children }: Props) => {
         {
           key: 230990,
           label: "Deploy to contentful",
-          action: openMigrationModal,
+          // action: openMigrationModal,
+          action: deploySchemaToContentful,
           shortcut: "",
           type: "item",
         },
@@ -259,7 +260,41 @@ const ContextMenuComponent = ({ children }: Props) => {
   }
 
   function openMigrationModal() {
+    // const notify = () => toast("Please provide access token and space ID.");
+    // notify();
     setMigrationModal(true);
+  }
+
+  async function deploySchemaToContentful() {
+    try {
+      const response = await fetch(`/api/management`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ models, relations }),
+      });
+
+      const result = await response.json();
+
+      if (result.error) {
+        throw new Error(result);
+      }
+    } catch (error) {
+      // If there is no accessToken, spaceId and environmentId  on the server side,
+      // then show notification error.
+
+      // setNotification({
+      //   location: "model-canvas",
+      //   message: "Please provide access token and space ID.",
+      //   type: "warning",
+      // });
+
+      // @ts-ignore
+      if (error.statusText === "InvalidContentfulAccessToken") {
+        openMigrationModal();
+      }
+    }
   }
 
   async function generateMigrationCode() {

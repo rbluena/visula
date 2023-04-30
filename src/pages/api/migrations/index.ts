@@ -25,7 +25,7 @@ function runMiddleware(
 
 async function POST(req: NextApiRequest, res: NextApiResponse) {
   const data: { models: any; relations: any } = req.body;
-  let migrationCode = null;
+  let migrationCode = "";
 
   if (!isEmpty(data)) {
     // Transform models and relations into migration code.
@@ -57,7 +57,7 @@ export default async function handler(
         error: {
           code: 405,
           message: "Method Not Allowed",
-          suggestion: "Only POST is available from this API",
+          suggestion: "Only POST is available on this API",
         },
       });
   }

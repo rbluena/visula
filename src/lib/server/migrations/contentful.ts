@@ -1,13 +1,12 @@
+import { js_beautify } from "js-beautify";
 import { ModelData, ModelRelation } from "@/types";
 import { dataTypeMap, getAttachingValidations } from "../mappings/contentful";
-// import { Migration } from 'contentful-migration'
 
 export function createMigrationCode(
   models: Record<string, ModelData>,
   relations: Record<string, ModelRelation>
 ) {
   const modelsKeys = Object.keys(models);
-  // const relationsKeys = Object.keys(relations);
 
   const contentTypeCodes = modelsKeys.map((key: string) => {
     const model = models[key] as ModelData;
@@ -38,7 +37,7 @@ export function createMigrationCode(
           const items = field.hasManyAssets
             ? `
             .items({
-              type: "Array",
+              type: "Link",
               linkType: "Asset",
             })
           `
@@ -60,7 +59,7 @@ export function createMigrationCode(
           const items = field.relationHasMany
             ? `
             .items({
-              type: "Array",
+              type: "Link",
               linkType: "Entry",
             })
           `
@@ -73,7 +72,11 @@ export function createMigrationCode(
             ${items}
             .validations([
               { linkContentType: ["${targetModelUniqueIdentity}"]},
-              ${getAttachingValidations(field.dataType, field.validations)}
+              ${getAttachingValidations(
+                field.dataType,
+                field.validations
+                // Removing beginning and ending square brackets
+              ).slice(1, -1)}
             ])
           `;
 
@@ -82,7 +85,10 @@ export function createMigrationCode(
 
         fieldType = `
             ${fieldType}.validations([
-              ${getAttachingValidations(field.dataType, field.validations)}
+              ${getAttachingValidations(
+                field.dataType,
+                field.validations
+              ).slice(1, -1)}
           ])
         `;
 
@@ -96,5 +102,14 @@ export function createMigrationCode(
     `;
   });
 
-  return `module.exports = function(migration){${contentTypeCodes.join(" ")}}`;
+  return js_beautify(
+    `module.exports = function(migration){${contentTypeCodes.join(" ")}}`,
+    {
+      indent_size: 2,
+      max_preserve_newlines: 2,
+      end_with_newline: true,
+      wrap_line_length: 0,
+      break_chained_methods: true,
+    }
+  );
 }

@@ -1,6 +1,7 @@
 import { ReactNode } from "react";
 import Head from "next/head";
 import { inter } from "@/assets/fonts";
+import { Toaster } from "react-hot-toast";
 import MigrationModal from "@/components/MigrationModal";
 
 type Props = {
@@ -29,6 +30,15 @@ Props) => {
       <main className={`bg-gray-50 ${inter.variable}`}>
         {children}
         <MigrationModal />
+        <Toaster
+          toastOptions={{
+            success: {
+              duration: 3000,
+              className: "border-b-2 border-b-green-400",
+            },
+          }}
+          containerClassName="w-[60%]"
+        />
       </main>
     </>
   );

@@ -1,14 +1,17 @@
 import { useGlobalStore } from "@/lib/client/store/global";
 import { ClipboardDocumentIcon, XMarkIcon } from "@heroicons/react/24/outline";
 import Prism from "../common/Prism";
+import { toast } from "react-hot-toast";
 
 const RightPaneGeneratedCode = () => {
   const { generatedCode, openGeneratedCode } = useGlobalStore((state) => state);
+  const notifiy = () => toast("Copied to the clipboard.");
 
   async function copyCodeContent() {
     if (window) {
       try {
         window?.navigator.clipboard.writeText(generatedCode);
+        notifiy();
       } catch (error) {
         console.log(error);
       }
