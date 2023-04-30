@@ -10,6 +10,7 @@ export type GlobalState = {
   isMigrationModalOpen: boolean;
   generatedCode: string;
   isGeneratedCodeOpen: boolean;
+  globalLoader: boolean;
   notification: null | NotificationMessage;
 };
 
@@ -17,6 +18,7 @@ export type Actions = {
   setMigrationModal: (payload: boolean) => void;
   setGeneratedCode: (payload: string) => void;
   openGeneratedCode: (payload: boolean) => void;
+  setGlobalLoader: (payload: boolean) => void;
   setNotification: (payload: NotificationMessage | null) => void;
 };
 
@@ -25,6 +27,7 @@ export const useGlobalStore = create<GlobalState & Actions>((set) => ({
   isGeneratedCodeOpen: false,
   generatedCode: "",
   notification: null,
+  globalLoader: true,
   openGeneratedCode(payload) {
     set(() => ({ isGeneratedCodeOpen: payload }));
   },
@@ -36,5 +39,8 @@ export const useGlobalStore = create<GlobalState & Actions>((set) => ({
   },
   setNotification(payload) {
     set(() => ({ notification: payload }));
+  },
+  setGlobalLoader(payload) {
+    set(() => ({ globalLoader: payload }));
   },
 }));

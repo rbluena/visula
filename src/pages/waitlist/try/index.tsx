@@ -23,7 +23,7 @@ const Try = () => {
                 lastUpdated: activeProject?.lastUpdate,
               }}
             />
-            <NodesEditor showEditor={editor === "nodes-editor"} />{" "}
+            <NodesEditor showEditor={editor === "nodes-editor"} />
             <CodeEditor showEditor={editor === "code-editor"} />
           </section>
 

@@ -1,30 +1,32 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import { v4 as uuidV4 } from "uuid";
 import { useProjectsStore } from "@/lib/client/store/projects";
+import { useGlobalStore } from "../store/global";
 
 export function useProjectInit(isTry: boolean) {
   const { addProject, setActiveProject } = useProjectsStore();
-  const [showLoader, setShowLoader] = useState(true);
+  const { globalLoader, setGlobalLoader } = useGlobalStore((state) => state);
 
   useEffect(() => {
     if (isTry) {
       const newProject = {
         id: uuidV4(),
-        title: "Try project",
+        title: "Dummy project",
         description: "This is dummy project for experiment and review.",
         lastUpdate: new Date(),
       };
 
       addProject(newProject);
       setActiveProject(newProject.id);
-      setShowLoader(false);
     }
+
+    setGlobalLoader(false);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isTry]);
 
   return {
-    showLoader,
+    showLoader: globalLoader,
   };
 }
 
