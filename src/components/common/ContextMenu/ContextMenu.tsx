@@ -23,8 +23,7 @@ type Props = {
 };
 
 const ContextMenuComponent = ({ children }: Props) => {
-  const { setMigrationModal, setGeneratedCode, openGeneratedCode } =
-    useGlobalStore((state) => state);
+  const { setMigrationModal } = useGlobalStore((state) => state);
   const { addNode: addNewNode, data: models } = useNodesStore((state) => state);
   const relations = useModelRelationStore((state) => state.data);
   const flowInstance = useReactFlow();
@@ -75,20 +74,21 @@ const ContextMenuComponent = ({ children }: Props) => {
           type: "label",
         },
         {
+          key: 236550990,
+          label: "Create migration",
+          action: generateMigrationCode,
+          shortcut: "",
+          type: "item",
+        },
+        {
           key: 230990,
-          label: "Deploy to contentful",
+          label: "Deploy schema",
           // action: openMigrationModal,
           action: deploySchemaToContentful,
           shortcut: "",
           type: "item",
         },
-        {
-          key: 236550990,
-          label: "Generate migration",
-          action: generateMigrationCode,
-          shortcut: "",
-          type: "item",
-        },
+
         {
           key: 4777347666,
           label: "",
@@ -96,7 +96,7 @@ const ContextMenuComponent = ({ children }: Props) => {
         },
         {
           key: 12345,
-          label: "Export",
+          label: "Schema",
           action: null,
           shortcut: "",
           type: "label",
