@@ -1,6 +1,7 @@
 import { ReactFlowProvider } from "reactflow";
 import { MainLayout, NodesEditor, CodeEditor } from "@/components";
 import { useUIStore } from "@/lib/client/store/ui";
+import UpdateModelModal from "@/components/modals/UpdateModelModal";
 import DashboardTopBar from "@/components/layouts/DashboardTopBar";
 import { RightPane } from "@/components";
 import { useProject, useProjectInit } from "@/lib/client/hooks/useProject";
@@ -12,8 +13,8 @@ const Try = () => {
 
   return (
     <MainLayout headTitle="Try visula" showHeader={false}>
-      <div className="flex w-full justify-between">
-        <ReactFlowProvider>
+      <ReactFlowProvider>
+        <div className="flex w-full justify-between">
           <section className="relative w-full h-screen overflow-hidden">
             <DashboardTopBar
               showLoader={showLoader}
@@ -28,8 +29,9 @@ const Try = () => {
           </section>
 
           <RightPane />
-        </ReactFlowProvider>
-      </div>
+        </div>
+        <UpdateModelModal />
+      </ReactFlowProvider>
     </MainLayout>
   );
 };

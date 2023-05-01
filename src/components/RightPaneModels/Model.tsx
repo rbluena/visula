@@ -4,6 +4,7 @@ import {
   TrashIcon,
   ChevronRightIcon,
   PlusSmallIcon,
+  Cog6ToothIcon,
   // XMarkIcon,
 } from "@heroicons/react/24/outline";
 import useModelField from "@/lib/client/hooks/useModelFields";
@@ -11,6 +12,7 @@ import { ModelData } from "@/types";
 // import dataTypes from "@/data/dataTypes";
 
 import ModelFieldComponent from "./ModelField";
+import { useGlobalStore } from "@/lib/client/store/global";
 // import { camelCase } from "lodash";
 
 type Props = {
@@ -27,6 +29,7 @@ const Model = ({
   onDeletingModel,
 }: Props) => {
   const [showFieldInput, setShowFieldInput] = useState(false);
+  const { setOpenedModal } = useGlobalStore((state) => state);
   // const [fieldDataType, setFieldDataType] = useState<DataTypes>("String");
   const { updateModelField, deleteModelField, createModelField } =
     useModelField();
@@ -120,17 +123,31 @@ const Model = ({
           <PlusSmallIcon strokeWidth={1} className="w-5 h-5" />
           New field
         </button>
-        <button
-          onClick={() => onDeletingModel(modelData)}
-          className="border border-slate-300 rounded-full p-1 bg-red-50 hover:bg-red-100 text-red-700"
-          aria-describedby="aria-model-delete"
-          title="Delete this model"
-        >
-          <span id="aria-model-delete" className="sr-only">
-            Delete model {modelData.name}
-          </span>
-          <TrashIcon strokeWidth={1} className="w-5 h-5" />
-        </button>
+
+        <div className="space-x-1">
+          <button
+            onClick={() => setOpenedModal("model-update")}
+            className="border border-slate-300 rounded-full p-1 bg-violet-50 hover:bg-violet-100 text-violet-700"
+            aria-describedby="aria-model-delete"
+            title="Delete this model"
+          >
+            <span id="aria-model-delete" className="sr-only">
+              Update model details
+            </span>
+            <Cog6ToothIcon strokeWidth={1} className="w-5 h-5" />
+          </button>
+          <button
+            onClick={() => onDeletingModel(modelData)}
+            className="border border-slate-300 rounded-full p-1 bg-red-50 hover:bg-red-100 text-red-700"
+            aria-describedby="aria-model-delete"
+            title="Delete this model"
+          >
+            <span id="aria-model-delete" className="sr-only">
+              Delete model {modelData.name}
+            </span>
+            <TrashIcon strokeWidth={1} className="w-5 h-5" />
+          </button>
+        </div>
       </div>
       {/* END: Footer */}
     </div>

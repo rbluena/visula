@@ -2,7 +2,7 @@ import { ReactNode } from "react";
 import Head from "next/head";
 import { inter } from "@/assets/fonts";
 import { Toaster } from "react-hot-toast";
-import MigrationModal from "@/components/MigrationModal";
+import MigrationModal from "@/components/modals/MigrationModal";
 
 type Props = {
   children: ReactNode;
@@ -15,8 +15,7 @@ const MainLayout = ({
   headTitle = "Visula",
   metaDescription = "",
   children,
-}: // showHeader = true,
-Props) => {
+}: Props) => {
   return (
     <>
       <Head>
@@ -27,18 +26,18 @@ Props) => {
       </Head>
 
       {/* {showHeader ? <Header /> : <DashboardTopBar />} */}
-      <main className={`bg-gray-50 ${inter.variable}`}>
-        {children}
-        <Toaster
-          toastOptions={{
-            success: {
-              duration: 3000,
-              className: "border-b-2 border-b-green-400",
-            },
-          }}
-          containerClassName="w-[60%]"
-        />
-      </main>
+      <main className={`bg-gray-50 ${inter.variable}`}>{children}</main>
+      <Toaster
+        toastOptions={{
+          position: "bottom-left",
+          className: "border-b border-b-green-400",
+          success: {
+            duration: 3000,
+            className: "border-b-2 border-b-green-400",
+          },
+        }}
+        containerClassName="w-[60%]"
+      />
       <MigrationModal />
     </>
   );

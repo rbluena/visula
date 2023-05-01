@@ -4,7 +4,7 @@ import * as ToggleGroupComponent from "@radix-ui/react-toggle-group";
 import { useGlobalStore } from "@/lib/client/store/global";
 import { useModelRelationStore } from "@/lib/client/store/relations";
 import { useNodesStore } from "@/lib/client/store/nodes";
-import Spinner from "../common/Spinner/Spinner";
+import Spinner from "@/components/common/Spinner";
 
 const MigrationModal = () => {
   const {

@@ -1,5 +1,7 @@
 import { create } from "zustand";
 
+type OpenedModal = "migration" | "deploy" | "model-update" | null;
+
 export type NotificationMessage = {
   type: "success" | "error" | "warning";
   location: "model-canvas" | "somewhereelse";
@@ -7,6 +9,7 @@ export type NotificationMessage = {
 };
 
 export type GlobalState = {
+  openedModal: OpenedModal;
   isMigrationModalOpen: boolean;
   generatedCode: string;
   isGeneratedCodeOpen: boolean;
@@ -20,10 +23,12 @@ export type Actions = {
   openGeneratedCode: (payload: boolean) => void;
   setGlobalLoader: (payload: boolean) => void;
   setNotification: (payload: NotificationMessage | null) => void;
+  setOpenedModal: (payload: OpenedModal) => void;
 };
 
 export const useGlobalStore = create<GlobalState & Actions>((set) => ({
   isMigrationModalOpen: false,
+  openedModal: null,
   isGeneratedCodeOpen: false,
   generatedCode: "",
   notification: null,
@@ -43,4 +48,5 @@ export const useGlobalStore = create<GlobalState & Actions>((set) => ({
   setGlobalLoader(payload) {
     set(() => ({ globalLoader: payload }));
   },
+  setOpenedModal: (payload) => set(() => ({ openedModal: payload })),
 }));

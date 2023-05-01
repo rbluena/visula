@@ -20,6 +20,7 @@ export type NodesState = {
 
 export type Actions = {
   addNode: (payload: ModelData) => void;
+  updateModel: (payload: ModelData) => void;
   deleteModel: (modelId: string) => void;
   addField: (modelId: string, payload: ModelField) => void;
   updateField: (modelId: string, payload: ModelField) => void;
@@ -41,6 +42,11 @@ export const useNodesStore = create(
       set((state) => {
         state.data[payload.id] = payload;
         state.modelIds.push(payload.id);
+      });
+    },
+    updateModel(payload) {
+      set((state) => {
+        state.data[payload.id] = payload;
       });
     },
     deleteModel(modelId) {
