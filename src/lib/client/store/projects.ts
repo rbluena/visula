@@ -12,6 +12,7 @@ export type ProjectsState = {
   activeProjectId: string | null;
   projectIds: string[];
   data: Record<string, UserProject>;
+  settings: Record<string, any>;
 };
 
 export type Actions = {
@@ -25,6 +26,9 @@ export const useProjectsStore = create(
     activeProjectId: null,
     projectIds: [],
     data: {},
+    settings: {
+      edgeType: "smoothstep",
+    },
     addProject(payload) {
       set((state) => {
         state.data[payload.id] = payload;

@@ -111,7 +111,7 @@ const ModelField = ({
       addRelation({
         sourceModelId: modelId,
         sourceFieldId: id,
-        targetModelId: null,
+        connectedTargetModels: [],
         hasMany: relationType === "hasMany",
       });
     }

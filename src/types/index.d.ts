@@ -59,7 +59,7 @@ export type ValidationItem = {
 export type ModelRelation = {
   sourceModelId: string;
   sourceFieldId: string;
-  targetModelId: string | null;
+  connectedTargetModels: string[];
   hasMany: boolean;
   label?: string;
 };
