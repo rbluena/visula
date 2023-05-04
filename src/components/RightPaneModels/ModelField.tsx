@@ -66,7 +66,6 @@ const ModelField = ({
       dataType === "Relation" && relationType === "hasMany";
 
     if (!isNewFieldInput) {
-      // Update existing model
       updateModelField?.(modelId, {
         ...data,
         dataType,
@@ -155,14 +154,8 @@ const ModelField = ({
             }}
           >
             {dataTypes.map((item) => {
-              const disableRelationOnUpdate =
-                item.value === "Relation" && !isNewFieldInput;
               return (
-                <option
-                  key={item.value}
-                  value={item.value}
-                  disabled={disableRelationOnUpdate}
-                >
+                <option key={item.value} value={item.value}>
                   {item.label}
                 </option>
               );
@@ -211,14 +204,14 @@ const ModelField = ({
 
           <button
             onClick={createOrUpdateField}
-            className="bg-blue-700 text-white text-xs font-semibold px-2 py-1 rounded-md disabled:bg-blue-300"
+            className="bg-blue-700 text-white text-xs font-semibold px-2 py-1 m-2 rounded-md disabled:bg-blue-300"
             disabled={fieldName.length < 1 || fieldID.length < 1}
           >
-            {isNewFieldInput ? "Add" : "Save"}
+            {isNewFieldInput ? "Create" : "Save"}
           </button>
         </div>
 
-        <div className="space-x-[4px]">
+        <div className="space-x-[4px] ml-1">
           {isNewFieldInput ? (
             <button
               onClick={() => setShowFieldInput?.(false)}

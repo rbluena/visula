@@ -104,6 +104,7 @@ const Model = ({
         {/* END: fields */}
 
         {/* START: Input for creating a new field */}
+        <div className="pb-2" />
         {showFieldInput ? (
           <ModelFieldComponent
             modelId={modelData.id}
