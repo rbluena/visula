@@ -6,7 +6,8 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint",
+    "lint": "next lint ./src",
+    "ts-lint": "tsc --noEmit --incremental --watch",
     "generate": "antlr4 -Dlanguage=JavaScript -message-format vs2005 ./src/grammar/VisulaParser.g4 -o src/lib/"
   },
   "dependencies": {

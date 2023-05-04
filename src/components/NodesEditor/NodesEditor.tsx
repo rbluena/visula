@@ -12,10 +12,10 @@ import ReactFlow, {
 import { useModelsRelation } from "@/lib/client/hooks/useModelsRelation";
 
 type Props = {
-  showEditor: boolean;
+  showEditor?: boolean;
 };
 
-const NodeEditor = ({ showEditor }: Props) => {
+const NodeEditor = ({ showEditor = false }: Props) => {
   const { deleteModel, data } = useNodesStore((state) => state);
   const {
     onNodeConnect,

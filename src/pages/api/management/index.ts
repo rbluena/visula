@@ -54,14 +54,14 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
       data: responseData,
     });
   } catch (error) {
-    if (error?.status) {
-      return res.status(error.status).json({
-        error: true,
-        statusText: error.statusText,
-        message: error.message || "Failed to complete your request",
-        data: null,
-      });
-    }
+    // if (error?.status) {
+    //   return res.status(error.status).json({
+    //     error: true,
+    //     statusText: error.statusText,
+    //     message: error.message || "Failed to complete your request",
+    //     data: null,
+    //   });
+    // }
 
     return res.status(400).json({
       error: true,

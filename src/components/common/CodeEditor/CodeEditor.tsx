@@ -2,7 +2,7 @@ import useMonacoEditor from "@/lib/client/hooks/useMonacoEditor";
 import Editor from "@monaco-editor/react";
 
 type Props = {
-  showEditor: boolean;
+  showEditor?: boolean;
 };
 
 const CodeEditor = ({ showEditor = false }: Props) => {

@@ -7,7 +7,7 @@ import { useGlobalStore } from "@/lib/client/store/global";
 
 const RightPane = () => {
   const [toggleSidebarExpansion, setToggleSidebarExpansion] = useState(true);
-  const [showMultipleModels, setshowMultipleModels] = useState(true);
+  // const [showMultipleModels, setshowMultipleModels] = useState(true);
   const { isGeneratedCodeOpen } = useGlobalStore((state) => state);
 
   const [paneSwitch, setPaneSwitch] = useState<
@@ -41,7 +41,7 @@ const RightPane = () => {
         <RightPaneTemplates />
       ) : null}
       {paneSwitch === "models" && !isGeneratedCodeOpen ? (
-        <RightModelPane showMultipleModels={showMultipleModels} />
+        <RightModelPane showMultipleModels />
       ) : null}
 
       <div className="absolute top-0 h-screen w-[60px] left-[-60px] overflow-hidden">
