@@ -11,7 +11,7 @@ type Props = {
   children: React.ReactNode;
   connectingModels: ConnModel[];
   value: string;
-  onSelectingModel: Function;
+  onSelectingModel: (value: string) => void;
 };
 
 const RelationDropdown = ({

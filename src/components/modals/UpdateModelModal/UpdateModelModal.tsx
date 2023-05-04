@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { Controller, useForm } from "react-hook-form";
+import { useForm } from "react-hook-form";
 import Modal from "@/components/common/Modal";
 import { useGlobalStore } from "@/lib/client/store/global";
 import Spinner from "@/components/common/Spinner";
