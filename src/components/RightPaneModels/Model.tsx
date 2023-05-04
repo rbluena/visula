@@ -57,15 +57,7 @@ const Model = ({
       <div className="flex justify-between items-center border-b border-b-slate-200">
         <div className="w-full space-y-0">
           <div className="flex items-center space-x-2">
-            <div
-              contentEditable
-              className="block w-full"
-              lang="ghmkd"
-              spellCheck={false}
-              suppressContentEditableWarning
-            >
-              {modelData.name}
-            </div>
+            <div className="block w-full">{modelData.name}</div>
             {/* <button
               className="border border-slate-300 rounded-full p-1"
               onClick={() => onSelectingModel(modelData.id)}
