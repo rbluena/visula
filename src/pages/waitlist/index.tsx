@@ -4,8 +4,8 @@ import Nav from "@/components/layouts/Nav";
 const Waitlist = () => {
   return (
     <MainLayout headTitle="Visula - Waitlist">
-      <div className="max-h-screen overflow-hidden">
-        <Nav />
+      <Nav />
+      <div className="max-h-screen overflow-hidden pt-[60px]">
         <iframe
           className="airtable-embed"
           src="https://airtable.com/embed/shre174eu7R9ql5FU?backgroundColor=blue"
