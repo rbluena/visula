@@ -26,38 +26,41 @@ export function useModelsRelation() {
   }, []);
 
   const onNodeConnect = useCallback(
-    (edge: Edge) => {
+    (conn: Connection) => {
       // Add edge to the canvas
       setEdges((edges) => {
         // Avoid connection field to its parent model
-        if (edge.target === edge.source) {
+        if (conn.target === conn.source) {
           return edges;
         }
 
-        const sourceFieldId = edge.sourceHandle || null;
-        const targetModelId = edge.targetHandle as string;
+        const sourceFieldId = conn.sourceHandle || null;
+        const targetModelId = conn.targetHandle as string;
 
         if (sourceFieldId?.length) {
           const relationData = { ...data[sourceFieldId], targetModelId };
 
           updateRelation(sourceFieldId, relationData);
 
-          edge.type = "smoothstep";
-          edge.interactionWidth = 25;
-          edge.style = {
-            strokeWidth: 2.5,
-            stroke: "#08a3fa",
-          };
-          edge.label = relationData.hasMany ? "Has many" : "Has one";
-          edge.labelBgPadding = [8, 4];
-          edge.labelBgBorderRadius = 8;
-          edge.labelBgStyle = {
-            fill: "#08a3fa",
-            fillOpacity: 0.7,
-          };
-          edge.labelStyle = {
-            color: "#ffffff",
-          };
+          const edge = {
+            ...conn,
+            type: "smoothstep",
+            interactionWidth: 25,
+            style: {
+              strokeWidth: 2.5,
+              stroke: "#08a3fa",
+            },
+            label: relationData.hasMany ? "Has many" : "Has one",
+            labelBgPadding: [8, 4],
+            labelBgBorderRadius: 8,
+            labelBgStyle: {
+              fill: "#08a3fa",
+              fillOpacity: 0.7,
+            },
+            labelStyle: {
+              color: "#ffffff",
+            },
+          } as Edge;
 
           if (relationData.hasMany) {
             edge.markerEnd = {
@@ -72,7 +75,7 @@ export function useModelsRelation() {
             edge,
             // One field should only be connected to one model,
             // Now replacing one model to the other.
-            edges.filter((item) => item.sourceHandle !== edge.sourceHandle)
+            edges.filter((item) => item.sourceHandle !== conn.sourceHandle)
           );
         }
 
