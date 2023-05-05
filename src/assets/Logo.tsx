@@ -8,6 +8,7 @@ const SvgComponent = (props: SVGProps<SVGSVGElement>) => (
     xmlSpace="preserve"
     width="2em"
     height="2em"
+    className="rounded-lg"
     {...props}
   >
     <path
