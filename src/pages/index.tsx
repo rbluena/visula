@@ -38,17 +38,17 @@ export default function Home() {
 
                 <div className="flex gap-2 flex-wrap">
                   <Link
-                    href="/waitlist/try"
-                    className="rounded-full border-2 border-slate-900 hover:bg-slate-600 leading-4 p-4 px-8 text-md flex items-center justify-center text-slate-900 hover:text-white"
-                  >
-                    Give a try&nbsp;&nbsp;
-                    <ArrowRightIcon className="w-4 h-4 text-lg" />
-                  </Link>
-                  <Link
                     href="/waitlist"
                     className="rounded-full bg-slate-900 hover:bg-black leading-4 p-4 px-8 text-md flex items-center justify-center text-white"
                   >
                     Join the waitlist&nbsp;&nbsp;
+                    <ArrowRightIcon className="w-4 h-4 text-lg" />
+                  </Link>
+                  <Link
+                    href="/waitlist/try"
+                    className="rounded-full border-2 border-slate-900 hover:bg-slate-600 leading-4 p-4 px-8 text-md flex items-center justify-center text-slate-900 hover:text-white"
+                  >
+                    Give a try&nbsp;&nbsp;
                     <ArrowRightIcon className="w-4 h-4 text-lg" />
                   </Link>
                 </div>
@@ -57,15 +57,15 @@ export default function Home() {
               {/* start: Right side pane, video */}
               <div className="w-full mt-4 md:w-[60%] md:mt-0">
                 <iframe
+                  src="https://www.veed.io/embed/579c3433-b70e-4ef4-87b7-6483dfd7e7cd"
                   width="100%"
-                  // height="100%"
-                  className="aspect-video"
-                  src="https://www.youtube.com/embed/M4vrwI5PDI0?controls=0"
-                  title="YouTube video player"
-                  allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture; web-share"
+                  // height="504"
+                  className="aspect-video w-full"
+                  title="Visula - How to"
                   allowFullScreen
                 />
               </div>
+              {/* end: Right side pane, video */}
             </div>
           </div>
         </div>
