@@ -13,11 +13,14 @@ export default function Home() {
       <div className="bg-white">
         <div className="pt-[60px] max-w-[1248px] mx-auto p-4 min-h-screen">
           <div className="p-2 py-8">
-            <div className="flex items-baseline text-4xl">
+            <div className="flex items-start gap-1 text-4xl">
               <Logo />
+              <span className="uppercase bg-indigo-100 text-indigo-800 text-xs font-bold p-1 rounded-full">
+                Beta
+              </span>
             </div>
 
-            <div className="flex flex-col lg:flex-row pt-8">
+            <div className="flex flex-col gap-2 lg:flex-row pt-8">
               <div className=" space-y-4 md:space-y-6 lg:max-w-[50%] pr-4 mr-2">
                 <p className="uppercase text-slate-600">
                   From individuals to enterprises
@@ -36,7 +39,7 @@ export default function Home() {
                 <div className="flex gap-2 flex-wrap">
                   <Link
                     href="/waitlist/try"
-                    className="rounded-full border-2 border-slate-900 hover:bg-slate-600 leading-4 p-4 px-8 text-md flex items-center justify-center text-slate-700 hover:text-white"
+                    className="rounded-full border-2 border-slate-900 hover:bg-slate-600 leading-4 p-4 px-8 text-md flex items-center justify-center text-slate-900 hover:text-white"
                   >
                     Give a try&nbsp;&nbsp;
                     <ArrowRightIcon className="w-4 h-4 text-lg" />
@@ -52,7 +55,7 @@ export default function Home() {
               </div>
 
               {/* start: Right side pane, video */}
-              <div className="w-[60%]">
+              <div className="w-full mt-4 md:w-[60%] md:mt-0">
                 <iframe
                   width="100%"
                   // height="100%"
