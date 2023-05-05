@@ -18,19 +18,19 @@ export default function Home() {
             </div>
 
             <div className="flex flex-col lg:flex-row pt-8">
-              <div className=" space-y-4 md:space-y-8 lg:max-w-[50%] pr-4 mr-2">
-                <p className="uppercase text-slate-700">
-                  From individuals to enterprise
+              <div className=" space-y-4 md:space-y-6 lg:max-w-[50%] pr-4 mr-2">
+                <p className="uppercase text-slate-600">
+                  From individuals to enterprises
                 </p>
-                <h1 className="text-4xl font-bold leading-tight">
+                <h1 className="text-3xl font-semibold leading-tight">
                   Design and deploy schemas, and perform ETL oparations for
-                  headless CMSs.
+                  CMSs.
                 </h1>
-                <p className="text-slate-600 max-w-lg">
-                  Lorem ipsum, dolor sit amet consectetur adipisicing elit.
-                  Omnis libero eveniet atque iste exercitationem provident
-                  pariatur nostrum. Possimus distinctio commodi blanditiis
-                  optio, aliquam, voluptates quam eaque eum a vitae sequi.
+                <p className="text-slate-600 max-w-lg text-sm">
+                  As we will be supporting <em>Contentful</em>, <em>Sanity</em>,
+                  and others, our app is targeting to improve the ability to
+                  design and migrate schemas, deploy dummy data, and perform
+                  complex ETL operations for your favorite CMS.
                 </p>
 
                 <div className="flex gap-2 flex-wrap">
