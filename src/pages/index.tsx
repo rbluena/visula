@@ -26,7 +26,7 @@ export default function Home() {
                   From individuals to enterprises
                 </p>
                 <h1 className="text-3xl font-semibold leading-tight">
-                  Design and deploy schemas, and perform ETL oparations for
+                  Design and deploy schemas, and perform ETL operations for
                   CMSs.
                 </h1>
                 <p className="text-slate-600 max-w-lg text-sm">
