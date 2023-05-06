@@ -1,5 +1,13 @@
 import { Edge, Node } from "reactflow";
 
+export type UserProject = {
+  id: string;
+  name?: string;
+  description?: string;
+  lastUpdate?: Date;
+  settings: Record<string, any>;
+};
+
 export type ModelID = {
   id: string;
   unique?: string;

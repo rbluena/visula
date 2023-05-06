@@ -1,6 +1,11 @@
 import { create } from "zustand";
 
-type OpenedModal = "migration" | "deploy" | "model-update" | null;
+type OpenedModal =
+  | "migration"
+  | "deploy"
+  | "model-update"
+  | "project-settings"
+  | null;
 
 export type NotificationMessage = {
   type: "success" | "error" | "warning";

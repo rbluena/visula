@@ -8,9 +8,9 @@ type Props = InputHTMLAttributes<HTMLInputElement> & {
 const TextInput = React.forwardRef<any, Props>(
   ({ id, label, ...rest }, forwardRef) => {
     return (
-      <div className="my-2 space-x-2 flex items-center">
+      <div className="my-2 flex flex-col">
         {label ? (
-          <label htmlFor={id} className="w-fit whitespace-nowrap min-w-[70px]">
+          <label htmlFor={id} className="text-sm mb-1.5 text-slate-600">
             {label}
           </label>
         ) : null}
@@ -18,7 +18,7 @@ const TextInput = React.forwardRef<any, Props>(
           id={id}
           type="text"
           ref={forwardRef}
-          className="w-full p-1 rounded-md border-0 text-sm leading-5 ring-1 ring-inset ring-gray-300 focus:ring-1"
+          className="w-full p-2 rounded-none border-0 text-md leading-5 ring-1 ring-inset ring-gray-300 focus:ring-1"
           {...rest}
         />
       </div>

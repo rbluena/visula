@@ -20,7 +20,7 @@ const Try = () => {
               showLoader={showLoader}
               hideProjectTitle={editor === "code-editor"}
               project={{
-                title: activeProject?.title,
+                name: activeProject?.name,
                 lastUpdated: activeProject?.lastUpdate,
               }}
             />

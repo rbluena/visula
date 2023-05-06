@@ -2,6 +2,7 @@ import Link from "next/link";
 import { HomeIcon } from "@heroicons/react/24/outline";
 import Spinner from "@/components/common/Spinner/Spinner";
 import { getRelativeTime } from "@/lib/client/common/getTimeAgo";
+import { useGlobalStore } from "@/lib/client/store/global";
 // import ToggleGroup from "@/components/form/ToggleGroup/ToggleGroup";
 // import { useUIStore } from "@/lib/client/store/ui";
 
@@ -9,7 +10,7 @@ type Props = {
   hideProjectTitle: boolean;
   showLoader?: boolean;
   project?: {
-    title?: string;
+    name?: string;
     lastUpdated?: Date;
   };
 };
@@ -19,6 +20,8 @@ const DashboardTopBar = ({
   showLoader = true,
   project = {},
 }: Props) => {
+  const setOpenedModal = useGlobalStore((state) => state.setOpenedModal);
+
   return (
     <div className="flex justify-between items-start px-4 absolute w-full top-4 z-20 pointer-events-none">
       {hideProjectTitle ? (
@@ -36,9 +39,12 @@ const DashboardTopBar = ({
             <Spinner className="w-6 h-6" />
           ) : (
             <>
-              <button className="flex flex-col items-start py-2 px-4 space-y-0 bg-slate-100 hover:bg-violet-100 rounded-md border-2 border-violet-400">
+              <button
+                onClick={() => setOpenedModal("project-settings")}
+                className="flex flex-col items-start py-2 px-4 space-y-0 bg-slate-100 hover:bg-violet-100 rounded-md border-2 border-violet-400"
+              >
                 <h1 className="text-md font-semibold text-slate-600 w-[120px] overflow-clip whitespace-nowrap overflow-ellipsis">
-                  {project?.title}
+                  {project?.name}
                 </h1>
                 <div className="text-violet-700 text-xs">
                   {/* June 2, 2023&nbsp;&nbsp;10:00am */}

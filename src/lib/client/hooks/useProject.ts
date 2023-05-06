@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import { v4 as uuidV4 } from "uuid";
 import { useProjectsStore } from "@/lib/client/store/projects";
 import { useGlobalStore } from "../store/global";
+import { UserProject } from "@/types";
 
 export function useProjectInit(isTry: boolean) {
   const { addProject, setActiveProject } = useProjectsStore();
@@ -9,11 +10,17 @@ export function useProjectInit(isTry: boolean) {
 
   useEffect(() => {
     if (isTry) {
-      const newProject = {
+      const newProject: UserProject = {
         id: uuidV4(),
-        title: "Dummy project",
+        name: "Dummy project",
         description: "This is dummy project for experiment and review.",
         lastUpdate: new Date(),
+        settings: {
+          cms: {
+            name: null,
+            deploymentConfigured: false,
+          },
+        },
       };
 
       addProject(newProject);

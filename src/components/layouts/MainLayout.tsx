@@ -3,6 +3,7 @@ import Head from "next/head";
 import { inter } from "@/assets/fonts";
 import { Toaster } from "react-hot-toast";
 import MigrationModal from "@/components/modals/MigrationModal";
+import ProjectSettingsModal from "../modals/ProjectSettingsModal";
 
 type Props = {
   children: ReactNode;
@@ -38,7 +39,9 @@ const MainLayout = ({
         }}
         containerClassName="w-[60%]"
       />
+
       <MigrationModal />
+      <ProjectSettingsModal />
     </>
   );
 };
