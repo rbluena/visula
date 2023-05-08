@@ -17,7 +17,7 @@ export function useProjectInit(isTry: boolean) {
         lastUpdate: new Date(),
         settings: {
           cms: {
-            name: null,
+            type: null,
             deploymentConfigured: false,
           },
         },

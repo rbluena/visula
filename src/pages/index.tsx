@@ -30,10 +30,10 @@ export default function Home() {
                   CMSs.
                 </h1>
                 <p className="text-slate-600 max-w-lg text-sm">
-                  As we will be supporting <em>Contentful</em>, <em>Sanity</em>,
-                  and others, our app is targeting to improve the ability to
-                  design and migrate schemas, deploy dummy data, and perform
-                  complex ETL operations for your favorite CMS.
+                  As we aim at <em>Contentful</em>, <em>Sanity</em>, and other
+                  CMSs, our app targets to improve the ability to design and
+                  migrate schemas, data seeding, and perform AI-assisted ETL
+                  operations for your favorite CMS.
                 </p>
 
                 <div className="flex gap-2 flex-wrap">

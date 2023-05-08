@@ -1,9 +1,11 @@
 import { useState } from "react";
-import { MainLayout } from "@/components";
+import { MainLayout, Spinner } from "@/components";
 import Nav from "@/components/layouts/Nav";
 
 const Raodmap = () => {
   const [showFeatureRequest, setShowFeatureRequest] = useState(false);
+  const [isLoading, setIsLoading] = useState(true);
+
   return (
     <MainLayout headTitle="Visula - Raodmap">
       <Nav />
@@ -36,11 +38,20 @@ const Raodmap = () => {
             </label>
           </div>
         </div>
+
+        {isLoading ? (
+          <div className="bg-white grid place-items-center p-4 min-h-screen">
+            <Spinner className="w-16" />{" "}
+          </div>
+        ) : null}
+
         <iframe
           className={`airtable-embed ${showFeatureRequest ? "" : "hidden"}`}
           src="https://airtable.com/embed/shrCojmuMcdxvyV8G?backgroundColor=blue"
           width="100%"
           height="533"
+          onLoad={() => setIsLoading(false)}
+          onError={() => setIsLoading(false)}
         />
 
         <iframe
@@ -48,6 +59,7 @@ const Raodmap = () => {
           src="https://airtable.com/embed/shrsY2eoICp1MtcXm?backgroundColor=blue"
           width="100%"
           height="533"
+          onLoad={() => setIsLoading(false)}
         />
       </div>
     </MainLayout>
