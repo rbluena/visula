@@ -1,39 +1,28 @@
 import { useEffect } from "react";
-import { v4 as uuidV4 } from "uuid";
 import { useProjectsStore } from "@/lib/client/store/projects";
 import { useGlobalStore } from "../store/global";
 import { UserProject } from "@/types";
 
-export function useProjectInit(isTry: boolean) {
+export function useProjectInit(project: UserProject) {
   const { addProject, setActiveProject } = useProjectsStore();
   const { globalLoader, setGlobalLoader } = useGlobalStore((state) => state);
 
   useEffect(() => {
-    if (isTry) {
-      const newProject: UserProject = {
-        id: uuidV4(),
-        name: "Dummy project",
-        description: "This is dummy project for experiment and review.",
-        lastUpdate: new Date(),
-        settings: {
-          cms: {
-            type: null,
-            deploymentConfigured: false,
-          },
-        },
-      };
+    addProject(project);
+    setActiveProject(project.id);
 
-      addProject(newProject);
-      setActiveProject(newProject.id);
+    if (project.id) {
+      // TODO: Load all project's models stored in the database
+      // TODO: AND template models
+      setGlobalLoader(false);
     }
 
-    setGlobalLoader(false);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isTry]);
+  }, [project]);
 
   return {
     showLoader: globalLoader,
+    activeProject: project,
   };
 }
 

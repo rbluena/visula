@@ -4,7 +4,7 @@ export type UserProject = {
   id: string;
   name?: string;
   description?: string;
-  lastUpdate?: Date;
+  updatedAt?: Date;
   settings: Record<string, any>;
 };
 
