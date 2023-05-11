@@ -1,5 +1,6 @@
-import { NextApiRequest } from "next";
+import { GetServerSideProps } from "next";
 import { ReactFlowProvider } from "reactflow";
+import { useEffect } from "react";
 import { MainLayout, NodesEditor, CodeEditor } from "@/components";
 import { useUIStore } from "@/lib/client/store/ui";
 import UpdateModelModal from "@/components/modals/UpdateModelModal";
@@ -8,16 +9,17 @@ import { RightPane } from "@/components";
 import { useProjectInit } from "@/lib/client/hooks/useProject";
 import { UserProject } from "@/types";
 import prisma from "@/lib/server/prisma";
-import { useEffect } from "react";
 
 const Try = ({ project, error }: { project: UserProject; error: string }) => {
   const editor = useUIStore((state) => state.editor);
-  const { showLoader } = useProjectInit(project);
+  const { globalLoader, setGlobalLoader } = useProjectInit(project);
 
   useEffect(() => {
     if (error?.length) {
-      // TODO: Show error
+      setGlobalLoader(false);
+      window.location.assign("/try");
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [error]);
 
   return (
@@ -26,7 +28,7 @@ const Try = ({ project, error }: { project: UserProject; error: string }) => {
         <div className="flex w-full justify-between">
           <section className="relative w-full h-screen overflow-hidden">
             <DashboardTopBar
-              showLoader={showLoader}
+              showLoader={globalLoader}
               hideProjectTitle={editor === "code-editor"}
               project={{
                 name: project?.name,
@@ -45,38 +47,47 @@ const Try = ({ project, error }: { project: UserProject; error: string }) => {
   );
 };
 
-export async function getServerSideProps({ req }: { req: NextApiRequest }) {
-  let project = {};
-
+export const getServerSideProps: GetServerSideProps<{
+  project: any;
+  error: any;
+}> = async ({ query }) => {
   try {
-    if (req.query?.id?.length) {
-      project = await prisma.projects.findFirstOrThrow({
+    if (query?.id?.length) {
+      const project = await prisma.projects.findFirstOrThrow({
         where: {
-          id: req.query?.id as string,
+          id: query?.id as string,
         },
       });
-    } else {
-      project = await prisma.projects.create({
-        data: {
-          name: "Test Project",
-          description:
-            "This is testing project, it will be delete in the next 12 hours.",
-          projectStatus: "DUMMY",
-        },
-      });
+
+      return {
+        props: { project: JSON.parse(JSON.stringify(project)), error: false },
+      };
     }
 
+    const project = await prisma.projects.create({
+      data: {
+        name: "Test Project",
+        description:
+          "This is testing project, it will be delete in the next 12 hours.",
+        projectStatus: "DUMMY",
+      },
+    });
+
     return {
-      props: { project: JSON.parse(JSON.stringify(project)), error: false },
+      redirect: {
+        permanent: false,
+        destination: `/try?id=${project.id}`,
+      },
+      props: {},
     };
   } catch (error) {
     return {
       props: {
-        project,
+        project: {},
         error: "This project is not found",
       },
     };
   }
-}
+};
 
 export default Try;
