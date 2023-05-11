@@ -1,6 +1,6 @@
 import { GetServerSideProps } from "next";
 import { ReactFlowProvider } from "reactflow";
-import { useEffect } from "react";
+import prisma from "@/lib/server/prisma";
 import { MainLayout, NodesEditor, CodeEditor } from "@/components";
 import { useUIStore } from "@/lib/client/store/ui";
 import UpdateModelModal from "@/components/modals/UpdateModelModal";
@@ -8,19 +8,10 @@ import DashboardTopBar from "@/components/layouts/DashboardTopBar";
 import { RightPane } from "@/components";
 import { useProjectInit } from "@/lib/client/hooks/useProject";
 import { UserProject } from "@/types";
-import prisma from "@/lib/server/prisma";
 
-const Try = ({ project, error }: { project: UserProject; error: string }) => {
+const Try = ({ project }: { project: UserProject; error: string }) => {
   const editor = useUIStore((state) => state.editor);
-  const { globalLoader, setGlobalLoader } = useProjectInit(project);
-
-  useEffect(() => {
-    if (error?.length) {
-      setGlobalLoader(false);
-      window.location.assign("/try");
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [error]);
+  const { globalLoader } = useProjectInit(project);
 
   return (
     <MainLayout headTitle="Try visula" showHeader={false}>
@@ -62,29 +53,29 @@ export const getServerSideProps: GetServerSideProps<{
       return {
         props: { project: JSON.parse(JSON.stringify(project)), error: false },
       };
+    } else {
+      const project = await prisma.projects.create({
+        data: {
+          name: "Test Project",
+          description:
+            "This is testing project, it will be delete in the next 12 hours.",
+          projectStatus: "DUMMY",
+        },
+      });
+
+      return {
+        redirect: {
+          permanent: false,
+          destination: `/try?id=${project.id}`,
+        },
+        props: {},
+      };
     }
-
-    const project = await prisma.projects.create({
-      data: {
-        name: "Test Project",
-        description:
-          "This is testing project, it will be delete in the next 12 hours.",
-        projectStatus: "DUMMY",
-      },
-    });
-
+  } catch (error) {
     return {
       redirect: {
         permanent: false,
-        destination: `/try?id=${project.id}`,
-      },
-      props: {},
-    };
-  } catch (error) {
-    return {
-      props: {
-        project: {},
-        error: "This project is not found",
+        destination: `/try`,
       },
     };
   }

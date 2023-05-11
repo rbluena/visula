@@ -43,11 +43,10 @@ const DashboardTopBar = ({
                 onClick={() => setOpenedModal("project-settings")}
                 className="flex flex-col items-start py-2 px-4 space-y-0 bg-slate-100 hover:bg-violet-100 rounded-md border-2 border-violet-400"
               >
-                <h1 className="text-md font-semibold text-slate-600 w-[120px] overflow-clip whitespace-nowrap overflow-ellipsis">
+                <h1 className="text-md font-semibold text-slate-600 max-w-[124px] overflow-clip whitespace-nowrap overflow-ellipsis">
                   {project?.name}
                 </h1>
                 <div className="text-violet-700 text-xs">
-                  {/* June 2, 2023&nbsp;&nbsp;10:00am */}
                   <strong>Update:</strong>&nbsp;
                   {getRelativeTime(project.lastUpdated)}
                 </div>

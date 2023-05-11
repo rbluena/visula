@@ -21,7 +21,8 @@ export function useProjectInit(project: UserProject) {
   }, [project]);
 
   return {
-    showLoader: globalLoader,
+    globalLoader,
+    setGlobalLoader,
     activeProject: project,
   };
 }
