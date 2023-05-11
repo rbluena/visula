@@ -44,7 +44,7 @@ export const getServerSideProps: GetServerSideProps<{
 }> = async ({ query }) => {
   try {
     if (query?.id?.length) {
-      const project = await prisma.projects.findFirstOrThrow({
+      const project = await prisma.project.findFirstOrThrow({
         where: {
           id: query?.id as string,
         },
@@ -54,11 +54,11 @@ export const getServerSideProps: GetServerSideProps<{
         props: { project: JSON.parse(JSON.stringify(project)), error: false },
       };
     } else {
-      const project = await prisma.projects.create({
+      const project = await prisma.project.create({
         data: {
-          name: "Test Project",
+          name: "Dummy project",
           description:
-            "This is testing project, it will be delete in the next 12 hours.",
+            "This is a dummy project and will be  deleted in the next 24hrs",
           projectStatus: "DUMMY",
         },
       });

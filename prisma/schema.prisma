@@ -9,25 +9,50 @@ datasource db {
 }
 
 model User {
-  id       String     @id @default(cuid())
-  email    String     @unique
+  id       String    @id @default(cuid())
+  email    String    @unique
   name     String?
-  projects Projects[]
+  projects Project[]
 
   @@map("users")
 }
 
-model Projects {
-  id            String        @id @default(cuid())
-  name          String        @db.VarChar(255)
-  description   String?
-  User          User?         @relation(fields: [userId], references: [id])
-  userId        String?
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
-  projectStatus ProjectStatus
+model Project {
+  id             String          @id @default(cuid())
+  name           String          @db.VarChar(255)
+  description    String?         @db.Text
+  owner          User?           @relation(fields: [ownerId], references: [id])
+  ownerId        String?
+  projectStatus  ProjectStatus
+  projectSchemas ProjectSchema[]
+  projectSetting ProjectSetting?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@map("projects")
+}
+
+model ProjectSetting {
+  id                      String  @id @default(cuid())
+  contentManagementSystem String? @db.Text
+  project                 Project @relation(fields: [projectId], references: [id])
+  projectId               String  @unique
+
+  @@map("project_settings")
+}
+
+model ProjectSchema {
+  id                 String   @id @default(cuid())
+  name               String?
+  versionDescription String?  @db.Text
+  checksum           String
+  project            Project  @relation(fields: [projectId], references: [id])
+  projectId          String
+  createdAt          DateTime @default(now())
+  updatedAt          DateTime @updatedAt
+
+  @@map("project_schema")
 }
 
 enum ProjectStatus {

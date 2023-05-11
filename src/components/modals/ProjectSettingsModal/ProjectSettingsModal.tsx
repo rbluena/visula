@@ -7,8 +7,11 @@ import { useProject } from "@/lib/client/hooks/useProject";
 import { useGlobalStore } from "@/lib/client/store/global";
 import { InformationCircleIcon } from "@heroicons/react/24/outline";
 import { useProjectsStore } from "@/lib/client/store/projects";
+import { updateProjectService } from "@/services/project";
+import Spinner from "@/components/common/Spinner/Spinner";
 
 const ProjectSettingsModal = () => {
+  const [isLoading, setIsLoading] = useState(false);
   const { openedModal, setOpenedModal } = useGlobalStore((state) => state);
   const updateProject = useProjectsStore((state) => state.updateProjectDetails);
   const { activeProject } = useProject();
@@ -22,7 +25,7 @@ const ProjectSettingsModal = () => {
     },
   });
   const [cms, setCMS] = useState({
-    name: activeProject?.settings?.cms?.name || null,
+    type: activeProject?.settings?.cms?.type || null,
     deploymentConfigured: false,
   });
 
@@ -31,23 +34,35 @@ const ProjectSettingsModal = () => {
   }
 
   async function onSubmit(data: any) {
-    if (cms?.name.length && data?.accessToken.length && data?.spaceId.length) {
-      // TODO: Store details to the server
-    }
+    setIsLoading(true);
 
-    const updates = {
-      ...activeProject,
-      name: data.name,
-      description: data.description,
-      settings: {
-        cms: {
-          name: cms.name,
-          deploymentConfigured: false,
+    try {
+      const project = await updateProjectService(
+        activeProject!.id,
+        {
+          name: data.name,
+          description: data.description,
         },
-      },
-    };
+        {
+          ...(cms?.type?.length &&
+          data?.accessToken?.length &&
+          data?.spaceId?.length
+            ? {
+                type: cms.type,
+                accessToken: data.accessToken,
+                spaceId: data.spaceId,
+                environmentId: data.environmentId,
+              }
+            : null),
+        }
+      );
 
-    updateProject(activeProject?.id || "", updates);
+      updateProject(project.id, project);
+      setIsLoading(false);
+      setOpenedModal(null);
+    } catch (error) {
+      setIsLoading(false);
+    }
   }
 
   useEffect(() => {
@@ -91,9 +106,9 @@ const ProjectSettingsModal = () => {
             <ToggleGroupComponent.Root
               type="single"
               onValueChange={(value) =>
-                setCMS((state) => ({ ...state, name: value }))
+                setCMS((state) => ({ ...state, type: value }))
               }
-              value={cms.name || ""}
+              value={cms.type || ""}
             >
               {[
                 { value: "contentful", label: "Contentful", disabled: false },
@@ -112,13 +127,19 @@ const ProjectSettingsModal = () => {
             </ToggleGroupComponent.Root>
           </div>
 
-          {cms?.name === "contentful" ? (
+          {cms?.type === "contentful" ? (
             <div>
               <div className="flex gap-2">
                 <InformationCircleIcon className="w-8 h-8 block text-lg" />
                 <span className="text-[12px] text-slate-500">
                   The information below is not required to create a migration
-                  code; however, is needed for deploying schema to the CMS.
+                  code; however, is needed for deploying schema to the CMS.{" "}
+                  <button
+                    type="button"
+                    className="text-indigo-600 hover:underline"
+                  >
+                    Remove these details
+                  </button>
                 </span>
               </div>
 
@@ -145,7 +166,7 @@ const ProjectSettingsModal = () => {
               type="submit"
               className="flex w-full text-md  justify-center rounded-md bg-indigo-600 py-2 md:py-3 text-sm font-semibold leading-6 text-white shadow-sm hover:bg-indigo-500 focus-visible:outline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-600 disabled:opacity-60 disabled:bg-slate-400"
             >
-              Submit
+              {isLoading ? <Spinner /> : "Submit"}
             </button>
           </div>
         </form>
