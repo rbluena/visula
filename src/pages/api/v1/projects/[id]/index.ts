@@ -53,11 +53,7 @@ async function PUT(req: NextApiRequest, res: NextApiResponse) {
             },
           },
         },
-        select: {
-          id: true,
-          description: true,
-          name: true,
-          updatedAt: true,
+        include: {
           projectSetting: true,
         },
       });
@@ -78,11 +74,7 @@ async function PUT(req: NextApiRequest, res: NextApiResponse) {
         name: data.name,
         description: data.description,
       },
-      select: {
-        id: true,
-        description: true,
-        name: true,
-        updatedAt: true,
+      include: {
         projectSetting: true,
       },
     });
