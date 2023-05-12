@@ -24,10 +24,16 @@ const ProjectSettingsModal = () => {
       environmentId: "",
     },
   });
+  // const [isModalOpened, setIsModalOpened] = useState(false)
   const [cms, setCMS] = useState({
-    type: activeProject?.settings?.cms?.type || null,
+    type:
+      JSON.parse(activeProject?.projectSetting?.contentManagementSystem || "{}")
+        ?.type || null,
     deploymentConfigured: false,
   });
+
+  const isModalOpened =
+    openedModal === "project-settings" && activeProject !== null;
 
   function onModalClosed() {
     setOpenedModal(null);
@@ -73,12 +79,8 @@ const ProjectSettingsModal = () => {
   }, [activeProject]);
 
   return (
-    <Modal
-      title=""
-      isOpen={openedModal === "project-settings" && activeProject !== null}
-      setIsOpen={onModalClosed}
-    >
-      <div className=" bg-white">
+    <Modal title="" isOpen={isModalOpened} setIsOpen={onModalClosed}>
+      <div className={`bg-white ${!isModalOpened && "hidden"}`}>
         <form
           onSubmit={handleSubmit(onSubmit)}
           className="space-y-6 overscroll-y-scroll"
@@ -134,30 +136,36 @@ const ProjectSettingsModal = () => {
                 <span className="text-[12px] text-slate-500">
                   The information below is not required to create a migration
                   code; however, is needed for deploying schema to the CMS.{" "}
-                  <button
-                    type="button"
-                    className="text-indigo-600 hover:underline"
-                  >
-                    Remove these details
-                  </button>
                 </span>
               </div>
 
-              <TextInput
-                placeholder="Enter access token"
-                label="Access token"
-                {...register("accessToken")}
-              />
-              <TextInput
-                placeholder="Enter space ID"
-                label="Space ID"
-                {...register("spaceId")}
-              />
-              <TextInput
-                placeholder="Enter environment ID"
-                label="Environment ID"
-                {...register("environmentId")}
-              />
+              {activeProject?.projectSetting?.contentManagementSystem
+                ?.length ? (
+                <button
+                  type="button"
+                  className="text-indigo-700 text-sm hover:underline"
+                >
+                  Update CMS details
+                </button>
+              ) : (
+                <>
+                  <TextInput
+                    placeholder="Enter access token"
+                    label="Access token"
+                    {...register("accessToken")}
+                  />
+                  <TextInput
+                    placeholder="Enter space ID"
+                    label="Space ID"
+                    {...register("spaceId")}
+                  />
+                  <TextInput
+                    placeholder="Enter environment ID"
+                    label="Environment ID"
+                    {...register("environmentId")}
+                  />
+                </>
+              )}
             </div>
           ) : null}
 

@@ -5,7 +5,7 @@ export type UserProject = {
   name?: string;
   description?: string;
   updatedAt?: Date;
-  settings: Record<string, any>;
+  projectSetting: Record<string, any>;
 };
 
 export type ModelID = {

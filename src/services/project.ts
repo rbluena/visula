@@ -18,7 +18,6 @@ export async function initilizeProjectService(data: any) {
   }
 
   const results = await response.json();
-  console.log(`Project created`, results);
   return results.data as UserProject;
 }
 
@@ -61,8 +60,6 @@ export async function updateProjectService(
   }
 
   const results = await response.json();
-
-  console.log(results);
 
   return results.data as UserProject;
 }

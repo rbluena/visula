@@ -6,12 +6,13 @@ import { useUIStore } from "@/lib/client/store/ui";
 import UpdateModelModal from "@/components/modals/UpdateModelModal";
 import DashboardTopBar from "@/components/layouts/DashboardTopBar";
 import { RightPane } from "@/components";
-import { useProjectInit } from "@/lib/client/hooks/useProject";
+import { useProject, useProjectInit } from "@/lib/client/hooks/useProject";
 import { UserProject } from "@/types";
 
 const Try = ({ project }: { project: UserProject; error: string }) => {
   const editor = useUIStore((state) => state.editor);
-  const { globalLoader } = useProjectInit(project);
+  const { globalLoader } = useProjectInit(project); // Project when page is loaded
+  const { activeProject } = useProject();
 
   return (
     <MainLayout headTitle="Try visula" showHeader={false}>
@@ -22,8 +23,8 @@ const Try = ({ project }: { project: UserProject; error: string }) => {
               showLoader={globalLoader}
               hideProjectTitle={editor === "code-editor"}
               project={{
-                name: project?.name,
-                lastUpdated: project?.updatedAt,
+                name: activeProject?.name,
+                lastUpdated: activeProject?.updatedAt,
               }}
             />
             <NodesEditor showEditor={editor === "nodes-editor"} />
