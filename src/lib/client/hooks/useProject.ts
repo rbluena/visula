@@ -28,7 +28,9 @@ export function useProjectInit(project: UserProject) {
 }
 
 export function useProject() {
-  const { data, projectIds, activeProjectId } = useProjectsStore();
+  const { data, projectIds, activeProjectId } = useProjectsStore(
+    (state) => state
+  );
 
   return {
     projects: projectIds.map((id) => data[id]),
