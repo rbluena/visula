@@ -53,7 +53,7 @@ const ProjectSettingsModal = () => {
                 spaceId: data.spaceId,
                 environmentId: data.environmentId,
               }
-            : null),
+            : {}),
         }
       );
 
