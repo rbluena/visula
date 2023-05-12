@@ -68,21 +68,21 @@ const ContextMenuComponent = ({ children }: Props) => {
         },
         {
           key: 122,
-          label: "Migration",
+          label: "Schema",
           action: null,
           shortcut: "",
           type: "label",
         },
         {
           key: 236550990,
-          label: "Create",
+          label: "Create migration",
           action: generateMigrationCode,
           shortcut: "",
           type: "item",
         },
         {
           key: 230990,
-          label: "Deploy",
+          label: "Deploy schema",
           // action: openMigrationModal,
           action: deploySchemaToContentful,
           shortcut: "",
@@ -96,7 +96,7 @@ const ContextMenuComponent = ({ children }: Props) => {
         },
         {
           key: 12345,
-          label: "Schema",
+          label: "Export",
           action: null,
           shortcut: "",
           type: "label",

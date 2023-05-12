@@ -11,7 +11,7 @@ const Nav = () => {
           <li>
             <Link
               className="text-indigo-700 text-sm font-bold hover:underline"
-              href="/waitlist/try"
+              href="/try"
             >
               Try
             </Link>

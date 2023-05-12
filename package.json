@@ -2,17 +2,25 @@
   "name": "visula",
   "version": "0.1.0",
   "private": true,
+  "packageManager": "pnpm@8.4.0",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
     "lint": "next lint ./src",
     "ts-lint": "tsc --noEmit --incremental --watch",
-    "generate": "antlr4 -Dlanguage=JavaScript -message-format vs2005 ./src/grammar/VisulaParser.g4 -o src/lib/"
+    "generate": "antlr4 -Dlanguage=JavaScript -message-format vs2005 ./src/grammar/VisulaParser.g4 -o src/lib/",
+    "db:migrate": "pnpx prisma migrate dev --create-only --name",
+    "db:generate": "pnpx prisma generate",
+    "db:studio": "pnpx prisma studio",
+    "db:push": "pnpx prisma db push",
+    "postinstall": "prisma generate"
   },
   "dependencies": {
     "@heroicons/react": "^2.0.17",
+    "@keyv/redis": "^2.5.8",
     "@monaco-editor/react": "^4.4.6",
+    "@prisma/client": "4.14.0",
     "@radix-ui/react-accordion": "^1.1.1",
     "@radix-ui/react-context-menu": "^2.1.3",
     "@radix-ui/react-dialog": "^1.0.3",
@@ -36,6 +44,8 @@
     "html-to-image": "^1.11.11",
     "immer": "^9.0.21",
     "js-beautify": "^1.14.7",
+    "js-cookie": "^3.0.5",
+    "keyv": "^4.5.2",
     "lodash": "^4.17.21",
     "monaco-editor": "^0.36.1",
     "next": "13.2.4",
@@ -54,6 +64,7 @@
     "@types/uuid": "^9.0.1",
     "autoprefixer": "^10.4.14",
     "postcss": "^8.4.21",
+    "prisma": "^4.13.0",
     "tailwindcss": "^3.3.1"
   }
 }

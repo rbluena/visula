@@ -1,6 +1,6 @@
 import type { NextApiRequest, NextApiResponse } from "next";
-import isEmpty from "lodash/isEmpty";
 import Cors from "cors";
+import isEmpty from "lodash/isEmpty";
 import { createMigrationCode } from "@/lib/server/migrations/contentful";
 
 const cors = Cors({
@@ -49,7 +49,7 @@ export default async function handler(
   await runMiddleware(req, res, cors);
 
   switch (req.method) {
-    case "POST":
+    case "PUT":
       return await POST(req, res);
 
     default:

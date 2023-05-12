@@ -19,7 +19,7 @@ const NotFound = () => {
               className="hover:underline underline-offset-2 flex items-end space-x-2"
             >
               <HomeModernIcon className="w-8 h-8" />
-              <p className="text-violet-600">Go back home</p>
+              <p className="text-violet-600">Home</p>
             </Link>{" "}
           </div>
         </div>

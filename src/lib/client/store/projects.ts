@@ -1,12 +1,6 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-
-export type UserProject = {
-  id: string;
-  title?: string;
-  description?: string;
-  lastUpdate?: Date;
-};
+import { UserProject } from "@/types";
 
 export type ProjectsState = {
   activeProjectId: string | null;
@@ -16,6 +10,7 @@ export type ProjectsState = {
 
 export type Actions = {
   addProject: (payload: UserProject) => void;
+  updateProjectDetails: (projectId: string, payload: any) => void;
   setActiveProject: (payload: string) => void;
   setLastUpdate: (projectId: string, date: Date) => void;
 };
@@ -36,9 +31,17 @@ export const useProjectsStore = create(
         state.activeProjectId = projectId;
       });
     },
-    setLastUpdate(projectId, payload) {
+    updateProjectDetails(projectId, payload) {
       set((state) => {
-        state.data[projectId].lastUpdate = payload;
+        if (state.data[projectId]) {
+          state.data[projectId] = payload;
+        }
+      });
+    },
+    setLastUpdate() {
+      set((state) => {
+        // state.data[projectId].lastUpdate = payload;
+        return state;
       });
     },
   }))
