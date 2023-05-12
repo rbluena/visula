@@ -6,7 +6,7 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
   const data = req.body as UserProject;
 
   try {
-    const project = await prisma.projects.create({
+    const project = await prisma.project.create({
       data: {
         name: data.name || "",
         description: data?.description || "",
@@ -25,11 +25,6 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-async function GET(req: NextApiRequest, res: NextApiResponse) {
-  try {
-  } catch (error) {}
-}
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -38,8 +33,6 @@ export default async function handler(
     case "POST":
       return await POST(req, res);
 
-    case "GET":
-      return await GET(req, res);
 
     default:
       return res.status(405).json({

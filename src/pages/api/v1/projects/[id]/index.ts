@@ -30,7 +30,7 @@ async function PUT(req: NextApiRequest, res: NextApiResponse) {
   }: { contentManagementSystem: any; data: any } = req.body;
 
   try {
-    if (isEmpty(contentManagementSystem)) {
+    if (!isEmpty(contentManagementSystem)) {
       const project = await prisma.project.update({
         where: {
           id: req.query.id as string,
@@ -40,9 +40,6 @@ async function PUT(req: NextApiRequest, res: NextApiResponse) {
           description: data.description,
           projectSetting: {
             upsert: {
-              where: {
-                projectId: req.query.id as string,
-              },
               create: {
                 contentManagementSystem: JSON.stringify(
                   contentManagementSystem
@@ -101,8 +98,6 @@ async function PUT(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
-async function GET(req: NextApiRequest, res: NextApiResponse) {}
-
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -113,9 +108,6 @@ export default async function handler(
   switch (req.method) {
     case "PUT":
       return await PUT(req, res);
-
-    case "GET":
-      return await GET(req, res);
 
     default:
       return res.status(405).json({

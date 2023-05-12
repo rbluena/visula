@@ -38,9 +38,10 @@ export const useProjectsStore = create(
         }
       });
     },
-    setLastUpdate(projectId, payload) {
+    setLastUpdate() {
       set((state) => {
-        state.data[projectId].lastUpdate = payload;
+        // state.data[projectId].lastUpdate = payload;
+        return state;
       });
     },
   }))
