@@ -1,5 +1,5 @@
 import { getNodesFromData } from "@/lib/client/common/dataAndNodes";
-import { useNodesStore } from "@/lib/client/store/nodes";
+import { useModelStore } from "@/lib/client/store/models";
 import { ContextMenu } from "@/components";
 
 import ReactFlow, {
@@ -16,7 +16,7 @@ type Props = {
 };
 
 const NodeEditor = ({ showEditor = false }: Props) => {
-  const { deleteModel, data } = useNodesStore((state) => state);
+  const { deleteModel, data } = useModelStore((state) => state);
   const {
     onNodeConnect,
     onEdgeUpdate,

@@ -50,18 +50,12 @@ const Model = ({
         <div className="w-full space-y-0">
           <div className="flex items-center space-x-2">
             <div className="block w-full">{modelData.name}</div>
-            {/* <button
-              className="border border-slate-300 rounded-full p-1"
-              onClick={() => onSelectingModel(modelData.id)}
-              aria-describedby="aria-chevron-toggle"
-            > */}
             <ChevronRightIcon
               strokeWidth={2}
               className={`w-5 h-5 font-semibold text-violet-700 transition-transform transform ${
                 isSelectedModel ? "rotate-90" : ""
               }`}
             />
-            {/* </button> */}
           </div>
 
           <span className="block text-[12px] text-slate-600">
@@ -121,7 +115,7 @@ const Model = ({
             <Cog6ToothIcon strokeWidth={1} className="w-5 h-5" />
           </button>
           <button
-            onClick={() => onDeletingModel(modelData)}
+            onClick={() => onDeletingModel(modelData.id)}
             className="border border-slate-300 rounded-full p-1 bg-red-50 hover:bg-red-100 text-red-700"
             aria-describedby="aria-model-delete"
             title="Delete this model"
