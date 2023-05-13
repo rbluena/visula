@@ -1,7 +1,7 @@
-import type { ModelData } from "@/types";
-
-import { useNodesStore } from "@/lib/client/store/nodes";
 import { Node, useOnSelectionChange, useReactFlow } from "reactflow";
+import isEmpty from "lodash/isEmpty";
+import { useModelStore } from "@/lib/client/store/models";
+import useModels from "@/lib/client/hooks/useModels";
 import Model from "./Model";
 
 type Props = {
@@ -9,17 +9,23 @@ type Props = {
 };
 
 const RightModelPane = ({ showMultipleModels }: Props) => {
-  const { setActiveModel, activeModelId, data, modelIds } = useNodesStore(
-    (state) => state
-  );
   const { setNodes, setCenter, getZoom, deleteElements } = useReactFlow();
+  const setActiveModel = useModelStore((state) => state.setActiveModel);
+  const { getModelsData, selectedActiveModel } = useModels();
 
-  const modelsData = modelIds.map((key) => data[key]);
+  const modelsData = getModelsData();
 
+  // Node being selected from the canvas
+  // the we have to open model content on the right pane
+  // TODO: This probably should be moved somewhere else.
   useOnSelectionChange({
-    onChange: ({ nodes, edges: _ }) => setActiveModel(nodes[0]?.id),
+    onChange: ({ nodes }) => setActiveModel(nodes[0]?.id),
   });
 
+  /**
+   *
+   * @param modelId
+   */
   function onSelectingModel(modelId: string) {
     let currSelectingNode;
 
@@ -46,53 +52,15 @@ const RightModelPane = ({ showMultipleModels }: Props) => {
         }
       );
     }
-
-    /*  setNodes((nodes) => {
-
-
-      const currSelectedNode = nodes.find((item) => item.id === modelId);
-      const nextSelectingNode = nodes.find((item) => item.selected === true);
-
-      if (!currSelectedNode) {
-        return nodes;
-      }
-
-      currSelectedNode.selected = true;
-
-      setCenter(
-        Number(currSelectedNode.position.x + 200),
-        currSelectedNode.position.y,
-        {
-          duration: 500,
-          zoom: getZoom(),
-        }
-      );
-
-      if (!nextSelectingNode) {
-        return [
-          ...nodes.filter((item) => item.id !== modelId),
-          currSelectedNode,
-        ];
-      }
-
-      nextSelectingNode.selected = false;
-
-      return [
-        ...nodes.filter(
-          (item) => item.id !== modelId && item.selected === true
-        ),
-        currSelectedNode,
-        nextSelectingNode,
-      ];
-    }); */
   }
 
   /**
-   * Removing model data after node being removed from the canvas
+   * Removing model node from canvas, hence the model will deleted automatically,
+   * ref: NodeEditor component
    * @param modelData Model details
    */
-  function onDeletingModel(modelData: ModelData) {
-    deleteElements({ nodes: [modelData] });
+  function onDeletingModel(id: string) {
+    deleteElements({ nodes: [{ id }] });
   }
 
   return (
@@ -104,10 +72,19 @@ const RightModelPane = ({ showMultipleModels }: Props) => {
               modelData={modelData}
               onSelectingModel={onSelectingModel}
               onDeletingModel={onDeletingModel}
-              activeModelId={activeModelId}
+              isSelectedModel={selectedActiveModel?.id === modelData.id}
             />
           ))
         : null}
+
+      {!showMultipleModels && !isEmpty(selectedActiveModel) ? (
+        <Model
+          modelData={selectedActiveModel}
+          onSelectingModel={onSelectingModel}
+          onDeletingModel={onDeletingModel}
+          isSelectedModel
+        />
+      ) : null}
     </div>
   );
 };

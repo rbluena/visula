@@ -5,37 +5,31 @@ import {
   ChevronRightIcon,
   PlusSmallIcon,
   Cog6ToothIcon,
-  // XMarkIcon,
 } from "@heroicons/react/24/outline";
 import useModelField from "@/lib/client/hooks/useModelFields";
 import { ModelData } from "@/types";
-// import dataTypes from "@/data/dataTypes";
 
 import ModelFieldComponent from "./ModelField";
 import { useGlobalStore } from "@/lib/client/store/global";
-// import { camelCase } from "lodash";
 
 type Props = {
   modelData: ModelData;
-  activeModelId: string | null;
+  isSelectedModel: boolean;
   onSelectingModel: Function;
   onDeletingModel: Function;
 };
 
 const Model = ({
   modelData,
-  activeModelId,
+  isSelectedModel,
   onSelectingModel,
   onDeletingModel,
 }: Props) => {
   const [showFieldInput, setShowFieldInput] = useState(false);
   const { setOpenedModal } = useGlobalStore((state) => state);
-  // const [fieldDataType, setFieldDataType] = useState<DataTypes>("String");
   const { updateModelField, deleteModelField, createModelField } =
     useModelField();
   const inputRef = useRef<HTMLInputElement>(null);
-
-  const isThisModelActive = activeModelId === modelData.id;
 
   useEffect(() => {
     inputRef.current?.focus();
@@ -45,12 +39,10 @@ const Model = ({
     <div
       key={modelData.id}
       className={`${
-        isThisModelActive
-          ? "border-blue-400 border-2"
-          : "border border-blue-100"
+        isSelectedModel ? "border-blue-400 border-2" : "border border-blue-100"
       } min-h-[80px] rounded-md p-2 space-y-3 bg-white shadow-sm`}
       onMouseDown={() => {
-        if (isThisModelActive) return;
+        if (isSelectedModel) return;
         onSelectingModel(modelData.id);
       }}
     >
@@ -58,22 +50,16 @@ const Model = ({
         <div className="w-full space-y-0">
           <div className="flex items-center space-x-2">
             <div className="block w-full">{modelData.name}</div>
-            {/* <button
-              className="border border-slate-300 rounded-full p-1"
-              onClick={() => onSelectingModel(modelData.id)}
-              aria-describedby="aria-chevron-toggle"
-            > */}
             <ChevronRightIcon
               strokeWidth={2}
               className={`w-5 h-5 font-semibold text-violet-700 transition-transform transform ${
-                isThisModelActive ? "rotate-90" : ""
+                isSelectedModel ? "rotate-90" : ""
               }`}
             />
-            {/* </button> */}
           </div>
 
           <span className="block text-[12px] text-slate-600">
-            {modelData.unique}
+            {modelData.modelId}
           </span>
         </div>
       </div>
@@ -81,10 +67,10 @@ const Model = ({
       {/* START: fields */}
       <div
         className={`transition-all overflow-y-hidden space-y-1 pl-2 ${
-          !isThisModelActive ? "h-0" : "h-auto py-2"
+          !isSelectedModel ? "h-0" : "h-auto py-2"
         }`}
       >
-        {modelData?.fields.map((field) => (
+        {modelData?.fields?.map((field) => (
           <ModelFieldComponent
             key={field.id}
             data={field}
@@ -129,7 +115,7 @@ const Model = ({
             <Cog6ToothIcon strokeWidth={1} className="w-5 h-5" />
           </button>
           <button
-            onClick={() => onDeletingModel(modelData)}
+            onClick={() => onDeletingModel(modelData.id)}
             className="border border-slate-300 rounded-full p-1 bg-red-50 hover:bg-red-100 text-red-700"
             aria-describedby="aria-model-delete"
             title="Delete this model"

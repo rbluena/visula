@@ -9,13 +9,13 @@ import NodeField from "./NodeField";
 import { useModelsRelation } from "@/lib/client/hooks/useModelsRelation";
 
 export type Props = {
+  id: string;
   modelId: string;
   comment?: string;
   name: string;
-  unique?: string;
 };
 
-const ModelNode = ({ name, modelId, unique }: Props) => {
+const ModelNode = ({ name, modelId }: Props) => {
   const { fields } = useNodesStore((state) => state.data?.[modelId] || []);
   const addModelField = useNodesStore((state) => state.addField);
   const { checkFieldIsConnected, checkTargetModelIsConnected } =
@@ -69,7 +69,7 @@ const ModelNode = ({ name, modelId, unique }: Props) => {
         <div className="pl-2">
           {/* <TableCellsIcon strokeWidth={1} className="text-lg w-6 h-6" /> */}
           <span className="block leading-4 text-[16px]">{name}</span>
-          <span className="block text-[10px] text-slate-500">{unique}</span>
+          <span className="block text-[10px] text-slate-500">{modelId}</span>
         </div>
         <button
           className="text-indigo-500 active:text-indigo-300"

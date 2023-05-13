@@ -10,12 +10,12 @@ export function createMigrationCode(
 
   const contentTypeCodes = modelsKeys.map((key: string) => {
     const model = models[key] as ModelData;
-    const modelContentType = `${model.unique}Type`;
+    const modelContentType = `${model.modelId}Type`;
 
     let script = `
       // Creating ${model.name}
       const ${modelContentType}  = migration
-            .createContentType("${model.unique}")
+            .createContentType("${model.modelId}")
             .name("${model.name}")
             .description(${model?.description || '""'});
     `;
@@ -54,7 +54,7 @@ export function createMigrationCode(
         if (field.dataType === "Relation") {
           const targetId = relations[field.id].targetModelId;
           const targetModelUniqueIdentity =
-            models[targetId || ""]?.unique || "";
+            models[targetId || ""]?.modelId || "";
 
           const items = field.relationHasMany
             ? `
@@ -75,7 +75,7 @@ export function createMigrationCode(
               ${getAttachingValidations(
                 field.dataType,
                 field.validations
-                // Removing beginning and ending square brackets
+                // Removing the beginning and ending square brackets
               ).slice(1, -1)}
             ])
           `;

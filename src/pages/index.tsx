@@ -4,8 +4,6 @@ import Nav from "@/components/layouts/Nav";
 import { ArrowRightIcon } from "@heroicons/react/24/outline";
 import Logo from "@/assets/Logo";
 
-// TODO: Put the video at the center with title and description of the product.
-
 export default function Home() {
   return (
     <MainLayout headTitle="Visula - Home">
@@ -45,7 +43,7 @@ export default function Home() {
                     <ArrowRightIcon className="w-4 h-4 text-lg" />
                   </Link>
                   <Link
-                    href="/waitlist/try"
+                    href="/try"
                     className="rounded-full border-2 border-slate-900 hover:bg-slate-600 leading-4 p-4 px-8 text-md flex items-center justify-center text-slate-900 hover:text-white"
                   >
                     Give a try&nbsp;&nbsp;
