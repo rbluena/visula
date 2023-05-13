@@ -14,9 +14,9 @@ import { useReactFlow } from "reactflow";
 import { v4 as uuidV4 } from "uuid";
 import { ModelData } from "@/types";
 import { useNodesStore } from "@/lib/client/store/nodes";
-import { getNodeFromData } from "@/lib/client/common/dataAndNodes";
 import { useGlobalStore } from "@/lib/client/store/global";
 import { useModelRelationStore } from "@/lib/client/store/relations";
+import useModels from "@/lib/client/hooks/useModels";
 
 type Props = {
   children: ReactNode;
@@ -24,7 +24,8 @@ type Props = {
 
 const ContextMenuComponent = ({ children }: Props) => {
   const { setMigrationModal } = useGlobalStore((state) => state);
-  const { addNode: addNewNode, data: models } = useNodesStore((state) => state);
+  const { createModel } = useModels();
+  const { data: models } = useNodesStore((state) => state);
   const relations = useModelRelationStore((state) => state.data);
   const flowInstance = useReactFlow();
   const inputRef = useRef<HTMLDivElement>(null);
@@ -140,8 +141,6 @@ const ContextMenuComponent = ({ children }: Props) => {
         },
       ]);
     }
-
-    // console.log(evt.target);
   }
 
   function deleteCurrentModel() {
@@ -152,6 +151,10 @@ const ContextMenuComponent = ({ children }: Props) => {
     }
   }
 
+  /**
+   * Adding a new model data and its node  the canvas
+   * @param evt
+   */
   function createNewModel(evt: Event) {
     const canvasViewPort = flowInstance.getViewport();
     const { setNodes, addNodes } = flowInstance;
@@ -179,23 +182,15 @@ const ContextMenuComponent = ({ children }: Props) => {
           return;
         }
 
-        const nodeData: ModelData = {
-          kind: "model",
+        const modelData: ModelData = {
           id: uuidV4(),
-          position,
-          selected: false,
           name: modelName,
-          unique: camelCase(modelName),
-          data: {},
+          modelId: camelCase(modelName),
+          position,
           fields: [],
         };
 
-        addNewNode(nodeData);
-        setNodes((nodes) => [
-          ...nodes.filter((item) => item.id !== "newnodeinput"),
-          getNodeFromData(nodeData),
-        ]);
-
+        createModel(modelData);
         return;
       }
     };

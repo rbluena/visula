@@ -7,12 +7,12 @@ import { useGlobalStore } from "@/lib/client/store/global";
 
 const RightPane = () => {
   const [toggleSidebarExpansion, setToggleSidebarExpansion] = useState(true);
-  // const [showMultipleModels, setshowMultipleModels] = useState(true);
+  const [showMultipleModels, setshowMultipleModels] = useState(true);
   const { isGeneratedCodeOpen } = useGlobalStore((state) => state);
 
-  const [paneSwitch, setPaneSwitch] = useState<
-    "models" | "templates" | "documentation" | string
-  >("models");
+  const [paneSwitch, setPaneSwitch] = useState<"models" | "templates" | string>(
+    "models"
+  );
 
   return (
     <aside
@@ -22,26 +22,42 @@ const RightPane = () => {
     >
       {!isGeneratedCodeOpen ? (
         <div className="min-h-[50px] bg-white border-b border-b-violet-100">
-          <div className="p-2 px-4 flex items-center">
-            {/* <div>{paneSwitch === "models" ? "Models" : "Templates"}</div> */}
-            <select
-              className="bg-slate-100 py-1 text-sm rounded-md border text-slate-800"
-              onChange={(evt) => setPaneSwitch(evt.target.value)}
-            >
-              <option value="models">Models</option>
-              <option value="templates">Templates</option>
-              {/* <option value="docume">Documentation</option> */}
-            </select>
-          </div>
+          {paneSwitch === "models" || paneSwitch === "templates" ? (
+            <div className="p-2 px-4 flex items-center justify-between">
+              {/* <div>{paneSwitch === "models" ? "Models" : "Templates"}</div> */}
+              <select
+                className="bg-slate-100 py-1 text-sm rounded-md border text-slate-800"
+                onChange={(evt) => setPaneSwitch(evt.target.value)}
+              >
+                <option value="models">Models</option>
+                <option value="templates">Templates</option>
+                {/* <option value="docume">Documentation</option> */}
+              </select>
+              <label
+                className="text-sm flex items-center text-slate-500"
+                htmlFor="miltiple-models"
+              >
+                Multiple models&nbsp;
+                <input
+                  id="miltiple-models"
+                  className="w-5 h-5 rounded"
+                  type="checkbox"
+                  checked={showMultipleModels}
+                  onChange={() => setshowMultipleModels(!showMultipleModels)}
+                />
+              </label>
+            </div>
+          ) : null}
         </div>
       ) : null}
 
       {isGeneratedCodeOpen ? <RightPaneGeneratedCode /> : null}
+
       {paneSwitch === "templates" && !isGeneratedCodeOpen ? (
         <RightPaneTemplates />
       ) : null}
       {paneSwitch === "models" && !isGeneratedCodeOpen ? (
-        <RightModelPane showMultipleModels />
+        <RightModelPane showMultipleModels={showMultipleModels} />
       ) : null}
 
       <div className="absolute top-0 h-screen w-[60px] left-[-60px] overflow-hidden">

@@ -64,7 +64,7 @@ const NodeEditor = ({ showEditor = false }: Props) => {
           nodes={nodes}
           edges={edges}
           // fitView
-          attributionPosition="bottom-left"
+          attributionPosition="bottom-right"
         >
           <Controls />
           <Background />

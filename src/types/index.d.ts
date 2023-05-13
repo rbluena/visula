@@ -1,4 +1,4 @@
-import { Edge, Node } from "reactflow";
+import { Edge, Node, XYPosition } from "reactflow";
 
 export type UserProject = {
   id: string;
@@ -27,7 +27,7 @@ export type ModelField = {
   validations: Validations;
 };
 
-export type ModelData = Node & {
+export type ModelDetails = Node & {
   kind: "model";
   id: string;
   unique?: string;
@@ -37,6 +37,16 @@ export type ModelData = Node & {
   description?: string;
   comment?: string;
   fields: ModelField[];
+};
+
+export type ModelData = {
+  id: string;
+  modelId: string;
+  name: string;
+  description?: string;
+  comment?: string;
+  fields: ModelField[];
+  position: XYPosition;
 };
 
 export type ModelNode = Node & ModelData;
@@ -50,7 +60,6 @@ export type DataType =
   | "Boolean"
   | "Location"
   | "Date"
-  // | "Array"
   | "Object"
   | "List"
   | "Media"

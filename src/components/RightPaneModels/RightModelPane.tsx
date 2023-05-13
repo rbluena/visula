@@ -1,7 +1,8 @@
-import type { ModelData } from "@/types";
-
-import { useNodesStore } from "@/lib/client/store/nodes";
 import { Node, useOnSelectionChange, useReactFlow } from "reactflow";
+import isEmpty from "lodash/isEmpty";
+import type { ModelData } from "@/types";
+import { useModelStore } from "@/lib/client/store/models";
+import useModels from "@/lib/client/hooks/useModels";
 import Model from "./Model";
 
 type Props = {
@@ -9,15 +10,17 @@ type Props = {
 };
 
 const RightModelPane = ({ showMultipleModels }: Props) => {
-  const { setActiveModel, activeModelId, data, modelIds } = useNodesStore(
-    (state) => state
-  );
   const { setNodes, setCenter, getZoom, deleteElements } = useReactFlow();
+  const setActiveModel = useModelStore((state) => state.setActiveModel);
+  const { getModelsData, selectedActiveModel } = useModels();
 
-  const modelsData = modelIds.map((key) => data[key]);
+  const modelsData = getModelsData();
 
+  // Node being selected from the canvas
+  // the we have to open model content on the right pane
+  // TODO: This probably should be moved somewhere else.
   useOnSelectionChange({
-    onChange: ({ nodes, edges: _ }) => setActiveModel(nodes[0]?.id),
+    onChange: ({ nodes }) => setActiveModel(nodes[0]?.id),
   });
 
   function onSelectingModel(modelId: string) {
@@ -104,10 +107,19 @@ const RightModelPane = ({ showMultipleModels }: Props) => {
               modelData={modelData}
               onSelectingModel={onSelectingModel}
               onDeletingModel={onDeletingModel}
-              activeModelId={activeModelId}
+              isSelectedModel={selectedActiveModel?.id === modelData.id}
             />
           ))
         : null}
+
+      {!showMultipleModels && !isEmpty(selectedActiveModel) ? (
+        <Model
+          modelData={selectedActiveModel}
+          onSelectingModel={onSelectingModel}
+          onDeletingModel={onDeletingModel}
+          isSelectedModel
+        />
+      ) : null}
     </div>
   );
 };
