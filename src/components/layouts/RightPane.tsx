@@ -37,7 +37,7 @@ const RightPane = () => {
                 className="text-sm flex items-center text-slate-500"
                 htmlFor="miltiple-models"
               >
-                Multiple models&nbsp;
+                All models&nbsp;
                 <input
                   id="miltiple-models"
                   className="w-5 h-5 rounded"

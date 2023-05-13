@@ -1,16 +1,13 @@
 import { useReactFlow } from "reactflow";
 import { cloneDeep } from "lodash";
 import { ModelData } from "@/types";
-import { useNodesStore } from "@/lib/client/store/nodes";
 import { useModelStore } from "@/lib/client/store/models";
 import { getNodeFromData } from "@/lib/client/common/dataAndNodes";
 
 export default function useModels() {
   const { setNodes } = useReactFlow();
-  const { updateModel } = useNodesStore((state) => state);
-  const { addModel, data, modelIds, activeModelId } = useModelStore(
-    (state) => state
-  );
+  const { addModel, updateModel, data, modelIds, activeModelId } =
+    useModelStore((state) => state);
 
   const selectedActiveModel = data[activeModelId || ""] || {};
 

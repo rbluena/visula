@@ -19,9 +19,6 @@ export type NodesState = {
 };
 
 export type Actions = {
-  addNode: (payload: ModelData) => void;
-  updateModel: (payload: ModelData) => void;
-  deleteModel: (modelId: string) => void;
   addField: (modelId: string, payload: ModelField) => void;
   updateField: (modelId: string, payload: ModelField) => void;
   deleteField: (modelId: string, fieldId: string) => void;
@@ -38,26 +35,6 @@ export const useNodesStore = create(
     connections: {},
     data: {},
     modelIds: [],
-    addNode(payload) {
-      set((state) => {
-        state.data[payload.id] = payload;
-        state.modelIds.push(payload.id);
-      });
-    },
-    updateModel(payload) {
-      set((state) => {
-        state.data[payload.id] = payload;
-      });
-    },
-    deleteModel(modelId) {
-      set((state) => {
-        const newData = state.data;
-        delete newData[modelId];
-        state.data = newData;
-        state.modelIds = state.modelIds.filter((id) => id !== modelId);
-        return state;
-      });
-    },
     addField(modelId, payload) {
       set((state) => {
         state.data[modelId].fields.push(payload);

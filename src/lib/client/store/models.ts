@@ -10,7 +10,7 @@ export type ModelsState = {
 
 export type Actions = {
   addModel: (payload: ModelData) => void;
-  updateModel?: (payload: ModelData) => void;
+  updateModel: (payload: ModelData) => void;
   deleteModel: (modelId: string) => void;
   addField?: (modelId: string, payload: ModelField) => void;
   updateField?: (modelId: string, payload: ModelField) => void;
@@ -37,7 +37,11 @@ export const useModelStore = create(
         return state;
       });
     },
-
+    updateModel(payload) {
+      set((state) => {
+        state.data[payload.id] = payload;
+      });
+    },
     deleteModel(id) {
       set((state) => {
         delete state.data[id];
