@@ -18,7 +18,7 @@ export function deploySchemaToContentful(
 
   return modelsKeys.map((modelKey) => {
     const modelData = models[modelKey] as ModelData;
-    const modelID = modelData?.unique || modelData.id;
+    const modelID = modelData?.modelId || modelData.id;
 
     // @ts-ignore
     const fields: ContentFields<KeyValueMap>[] = modelData.fields.map(
@@ -28,7 +28,7 @@ export function deploySchemaToContentful(
 
         if (field.dataType === "Relation") {
           targetId = relations[field.id].targetModelId || "";
-          targetModelUniqueIdentity = models[targetId]?.unique || "";
+          targetModelUniqueIdentity = models[targetId]?.modelId || "";
         }
 
         return {

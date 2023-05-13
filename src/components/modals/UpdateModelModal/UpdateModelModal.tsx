@@ -3,20 +3,20 @@ import { useForm } from "react-hook-form";
 import Modal from "@/components/common/Modal";
 import { useGlobalStore } from "@/lib/client/store/global";
 import Spinner from "@/components/common/Spinner";
-import { useNodesStore } from "@/lib/client/store/nodes";
+import { useModelStore } from "@/lib/client/store/models";
 import TextInput from "@/components/form/TextInput";
 import useModels from "@/lib/client/hooks/useModels";
 
 type FormData = {
   name: string;
-  unique: string;
+  modelId: string;
 };
 
 const UpdateModelModal = () => {
   const { openedModal, setOpenedModal } = useGlobalStore((state) => state);
   const { updateModelData } = useModels();
   const [showSpinner, setShowSpinner] = useState(false);
-  const activeModel = useNodesStore(
+  const activeModel = useModelStore(
     (state) => state.data[state.activeModelId || ""]
   );
 
@@ -34,7 +34,7 @@ const UpdateModelModal = () => {
     updateModelData({
       ...activeModel,
       name: data.name,
-      unique: data.unique,
+      modelId: data.modelId,
     });
 
     setShowSpinner(false);
@@ -48,7 +48,7 @@ const UpdateModelModal = () => {
 
   useEffect(() => {
     setValue("name", activeModel?.name || "");
-    setValue("unique", activeModel?.unique || "");
+    setValue("modelId", activeModel?.modelId || "");
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [activeModel]);
 
@@ -75,9 +75,9 @@ const UpdateModelModal = () => {
             label="Model ID"
             type="text"
             placeholder="Model ID"
-            defaultValue={activeModel?.unique}
+            defaultValue={activeModel?.modelId}
             pattern="^\S*$"
-            {...register("unique")}
+            {...register("modelId")}
           />
         </div>
 
