@@ -1,6 +1,6 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
-import { ModelData, ModelField } from "@/types";
+import { ModelData } from "@/types";
 
 export type ModelsState = {
   modelIds: string[];
@@ -12,9 +12,8 @@ export type Actions = {
   addModel: (payload: ModelData) => void;
   updateModel: (payload: ModelData) => void;
   deleteModel: (modelId: string) => void;
-  addField?: (modelId: string, payload: ModelField) => void;
-  updateField?: (modelId: string, payload: ModelField) => void;
-  deleteField?: (modelId: string, fieldId: string) => void;
+  onFieldCreated: (modelId: string, fieldId: string) => void;
+  onFieldDeleted: (modelId: string, fieldId: string) => void;
   setActiveModel: (modelId: string) => void;
 };
 
@@ -47,6 +46,18 @@ export const useModelStore = create(
         delete state.data[id];
         state.modelIds = state.modelIds.filter((item) => item !== id);
         state.activeModelId = null;
+      });
+    },
+    onFieldCreated(modelId, fieldId) {
+      set((state) => {
+        state.data[modelId].fields.push(fieldId);
+      });
+    },
+    onFieldDeleted(modelId, fieldId) {
+      set((state) => {
+        state.data[modelId].fields = state.data[modelId].fields.filter(
+          (item) => item !== fieldId
+        );
       });
     },
   }))

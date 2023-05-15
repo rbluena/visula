@@ -1,16 +1,16 @@
-import { useEffect, useState, useRef } from "react";
-// import { v4 as uuidV4 } from "uuid";
+import { v4 as uuidV4 } from "uuid";
 import {
   TrashIcon,
   ChevronRightIcon,
   PlusSmallIcon,
   Cog6ToothIcon,
 } from "@heroicons/react/24/outline";
-import useModelField from "@/lib/client/hooks/useModelFields";
+
 import { ModelData } from "@/types";
+import { useGlobalStore } from "@/lib/client/store/global";
+import useModelField from "@/lib/client/hooks/useModelFields";
 
 import ModelFieldComponent from "./ModelField";
-import { useGlobalStore } from "@/lib/client/store/global";
 
 type Props = {
   modelData: ModelData;
@@ -25,15 +25,19 @@ const Model = ({
   onSelectingModel,
   onDeletingModel,
 }: Props) => {
-  const [showFieldInput, setShowFieldInput] = useState(false);
   const { setOpenedModal } = useGlobalStore((state) => state);
-  const { updateModelField, deleteModelField, createModelField } =
-    useModelField();
-  const inputRef = useRef<HTMLInputElement>(null);
+  const { createModelField } = useModelField();
 
-  useEffect(() => {
-    inputRef.current?.focus();
-  }, [showFieldInput]);
+  function addFieldInput() {
+    createModelField(modelData.id, {
+      id: uuidV4(),
+      fieldId: "",
+      name: "",
+      parentId: modelData.id,
+      dataType: "String",
+      validations: {},
+    });
+  }
 
   return (
     <div
@@ -70,32 +74,16 @@ const Model = ({
           !isSelectedModel ? "h-0" : "h-auto py-2"
         }`}
       >
-        {modelData?.fields?.map((field) => (
-          <ModelFieldComponent
-            key={field.id}
-            data={field}
-            modelId={modelData.id}
-            updateModelField={updateModelField}
-            deleteModelField={deleteModelField}
-          />
+        {modelData?.fields?.map((fieldUUID: string) => (
+          <ModelFieldComponent key={fieldUUID} fieldUUID={fieldUUID} />
         ))}
         {/* END: fields */}
-
-        {/* START: Input for creating a new field */}
-        {showFieldInput ? (
-          <ModelFieldComponent
-            modelId={modelData.id}
-            setShowFieldInput={setShowFieldInput}
-            createModelField={createModelField}
-          />
-        ) : null}
-        {/* END: Input for creating a new field */}
       </div>
 
       {/* START: Footer */}
       <div className="flex justify-between">
         <button
-          onClick={() => setShowFieldInput(true)}
+          onClick={addFieldInput}
           className="text-xs flex items-center justify-center text-violet-600 rounded-md border border-violet-500 px-2 py-1"
         >
           <PlusSmallIcon strokeWidth={1} className="w-5 h-5" />

@@ -15,7 +15,10 @@ export type Actions = {
   addRelation: (payload: ModelRelation) => void;
   updateRelation: (fieldId: string, payload: ModelRelation) => void;
   removeRelationFromStore: (fieldId: string) => void;
-  removeRelationTarget: (sourceFieldId: string) => void;
+  disconnectRelationTargetModel: (
+    sourceFieldId: string,
+    targetModelId: string
+  ) => void;
 };
 
 export const useModelRelationStore = create(
@@ -31,10 +34,10 @@ export const useModelRelationStore = create(
         return state;
       });
     },
-    updateRelation(fieldId, payload) {
+    updateRelation(sourceFieldId, payload) {
       set((state) => {
-        if (!state.data[fieldId]) return;
-        state.data[fieldId] = payload;
+        if (!state.data[sourceFieldId]) return;
+        state.data[sourceFieldId] = payload;
       });
     },
     removeRelationFromStore(fieldId) {
@@ -43,10 +46,12 @@ export const useModelRelationStore = create(
         state.relationIds = state.relationIds.filter((id) => id !== fieldId);
       });
     },
-    removeRelationTarget(sourceFieldId) {
+    disconnectRelationTargetModel(sourceFieldId, targetModelId) {
       set((state) => {
         if (state.data[sourceFieldId]) {
-          state.data[sourceFieldId].targetModelId = null;
+          state.data[sourceFieldId].connectedTargetModels = state.data[
+            sourceFieldId
+          ].connectedTargetModels.filter((id) => id !== targetModelId);
         }
       });
     },

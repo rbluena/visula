@@ -9,13 +9,15 @@ import {
   Connection,
 } from "reactflow";
 import { useModelRelationStore } from "@/lib/client/store/relations";
+import { ModelRelation } from "@/types";
+import getEdgeId from "../common/getEdgeId";
 
 export function useModelsRelation() {
-  const { setEdges, deleteElements } = useReactFlow();
+  const { setEdges, deleteElements, getEdge } = useReactFlow();
   const {
     updateRelation,
     removeRelationFromStore,
-    removeRelationTarget,
+    disconnectRelationTargetModel,
     relationIds,
     data,
   } = useModelRelationStore((state) => state);
@@ -26,41 +28,47 @@ export function useModelsRelation() {
   }, []);
 
   const onNodeConnect = useCallback(
-    (conn: Connection) => {
+    (edge: Edge) => {
       // Add edge to the canvas
       setEdges((edges) => {
-        // Avoid connection field to its parent model
-        if (conn.target === conn.source) {
+        // Avoid connecting a field to its own parent model
+        if (edge.target === edge.source) {
           return edges;
         }
 
-        const sourceFieldId = conn.sourceHandle || null;
-        const targetModelId = conn.targetHandle as string;
+        const sourceFieldId = edge.sourceHandle || null;
+        const targetModelId = edge.targetHandle as string;
 
         if (sourceFieldId?.length) {
-          const relationData = { ...data[sourceFieldId], targetModelId };
+          const relationData = {
+            ...data[sourceFieldId],
+          } as ModelRelation;
+
+          const uniqueSet = new Set([
+            ...(relationData.connectedTargetModels || []),
+            targetModelId,
+          ]);
+
+          relationData.connectedTargetModels = Array.from(uniqueSet);
 
           updateRelation(sourceFieldId, relationData);
 
-          const edge = {
-            ...conn,
-            type: "smoothstep",
-            interactionWidth: 25,
-            style: {
-              strokeWidth: 2.5,
-              stroke: "#08a3fa",
-            },
-            label: relationData.hasMany ? "Has many" : "Has one",
-            labelBgPadding: [8, 4],
-            labelBgBorderRadius: 8,
-            labelBgStyle: {
-              fill: "#08a3fa",
-              fillOpacity: 0.7,
-            },
-            labelStyle: {
-              color: "#ffffff",
-            },
-          } as Edge;
+          edge.type = "smoothstep";
+          edge.interactionWidth = 25;
+          edge.style = {
+            strokeWidth: 2.5,
+            stroke: "#08a3fa",
+          };
+          edge.label = relationData.hasMany ? "Has many" : "Has one";
+          edge.labelBgPadding = [8, 4];
+          edge.labelBgBorderRadius = 8;
+          edge.labelBgStyle = {
+            fill: "#08a3fa",
+            fillOpacity: 0.7,
+          };
+          edge.labelStyle = {
+            color: "#ffffff",
+          };
 
           if (relationData.hasMany) {
             edge.markerEnd = {
@@ -71,12 +79,7 @@ export function useModelsRelation() {
             };
           }
 
-          return addEdge(
-            edge,
-            // One field should only be connected to one model,
-            // Now replacing one model to the other.
-            edges.filter((item) => item.sourceHandle !== conn.sourceHandle)
-          );
+          return addEdge(edge, edges);
         }
 
         return edges;
@@ -89,15 +92,33 @@ export function useModelsRelation() {
     (oldEdge: Edge, newConnection: Connection) => {
       edgeUpdateSuccessful.current = true;
 
-      const sourceFieldId = oldEdge.sourceHandle || "";
-      const targetModelId = newConnection.target;
+      const oldSourceFieldId = oldEdge?.sourceHandle || "";
+      const oldTargetModelId = oldEdge?.targetHandle || "";
+      const targetModelId = newConnection.targetHandle;
 
-      const relationData = { ...data[sourceFieldId], targetModelId };
-      updateRelation(sourceFieldId, relationData);
+      const newEdgeId = getEdgeId(newConnection);
 
-      setEdges((els) => updateEdge(oldEdge, newConnection, els));
+      if (targetModelId?.length && !getEdge(newEdgeId)) {
+        const relationData: ModelRelation = {
+          ...data[oldSourceFieldId],
+        };
+
+        // Maintaining uniquiness with target IDs
+        relationData.connectedTargetModels = Array.from(
+          new Set([
+            ...(relationData.connectedTargetModels || []).filter(
+              (id) => id !== oldTargetModelId
+            ),
+            targetModelId,
+          ])
+        );
+
+        updateRelation(oldSourceFieldId, relationData);
+
+        setEdges((els) => updateEdge(oldEdge, newConnection, els));
+      }
     },
-    [setEdges, data, updateRelation]
+    [setEdges, data, updateRelation, getEdge]
   );
 
   const onEdgeUpdateEnd = useCallback(
@@ -128,19 +149,20 @@ export function useModelsRelation() {
     (edges: Edge[]) => {
       if (edges.length) {
         edges.forEach((edge: Edge) => {
-          const sourceHandle = edge.sourceHandle || "";
-          removeRelationTarget(sourceHandle);
+          const sourceFieldId = edge.sourceHandle || "";
+          const targetModelId = edge.targetHandle || "";
+          disconnectRelationTargetModel(sourceFieldId, targetModelId);
         });
       }
     },
-    [removeRelationTarget]
+    [disconnectRelationTargetModel]
   );
 
   // Check connections
   function checkFieldIsConnected(sourceFieldId: string) {
     const relationData = data[sourceFieldId];
 
-    if (relationData && relationData.targetModelId?.length) {
+    if (relationData && relationData.connectedTargetModels.length > 0) {
       // Relational field is connected, we return the relationalData
       return relationData;
     }
@@ -151,7 +173,9 @@ export function useModelsRelation() {
   function checkTargetModelIsConnected(modelId: string) {
     return relationIds
       .map((fieldId) => ({ ...data[fieldId] }))
-      .find((relationData) => relationData.targetModelId === modelId);
+      .find((relationData) =>
+        relationData.connectedTargetModels.includes(modelId)
+      );
   }
 
   return {
