@@ -1,14 +1,8 @@
 // /* eslint-disable react-hooks/exhaustive-deps */
 import { useCallback, useRef } from "react";
-import {
-  addEdge,
-  updateEdge,
-  useReactFlow,
-  Edge,
-  MarkerType,
-  Connection,
-} from "reactflow";
+import { addEdge, updateEdge, useReactFlow, Edge, Connection } from "reactflow";
 import { useModelRelationStore } from "@/lib/client/store/relations";
+import getStyledEdge from "../common/getStyledEdge";
 import { ModelRelation } from "@/types";
 import getEdgeId from "../common/getEdgeId";
 
@@ -52,34 +46,10 @@ export function useModelsRelation() {
           relationData.connectedTargetModels = Array.from(uniqueSet);
 
           updateRelation(sourceFieldId, relationData);
+          const styledEdge = getStyledEdge(edge);
+          styledEdge.label = relationData.hasMany ? "Has many" : "Has one";
 
-          edge.type = "smoothstep";
-          edge.interactionWidth = 25;
-          edge.style = {
-            strokeWidth: 2.5,
-            stroke: "#08a3fa",
-          };
-          edge.label = relationData.hasMany ? "Has many" : "Has one";
-          edge.labelBgPadding = [8, 4];
-          edge.labelBgBorderRadius = 8;
-          edge.labelBgStyle = {
-            fill: "#08a3fa",
-            fillOpacity: 0.7,
-          };
-          edge.labelStyle = {
-            color: "#ffffff",
-          };
-
-          if (relationData.hasMany) {
-            edge.markerEnd = {
-              type: MarkerType.ArrowClosed,
-              height: 10,
-              width: 10,
-              color: "#08a3fa",
-            };
-          }
-
-          return addEdge(edge, edges);
+          return addEdge(styledEdge, edges);
         }
 
         return edges;

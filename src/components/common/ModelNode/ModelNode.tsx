@@ -24,13 +24,10 @@ const ModelNode = ({ id, name, modelId }: Props) => {
   const fieldsData = getModelFields(modelFieldIds);
 
   return (
-    <div className="bg-white rounded-md w-[230px] shadow-md divide-y divide-indigo-200 border-2 active:border-indigo-500 border-gray-200 model-node__wrapper">
-      {/* <NodeToolbar position={Position.Top}></NodeToolbar> */}
-
+    <div className="bg-white rounded-md w-[230px] shadow-md divide-y divide-indigo-200 border-2 active:border-indigo-100 border-gray-200 model-node__wrapper">
       {/* START: Node header */}
       <div className="px-2 py-3 flex items-center justify-between">
         <div className="pl-2">
-          {/* <TableCellsIcon strokeWidth={1} className="text-lg w-6 h-6" /> */}
           <span className="block leading-4 text-[16px]">{name}</span>
           <span className="block text-[10px] text-slate-500">{modelId}</span>
         </div>
