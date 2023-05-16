@@ -27,21 +27,23 @@ const MainLayout = ({
       </Head>
 
       {/* {showHeader ? <Header /> : <DashboardTopBar />} */}
-      <main className={`bg-gray-50 ${inter.variable}`}>{children}</main>
-      <Toaster
-        toastOptions={{
-          position: "bottom-left",
-          className: "border-b border-b-green-400",
-          success: {
-            duration: 3000,
-            className: "border-b-2 border-b-green-400",
-          },
-        }}
-        containerClassName="w-[60%]"
-      />
+      <main className={`bg-gray-50 ${inter.variable}`}>
+        {children}
+        <Toaster
+          toastOptions={{
+            position: "bottom-left",
+            className: "border-b border-b-green-400",
+            success: {
+              duration: 3000,
+              className: "border-b-2 border-b-green-400",
+            },
+          }}
+          containerClassName="w-[60%]"
+        />
 
-      <MigrationModal />
-      <ProjectSettingsModal />
+        <MigrationModal />
+        <ProjectSettingsModal />
+      </main>
     </>
   );
 };

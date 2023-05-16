@@ -18,13 +18,22 @@ const NodeField = ({ field, checkFieldIsConnected }: Props) => {
         </span>
       </div>
 
+      {/* DON'T REMOVE THIS */}
+      <Handle
+        id={"dummy"}
+        type="source"
+        position={Position.Right}
+        isConnectableEnd={false}
+        hidden
+      />
+
       <Handle
         id={field.id}
         style={{
           display: field.dataType !== "Relation" ? "none" : "block",
         }}
         className={`inline-block absolute right-[-14px] ${
-          fieldConnection ? "bg-blue-500" : "bg-slate-500"
+          fieldConnection ? "bg-blue-500" : "bg-slate-500 "
         } border border-green-300 rounded-full w-3 h-3  model-node__wrapper`}
         type="source"
         position={Position.Right}

@@ -8,45 +8,36 @@ export type UserProject = {
   projectSetting: Record<string, any>;
 };
 
-export type ModelID = {
-  id: string;
-  unique?: string;
-  name: string;
-};
-
-export type ModelField = {
-  kind: "field";
-  id: string;
-  fieldID: string;
-  name: string;
-  description?: string;
-  comment?: string;
-  dataType: DataType;
-  hasManyAssets?: boolean; // If dataType is media, media can accept one or more than one asset
-  relationHasMany?: boolean; // If dataType is media, media can accept one or more than one asset
-  validations: Validations;
-};
-
-export type ModelDetails = Node & {
-  kind: "model";
-  id: string;
-  unique?: string;
-  modelId?: string;
-  name: string;
-  selected: Boolean;
-  description?: string;
-  comment?: string;
-  fields: ModelField[];
-};
-
 export type ModelData = {
   id: string;
   modelId: string;
   name: string;
   description?: string;
   comment?: string;
-  fields: ModelField[];
+  fields: string[];
   position: XYPosition;
+};
+
+export type ModelField = {
+  id: string;
+  fieldId: string;
+  parentId: string; // Model uuid
+  name: string;
+  comment?: string;
+  dataType: DataType;
+  isUnique?: boolean;
+  isRequired?: boolean;
+  hasManyAssets?: boolean;
+  relationHasMany?: boolean;
+  validations: Validations;
+};
+
+export type ModelRelation = {
+  sourceModelId: string;
+  sourceFieldId: string;
+  connectedTargetModels: string[];
+  hasMany: boolean;
+  label?: string;
 };
 
 export type ModelNode = Node & ModelData;
@@ -70,15 +61,7 @@ export type ValidationItem = {
   name: string;
   description?: string;
   default: string | boolean;
-  type: "text" | "number" | "boolean" | "options";
-};
-
-export type ModelRelation = {
-  sourceModelId: string;
-  sourceFieldId: string;
-  targetModelId: string | null;
-  hasMany: boolean;
-  label?: string;
+  type: "text" | "number" | "boolean" | "options" | "date";
 };
 
 export type Validations = any;

@@ -69,14 +69,13 @@ export const getServerSideProps: GetServerSideProps<{
           permanent: false,
           destination: `/try?id=${project.id}`,
         },
-        props: {},
       };
     }
   } catch (error) {
     return {
-      redirect: {
-        permanent: false,
-        destination: `/try`,
+      props: {
+        project: null,
+        error: "Failed to load project.",
       },
     };
   }

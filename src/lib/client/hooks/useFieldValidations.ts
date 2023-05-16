@@ -16,6 +16,6 @@ export default function useFieldValidations(dataType: DataType) {
   return {
     validationKeys,
     fieldValidationsDefaultValues,
-    validations: fieldInputValidations,
+    validationInputsData: fieldInputValidations,
   };
 }

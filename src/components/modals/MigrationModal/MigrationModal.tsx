@@ -3,8 +3,8 @@ import Modal from "@/components/common/Modal";
 import * as ToggleGroupComponent from "@radix-ui/react-toggle-group";
 import { useGlobalStore } from "@/lib/client/store/global";
 import { useModelRelationStore } from "@/lib/client/store/relations";
-import { useNodesStore } from "@/lib/client/store/nodes";
 import Spinner from "@/components/common/Spinner";
+import { useModelStore } from "@/lib/client/store/models";
 
 const MigrationModal = () => {
   const {
@@ -14,7 +14,7 @@ const MigrationModal = () => {
     openGeneratedCode,
   } = useGlobalStore((state) => state);
   const relations = useModelRelationStore((state) => state.data);
-  const models = useNodesStore((state) => state.data);
+  const models = useModelStore((state) => state.data);
   const [showSpinner, setShowSpinner] = useState(false);
   const [active, setActive] = useState<string | "contentful" | "sanity" | null>(
     null
@@ -43,8 +43,6 @@ const MigrationModal = () => {
       setGeneratedCode("");
       setShowSpinner(false);
       setActive(null);
-
-      // console.log(error);
     }
   }
 

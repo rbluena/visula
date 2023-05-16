@@ -13,10 +13,10 @@ import {
 import { useReactFlow } from "reactflow";
 import { v4 as uuidV4 } from "uuid";
 import { ModelData } from "@/types";
-import { useNodesStore } from "@/lib/client/store/nodes";
 import { useGlobalStore } from "@/lib/client/store/global";
 import { useModelRelationStore } from "@/lib/client/store/relations";
 import useModels from "@/lib/client/hooks/useModels";
+import { useModelStore } from "@/lib/client/store/models";
 
 type Props = {
   children: ReactNode;
@@ -25,7 +25,7 @@ type Props = {
 const ContextMenuComponent = ({ children }: Props) => {
   const { setMigrationModal } = useGlobalStore((state) => state);
   const { createModel } = useModels();
-  const { data: models } = useNodesStore((state) => state);
+  const { data: models } = useModelStore((state) => state);
   const relations = useModelRelationStore((state) => state.data);
   const flowInstance = useReactFlow();
   const inputRef = useRef<HTMLDivElement>(null);
