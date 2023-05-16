@@ -30,6 +30,7 @@ export const useFieldsStore = create(
       updateField(payload) {
         set((state) => {
           state.data[payload.id] = payload;
+          return state;
         });
       },
       deleteField(id) {

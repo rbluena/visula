@@ -61,7 +61,7 @@ export type ValidationItem = {
   name: string;
   description?: string;
   default: string | boolean;
-  type: "text" | "number" | "boolean" | "options";
+  type: "text" | "number" | "boolean" | "options" | "date";
 };
 
 export type Validations = any;

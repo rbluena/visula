@@ -63,7 +63,6 @@ export const validations: Record<DataType, string[]> = {
   Boolean: ["required", "localized"],
   Location: ["required", "localized"],
   Object: ["required", "localized"],
-  // Array: ["required", "min", "max", "localized"],
   List: ["required", "min", "max", "localized"],
   Media: ["required", "min", "max", "localized"], // Allowed media types
   Relation: ["required", "localized"],
@@ -88,7 +87,35 @@ export function getInputFieldValidationsData(fieldDataType: DataType) {
 
   const fieldInputValidations = validationKeys.map((key: string) => {
     // @ts-ignore
-    return validationType[key] as ValidationItem;
+    const inputValidationData = validationType[key] as ValidationItem;
+
+    if (fieldDataType === "Date" && (key === "max" || key === "min")) {
+      inputValidationData.type = "date";
+
+      if (key === "min") {
+        inputValidationData.description =
+          "Minimum date range can be entered by user";
+      }
+
+      if (key === "min") {
+        inputValidationData.description =
+          "Maximum date range can be entered by user";
+      }
+    }
+
+    if (fieldDataType === "Media") {
+      if (key === "min") {
+        inputValidationData.description =
+          "Minimum file size in bytes that can be uploaded";
+      }
+
+      if (key === "max") {
+        inputValidationData.description =
+          "Maximum file size in bytes that can be uploaded";
+      }
+    }
+
+    return inputValidationData;
   });
 
   return {

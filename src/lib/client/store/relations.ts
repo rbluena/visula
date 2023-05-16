@@ -3,9 +3,6 @@ import { create } from "zustand";
 import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
-// TODO: On the right pane, user should be able to toggle whether to show one model at a time or to show
-// todo: all list of models
-
 export type ModelRelationState = {
   activeRelationId: string | null;
   relationIds: string[];
@@ -31,9 +28,11 @@ export const useModelRelationStore = create(
 
       addRelation(payload) {
         set((state) => {
+          if (!state.data[payload.sourceFieldId]) {
+            state.relationIds.push(payload.sourceFieldId);
+          }
+
           state.data[payload.sourceFieldId] = payload;
-          state.relationIds.push(payload.sourceFieldId);
-          return state;
         });
       },
       updateRelation(sourceFieldId, payload) {

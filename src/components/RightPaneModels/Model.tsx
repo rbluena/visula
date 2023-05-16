@@ -87,7 +87,7 @@ const Model = ({
           className="text-xs flex items-center justify-center text-violet-600 rounded-md border border-violet-500 px-2 py-1"
         >
           <PlusSmallIcon strokeWidth={1} className="w-5 h-5" />
-          New field
+          Add field
         </button>
 
         <div className="space-x-1">

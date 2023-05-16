@@ -41,11 +41,15 @@ export default function useModelField() {
     }));
   }
 
+  function updateFieldValidation(value: any) {
+    console.log(value);
+  }
+
   return {
     updateModelField,
     createModelField,
     deleteModelField,
     getModelFields,
-    // updateFieldValidation,
+    updateFieldValidation,
   };
 }
