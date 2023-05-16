@@ -1,5 +1,6 @@
 import { ModelField } from "@/types";
 import { create } from "zustand";
+import { createJSONStorage, persist } from "zustand/middleware";
 import { immer } from "zustand/middleware/immer";
 
 type FieldsState = {
@@ -15,31 +16,38 @@ type Actions = {
 };
 
 export const useFieldsStore = create(
-  immer<FieldsState & Actions>((set) => ({
-    data: {},
-    activeFieldId: null,
+  persist(
+    immer<FieldsState & Actions>((set) => ({
+      data: {},
+      activeFieldId: null,
 
-    // Actions
-    addField(payload) {
-      set((state) => {
-        state.data[payload.id] = payload;
-      });
-    },
-    updateField(payload) {
-      set((state) => {
-        state.data[payload.id] = payload;
-      });
-    },
-    deleteField(id) {
-      set((state) => {
-        delete state.data[id];
-        state.activeFieldId = null;
-      });
-    },
-    setActiveField(id) {
-      set((state) => {
-        state.activeFieldId = id;
-      });
-    },
-  }))
+      // Actions
+      addField(payload) {
+        set((state) => {
+          state.data[payload.id] = payload;
+        });
+      },
+      updateField(payload) {
+        set((state) => {
+          state.data[payload.id] = payload;
+        });
+      },
+      deleteField(id) {
+        set((state) => {
+          delete state.data[id];
+          state.activeFieldId = null;
+        });
+      },
+      setActiveField(id) {
+        set((state) => {
+          state.activeFieldId = id;
+        });
+      },
+    })),
+    {
+      name: "visula-schema-fields",
+      storage: createJSONStorage(() => sessionStorage),
+      skipHydration: true,
+    }
+  )
 );

@@ -1,5 +1,6 @@
 import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
+import { persist, createJSONStorage } from "zustand/middleware";
 import { ModelData } from "@/types";
 
 export type ModelsState = {
@@ -18,47 +19,54 @@ export type Actions = {
 };
 
 export const useModelStore = create(
-  immer<ModelsState & Actions>((set) => ({
-    modelIds: [],
-    data: {},
-    activeModelId: null,
+  persist(
+    immer<ModelsState & Actions>((set) => ({
+      modelIds: [],
+      data: {},
+      activeModelId: null,
 
-    // Actions
-    addModel(payload) {
-      set((state) => {
-        state.data[payload.id] = payload;
-        state.modelIds.push(payload.id);
-      });
-    },
-    setActiveModel(id) {
-      set((state) => {
-        state.activeModelId = id;
-        return state;
-      });
-    },
-    updateModel(payload) {
-      set((state) => {
-        state.data[payload.id] = payload;
-      });
-    },
-    deleteModel(id) {
-      set((state) => {
-        delete state.data[id];
-        state.modelIds = state.modelIds.filter((item) => item !== id);
-        state.activeModelId = null;
-      });
-    },
-    onFieldCreated(modelId, fieldId) {
-      set((state) => {
-        state.data[modelId].fields.push(fieldId);
-      });
-    },
-    onFieldDeleted(modelId, fieldId) {
-      set((state) => {
-        state.data[modelId].fields = state.data[modelId].fields.filter(
-          (item) => item !== fieldId
-        );
-      });
-    },
-  }))
+      // Actions
+      addModel(payload) {
+        set((state) => {
+          state.data[payload.id] = payload;
+          state.modelIds.push(payload.id);
+        });
+      },
+      setActiveModel(id) {
+        set((state) => {
+          state.activeModelId = id;
+          return state;
+        });
+      },
+      updateModel(payload) {
+        set((state) => {
+          state.data[payload.id] = payload;
+        });
+      },
+      deleteModel(id) {
+        set((state) => {
+          delete state.data[id];
+          state.modelIds = state.modelIds.filter((item) => item !== id);
+          state.activeModelId = null;
+        });
+      },
+      onFieldCreated(modelId, fieldId) {
+        set((state) => {
+          state.data[modelId].fields.push(fieldId);
+        });
+      },
+      onFieldDeleted(modelId, fieldId) {
+        set((state) => {
+          state.data[modelId].fields = state.data[modelId].fields.filter(
+            (item) => item !== fieldId
+          );
+        });
+      },
+    })),
+    {
+      name: "visula-schema-models",
+      storage: createJSONStorage(() => sessionStorage),
+      skipHydration: true,
+    }
+  )
 );
