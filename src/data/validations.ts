@@ -27,7 +27,7 @@ export const localized = {
 export const min = {
   id: "min",
   name: "Min",
-  description: "",
+  description: "Minimum length of characters",
   default: "",
   type: "number",
 };
@@ -35,7 +35,7 @@ export const min = {
 export const max = {
   id: "max",
   name: "Max",
-  description: "",
+  description: "Maximum length of characters",
   default: "",
   type: "number",
 };
@@ -89,17 +89,27 @@ export function getInputFieldValidationsData(fieldDataType: DataType) {
     // @ts-ignore
     const inputValidationData = validationType[key] as ValidationItem;
 
-    if (fieldDataType === "Date" && (key === "max" || key === "min")) {
-      inputValidationData.type = "date";
-
+    if (fieldDataType === "Int" || fieldDataType === "Decimal") {
       if (key === "min") {
-        inputValidationData.description =
-          "Minimum date range can be entered by user";
+        inputValidationData.description = "Minimum value a user can enter";
       }
 
+      if (key === "max") {
+        inputValidationData.description = "Maximum value a user can enter";
+      }
+    }
+
+    if (fieldDataType === "Date") {
       if (key === "min") {
+        inputValidationData.type = "date";
         inputValidationData.description =
-          "Maximum date range can be entered by user";
+          "Minimum date value can be entered by user";
+      }
+
+      if (key === "max") {
+        inputValidationData.type = "date";
+        inputValidationData.description =
+          "Maximum date value can be entered by user";
       }
     }
 
@@ -112,6 +122,18 @@ export function getInputFieldValidationsData(fieldDataType: DataType) {
       if (key === "max") {
         inputValidationData.description =
           "Maximum file size in bytes that can be uploaded";
+      }
+    }
+
+    if (fieldDataType === "List") {
+      if (key === "min") {
+        inputValidationData.description =
+          "Minimum number of items a list can contain";
+      }
+
+      if (key === "max") {
+        inputValidationData.description =
+          "Maximum number of items a list can contain";
       }
     }
 

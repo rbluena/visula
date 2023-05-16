@@ -6,6 +6,7 @@ import * as Popover from "@radix-ui/react-popover";
 import { Controller, useForm } from "react-hook-form";
 import { DataType, ValidationItem } from "@/types";
 import { Switch } from "@/components/form";
+import { InformationCircleIcon } from "@heroicons/react/24/outline";
 
 type FormProps = any;
 
@@ -107,24 +108,27 @@ const ValidationsPopover = ({
               required
               pattern="^\S*$"
             />
-            <p className="text-slate-700 text-[14px] leading-[19px] font-medium mb-1">
+            <p className="text-slate-700 text-[14px] font-medium">
               Validations
             </p>
 
             {/* START: Creating validations */}
-            <div className="w-full flex flex-col gap-1.5 pr-2 py-2">
+            <div className="w-full flex flex-col gap-2 pr-2 py-2">
               {validationInputsData.map((validationInput) => {
                 return (
                   <fieldset
                     key={validationInput.id}
-                    className="flex gap-5 items-center"
+                    className="flex gap-2 items-center"
                   >
                     <label
-                      className="text-[13px] text-violet-700 w-[75px]"
+                      className="text-xs text-violet-700 w-[75px] inline-flex gap-1"
                       htmlFor={validationInput.id}
                       title={validationInput.description}
                     >
                       {validationInput.name}
+                      <span className="inline-block">
+                        <InformationCircleIcon className="h-5 w-5 inline-block" />
+                      </span>
                     </label>
 
                     {validationInput.type === "boolean" ? (
@@ -168,7 +172,7 @@ const ValidationsPopover = ({
           </form>
 
           {/* START: Main content */}
-          {/* <Popover.Arrow className="fill-white" /> */}
+          <Popover.Arrow className="fill-white" />
         </Popover.Content>
       </Popover.Portal>
       {/* START: popover content container */}
