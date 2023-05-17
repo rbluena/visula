@@ -17,6 +17,8 @@ import { useGlobalStore } from "@/lib/client/store/global";
 import { useModelRelationStore } from "@/lib/client/store/relations";
 import useModels from "@/lib/client/hooks/useModels";
 import { useModelStore } from "@/lib/client/store/models";
+import { saveSchemaHistoryService } from "@/services/schemas";
+import { useRouter } from "next/router";
 
 type Props = {
   children: ReactNode;
@@ -32,6 +34,8 @@ const ContextMenuComponent = ({ children }: Props) => {
   const clientPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const [menuItems, setMenuItems] = useState<any[]>([]);
   const modelIdRef = useRef();
+
+  const { query } = useRouter();
 
   function onContextMenu(evt: MouseEvent<HTMLElement>) {
     clientPosRef.current.x = evt.clientX;
@@ -59,7 +63,7 @@ const ContextMenuComponent = ({ children }: Props) => {
           key: 23000,
           label: "Add",
           action: createNewModel,
-          shortcut: "⌘+N",
+          shortcut: "⌘+Shift+N",
           type: "item",
         },
         {
@@ -75,15 +79,22 @@ const ContextMenuComponent = ({ children }: Props) => {
           type: "label",
         },
         {
+          key: 230232300,
+          label: "Save",
+          action: saveSchema,
+          shortcut: "⌘+Shift+S",
+          type: "item",
+        },
+        {
           key: 236550990,
-          label: "Create migration",
+          label: "Migration",
           action: generateMigrationCode,
           shortcut: "",
           type: "item",
         },
         {
           key: 230990,
-          label: "Deploy schema",
+          label: "Deploy",
           // action: openMigrationModal,
           action: deploySchemaToContentful,
           shortcut: "",
@@ -164,6 +175,11 @@ const ContextMenuComponent = ({ children }: Props) => {
       y: clientPosRef.current.y - canvasViewPort.y,
     };
 
+    /**
+     *
+     * @param event
+     * @returns
+     */
     const onInputKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
       evt.preventDefault();
       const modelName = inputRef.current?.innerText as string;
@@ -171,7 +187,7 @@ const ContextMenuComponent = ({ children }: Props) => {
       const isEscapeKey = event.key.toLowerCase() === "escape";
       const isEnterKey = event.key.toLowerCase() === "enter";
 
-      if (isEscapeKey || (isBackspaceKey && modelName?.length === 1)) {
+      if (isEscapeKey || (isBackspaceKey && modelName?.length === 0)) {
         setNodes((nodes) => nodes.filter((item) => item.id !== "newnodeinput"));
         return;
       }
@@ -209,6 +225,34 @@ const ContextMenuComponent = ({ children }: Props) => {
         ),
       },
     });
+  }
+
+  /**
+   * Add them senses to everyone
+   */
+  async function saveSchema() {
+    try {
+      const schema = {
+        models: JSON.parse(
+          sessionStorage.getItem("visula-schema-models") || "{}"
+        )?.state?.data,
+        fields: JSON.parse(
+          sessionStorage.getItem("visula-schema-fields") || "{}"
+        )?.state?.data,
+        relations: JSON.parse(
+          sessionStorage.getItem("visula-schema-relations") || "{}"
+        )?.state?.data,
+      };
+
+      await saveSchemaHistoryService(query.id as string, {
+        name: new Date().toISOString(),
+        schema,
+      });
+
+      console.log(schema);
+    } catch (error) {
+      console.log(error);
+    }
   }
 
   function downloadImage(
@@ -255,9 +299,10 @@ const ContextMenuComponent = ({ children }: Props) => {
     };
   }
 
+  /**
+   *
+   */
   function openMigrationModal() {
-    // const notify = () => toast("Please provide access token and space ID.");
-    // notify();
     setMigrationModal(true);
   }
 

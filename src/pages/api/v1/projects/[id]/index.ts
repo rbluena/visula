@@ -86,7 +86,7 @@ async function PUT(req: NextApiRequest, res: NextApiResponse) {
       data: project,
     });
   } catch (error) {
-    console.log(`Error: `, error);
+    return res.status(400).json({ message: "Error occured!" });
   }
 }
 

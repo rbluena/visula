@@ -46,7 +46,8 @@ model ProjectSchema {
   id                 String   @id @default(cuid())
   name               String?
   versionDescription String?  @db.Text
-  checksum           String
+  tag                String?
+  checksum           String   @db.Text
   project            Project  @relation(fields: [projectId], references: [id])
   projectId          String
   createdAt          DateTime @default(now())

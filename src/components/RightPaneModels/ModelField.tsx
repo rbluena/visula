@@ -49,7 +49,7 @@ const ModelFieldComponent = ({ fieldUUID }: Props) => {
       });
     }
 
-    if (prevDataType === "Relation") {
+    if (prevDataType === "Relation" && updates.dataType !== "Relation") {
       onDeletingConnectedField(data.id);
     }
   }
@@ -106,6 +106,7 @@ const ModelFieldComponent = ({ fieldUUID }: Props) => {
               className="bg-slate-50 text-xs leading-tight p-1.5 border border-slate-300 rounded-md"
               onChange={(evt) =>
                 updateFieldData({
+                  dataType: "Relation",
                   relationHasMany: evt.target.value === "hasOne" ? false : true,
                 })
               }

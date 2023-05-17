@@ -9,13 +9,14 @@ export function useProjectInit(project: UserProject) {
 
   useEffect(() => {
     addProject(project);
-    setActiveProject(project.id);
+    setActiveProject(project?.id);
 
-    if (project.id) {
+    if (project?.id) {
       // TODO: Load all project's models stored in the database
       // TODO: AND template models
-      setGlobalLoader(false);
+    } else {
     }
+    setGlobalLoader(false);
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project]);

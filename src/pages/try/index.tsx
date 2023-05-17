@@ -73,10 +73,7 @@ export const getServerSideProps: GetServerSideProps<{
     }
   } catch (error) {
     return {
-      props: {
-        project: null,
-        error: "Failed to load project.",
-      },
+      notFound: true,
     };
   }
 };
