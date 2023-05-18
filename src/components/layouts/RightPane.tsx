@@ -1,6 +1,7 @@
 import { useState } from "react";
 import RightModelPane from "../RightPaneModels";
 import RightPaneTemplates from "../RightPageTemplates";
+import RightPaneHistory from "../RightPaneHistory";
 import RightPaneGeneratedCode from "../RightPaneGeneratedCode";
 import { ChevronDoubleLeftIcon } from "@heroicons/react/24/outline";
 import { useGlobalStore } from "@/lib/client/store/global";
@@ -10,9 +11,9 @@ const RightPane = () => {
   const [showMultipleModels, setshowMultipleModels] = useState(true);
   const { isGeneratedCodeOpen } = useGlobalStore((state) => state);
 
-  const [paneSwitch, setPaneSwitch] = useState<"models" | "templates" | string>(
-    "models"
-  );
+  const [paneSwitch, setPaneSwitch] = useState<
+    "models" | "templates" | "history" | string
+  >("models");
 
   return (
     <aside
@@ -22,7 +23,9 @@ const RightPane = () => {
     >
       {!isGeneratedCodeOpen ? (
         <div className="min-h-[50px] bg-white border-b border-b-violet-100">
-          {paneSwitch === "models" || paneSwitch === "templates" ? (
+          {paneSwitch === "models" ||
+          paneSwitch === "templates" ||
+          paneSwitch === "history" ? (
             <div className="p-2 px-4 flex items-center justify-between">
               {/* <div>{paneSwitch === "models" ? "Models" : "Templates"}</div> */}
               <select
@@ -31,21 +34,25 @@ const RightPane = () => {
               >
                 <option value="models">Models</option>
                 <option value="templates">Templates</option>
+                <option value="history">History</option>
                 {/* <option value="docume">Documentation</option> */}
               </select>
-              <label
-                className="text-sm flex items-center text-slate-500"
-                htmlFor="miltiple-models"
-              >
-                All models&nbsp;
-                <input
-                  id="miltiple-models"
-                  className="w-5 h-5 rounded"
-                  type="checkbox"
-                  checked={showMultipleModels}
-                  onChange={() => setshowMultipleModels(!showMultipleModels)}
-                />
-              </label>
+
+              {paneSwitch === "models" ? (
+                <label
+                  className="text-sm flex items-center text-slate-500"
+                  htmlFor="miltiple-models"
+                >
+                  All models&nbsp;
+                  <input
+                    id="miltiple-models"
+                    className="w-5 h-5 rounded"
+                    type="checkbox"
+                    checked={showMultipleModels}
+                    onChange={() => setshowMultipleModels(!showMultipleModels)}
+                  />
+                </label>
+              ) : null}
             </div>
           ) : null}
         </div>
@@ -58,6 +65,10 @@ const RightPane = () => {
       ) : null}
       {paneSwitch === "models" && !isGeneratedCodeOpen ? (
         <RightModelPane showMultipleModels={showMultipleModels} />
+      ) : null}
+
+      {paneSwitch === "history" && !isGeneratedCodeOpen ? (
+        <RightPaneHistory />
       ) : null}
 
       <div className="absolute top-0 h-screen w-[60px] left-[-60px] overflow-hidden">
