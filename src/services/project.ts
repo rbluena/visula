@@ -42,7 +42,7 @@ export async function getProjectService(id: string) {
 export async function updateProjectService(
   projectId: string,
   data: any,
-  contentManagementSystem: any = null
+  contentManagementSystems: any = null
 ) {
   const response = await fetch(`/api/v1/projects/${projectId}/`, {
     method: "PUT",
@@ -51,7 +51,7 @@ export async function updateProjectService(
     },
     body: JSON.stringify({
       data,
-      contentManagementSystem,
+      contentManagementSystems,
     }),
   });
 

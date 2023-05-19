@@ -19,7 +19,32 @@ export async function saveSchemaHistoryService(
     body: JSON.stringify(payload),
   });
 
-  console.log(response);
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+
+  const results = await response.json();
+
+  return results.data;
+}
+/**
+ *
+ * @param projectId
+ * @returns
+ */
+export async function getAllShemasService(
+  projectId: string,
+  pagination: any = {}
+) {
+  const response = await fetch(
+    `/api/v1/projects/${projectId}/schemas?${new URLSearchParams(pagination)}`,
+    {
+      method: "GET",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
 
   if (!response.ok) {
     throw new Error(response.statusText);

@@ -1,26 +1,20 @@
+import { getRelativeTime } from "@/lib/client/common/getTimeAgo";
 import {
-  EyeIcon,
-  RectangleGroupIcon,
   TableCellsIcon,
   TagIcon,
   TrashIcon,
-  WindowIcon,
 } from "@heroicons/react/24/outline";
 
 type Props = {
   name: string;
   version?: string;
   description?: string;
-  createdDate: string;
+  createdDate: Date;
 };
 
 const Card = ({ name, version, description = "", createdDate }: Props) => {
   return (
-    <div
-      className={`rounded shadow-sm ${
-        version?.length ? "bg-white" : "bg-white"
-      }`}
-    >
+    <div className={`shadow-sm ${version?.length ? "bg-white" : "bg-white"}`}>
       <div className="px-4 py-2  space-y-2 text-left">
         <div className="flex w-full justify-between">
           <div>
@@ -59,7 +53,9 @@ const Card = ({ name, version, description = "", createdDate }: Props) => {
         </div>
 
         <p className="text-sm font-light max-w-[90%]">{description}</p>
-        <p className="text-xs text-violet-600">{createdDate}</p>
+        <p className="text-xs text-violet-600">
+          {getRelativeTime(createdDate)}
+        </p>
       </div>
     </div>
   );

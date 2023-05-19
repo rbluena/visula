@@ -8,6 +8,17 @@ export type UserProject = {
   projectSetting: Record<string, any>;
 };
 
+export type SchemaData = {
+  id: string;
+  name: string;
+  description?: string;
+  tag?: string;
+  data: string;
+  projectId?: string;
+  createdAt: string;
+  updatedAt?: string;
+};
+
 export type ModelData = {
   id: string;
   modelId: string;

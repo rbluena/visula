@@ -17,6 +17,7 @@ import { useGlobalStore } from "@/lib/client/store/global";
 import { useModelRelationStore } from "@/lib/client/store/relations";
 import useModels from "@/lib/client/hooks/useModels";
 import { useModelStore } from "@/lib/client/store/models";
+import { useHistoryStore } from "@/lib/client/store/history";
 import { saveSchemaHistoryService } from "@/services/schemas";
 import { useRouter } from "next/router";
 
@@ -25,9 +26,12 @@ type Props = {
 };
 
 const ContextMenuComponent = ({ children }: Props) => {
-  const { setMigrationModal } = useGlobalStore((state) => state);
+  const { setMigrationModal, setGlobalLoader } = useGlobalStore(
+    (state) => state
+  );
   const { createModel } = useModels();
   const { data: models } = useModelStore((state) => state);
+  const addSchema = useHistoryStore((state) => state.addSchema);
   const relations = useModelRelationStore((state) => state.data);
   const flowInstance = useReactFlow();
   const inputRef = useRef<HTMLDivElement>(null);
@@ -231,27 +235,31 @@ const ContextMenuComponent = ({ children }: Props) => {
    * Add them senses to everyone
    */
   async function saveSchema() {
+    setGlobalLoader(true);
     try {
       const schema = {
         models: JSON.parse(
           sessionStorage.getItem("visula-schema-models") || "{}"
-        )?.state?.data,
+        )?.state,
         fields: JSON.parse(
           sessionStorage.getItem("visula-schema-fields") || "{}"
-        )?.state?.data,
+        )?.state,
         relations: JSON.parse(
           sessionStorage.getItem("visula-schema-relations") || "{}"
-        )?.state?.data,
+        )?.state,
       };
 
-      await saveSchemaHistoryService(query.id as string, {
+      const responseData = await saveSchemaHistoryService(query.id as string, {
         name: new Date().toISOString(),
         schema,
       });
 
-      console.log(schema);
+      addSchema(responseData);
+
+      setGlobalLoader(false);
     } catch (error) {
       console.log(error);
+      setGlobalLoader(false);
     }
   }
 
