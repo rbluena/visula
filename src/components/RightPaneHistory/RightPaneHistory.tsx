@@ -3,7 +3,10 @@ import { useEffect, useState } from "react";
 import Card from "./Card";
 import { useHistoryStore } from "@/lib/client/store/history";
 import Spinner from "../common/Spinner/Spinner";
-import { getAllShemasService } from "@/services/schemas";
+import {
+  deleteSchemaHistoryService,
+  getAllShemasService,
+} from "@/services/schemas";
 import { useRouter } from "next/router";
 
 // TODO: Options to "Diff"ing or checking the changes from one schema to another
@@ -16,13 +19,18 @@ const RightPaneHistory = () => {
   }>({ pagination: { page: 1, hasMore: true } });
 
   const { query } = useRouter();
-  const { resetState, appendLoadedSchemas } = useHistoryStore((state) => state);
+  const { resetState, appendLoadedSchemas, removeSchema } = useHistoryStore(
+    (state) => state
+  );
   const historyData = useHistoryStore((state) => {
     return state.schemaIds.map((id) => ({ ...state.data[id] }));
   });
 
   const isHistoryStateHasAtleastOneItem = historyData.length > 0;
 
+  /**
+   *
+   */
   function loadMoreSchemas() {
     setIsLoadingMore(true);
     getAllShemasService(query.id as string, {
@@ -35,6 +43,14 @@ const RightPaneHistory = () => {
         setIsLoadingMore(false);
       })
       .catch(() => setIsLoadingMore(false));
+  }
+
+  function deleteSchemaHistory(schemaId: string) {
+    deleteSchemaHistoryService(query.id as string, schemaId)
+      .then(() => {
+        removeSchema(schemaId);
+      })
+      .catch(console.log);
   }
 
   useEffect(() => {
@@ -64,6 +80,9 @@ const RightPaneHistory = () => {
                 description={schema.description}
                 createdDate={schema.createdAt as any}
                 version={schema.tag}
+                deleteSchemaHistory={() =>
+                  deleteSchemaHistory(schema.id as string)
+                }
               />
             );
           })

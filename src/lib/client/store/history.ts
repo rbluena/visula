@@ -45,14 +45,14 @@ export const useHistoryStore = create(
           ...state.data,
           ...payload.data,
         };
-        console.log(payload);
 
         state.schemaIds.concat(payload.schemaIds);
       });
     },
-    removeSchema(id) {
+    removeSchema(schemaId) {
       set((state) => {
-        delete state.data[id];
+        delete state.data[schemaId];
+        state.schemaIds = state.schemaIds.filter((id) => id !== schemaId);
       });
     },
     resetState(payload) {

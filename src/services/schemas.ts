@@ -88,3 +88,33 @@ export async function compareSchemaDiffService(
 
   return results.data;
 }
+
+/**
+ *
+ * @param projectId
+ * @param ids
+ */
+export async function deleteSchemaHistoryService(
+  projectId: string,
+  schemaId: string
+) {
+  const response = await fetch(
+    `/api/v1/projects/${projectId}/schemas?${new URLSearchParams({
+      schemaId,
+    })}`,
+    {
+      method: "DELETE",
+      headers: {
+        "Content-Type": "application/json",
+      },
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+
+  const results = await response.json();
+
+  return results.data;
+}

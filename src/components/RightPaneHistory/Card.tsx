@@ -4,15 +4,23 @@ import {
   TagIcon,
   TrashIcon,
 } from "@heroicons/react/24/outline";
+import { MouseEventHandler } from "react";
 
 type Props = {
   name: string;
   version?: string;
   description?: string;
   createdDate: Date;
+  deleteSchemaHistory: MouseEventHandler;
 };
 
-const Card = ({ name, version, description = "", createdDate }: Props) => {
+const Card = ({
+  name,
+  version,
+  description = "",
+  createdDate,
+  deleteSchemaHistory,
+}: Props) => {
   return (
     <div className={`shadow-sm ${version?.length ? "bg-white" : "bg-white"}`}>
       <div className="px-4 py-2  space-y-2 text-left">
@@ -43,10 +51,11 @@ const Card = ({ name, version, description = "", createdDate }: Props) => {
               aria-describedby="aria-version-delete"
               className="border border-slate-300 rounded-full p-1 bg-red-50 hover:bg-red-100 text-red-700"
               title="Delete this schema"
+              onClick={deleteSchemaHistory}
             >
               <TrashIcon className="w-4 h-4" />
               <span id="aria-version-delete" className="sr-only">
-                Remove version
+                Remove this version
               </span>
             </button>
           </div>

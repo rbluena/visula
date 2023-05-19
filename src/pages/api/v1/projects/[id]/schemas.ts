@@ -86,6 +86,27 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
   }
 }
 
+async function DELETE(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    // const projectId = req.query.id as string;
+    const schemaId = req.query.schemaId as string;
+
+    // TODO: Check if the project belongs to current user
+
+    const deletedIds = await prisma.projectSchema.deleteMany({
+      where: {
+        id: schemaId,
+      },
+    });
+
+    return res
+      .status(200)
+      .json({ message: "Deleted successfully!", data: deletedIds });
+  } catch (error) {
+    return res.status(400).json({ message: "Failed to create data." });
+  }
+}
+
 export default async function handler(
   req: NextApiRequest,
   res: NextApiResponse
@@ -100,6 +121,9 @@ export default async function handler(
 
     case "GET":
       return await GET(req, res);
+
+    case "DELETE":
+      return await DELETE(req, res);
 
     default:
       return res.status(405).json({
