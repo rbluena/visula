@@ -27,14 +27,27 @@ function runMiddleware(
 async function POST(req: NextApiRequest, res: NextApiResponse) {
   try {
     const data = req.body as { name?: string; schema: any };
+    const projectId = req.query.id as string;
 
     const schema = await prisma.projectSchema.create({
       data: {
-        name: data.name || "",
-        projectId: req.query.id as string,
+        name: data.name || new Date().toUTCString(),
+        projectId,
         data: data.schema,
       },
     });
+
+    prisma.project
+      .update({
+        where: {
+          id: projectId,
+        },
+        data: {
+          updatedAt: schema.createdAt,
+        },
+      })
+      .then()
+      .catch();
 
     return res
       .status(201)

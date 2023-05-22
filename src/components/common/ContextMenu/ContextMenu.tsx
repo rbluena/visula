@@ -255,7 +255,6 @@ const ContextMenuComponent = ({ children }: Props) => {
       };
 
       const responseData = await saveSchemaHistoryService(query.id as string, {
-        name: new Date().toISOString(),
         schema,
       });
 
