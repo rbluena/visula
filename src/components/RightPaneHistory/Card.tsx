@@ -12,6 +12,7 @@ type Props = {
   description?: string;
   createdDate: Date;
   showSchema: MouseEventHandler;
+  openSchemaTaggingModal: MouseEventHandler;
   deleteSchemaHistory: MouseEventHandler;
 };
 
@@ -21,16 +22,19 @@ const Card = ({
   description = "",
   createdDate,
   showSchema,
+  openSchemaTaggingModal,
   deleteSchemaHistory,
 }: Props) => {
   return (
     <div className={`shadow-sm ${version?.length ? "bg-white" : "bg-white"}`}>
-      <div className="px-4 py-2  space-y-2 text-left">
+      <div className="px-4 py-4  space-y-2 text-left">
         <div className="flex w-full justify-between">
           <div>
             <h2 className="text-sm font-semibold leading-tight">{name}</h2>
             {version ? (
-              <span className="text-[12px] text-slate-400">v{version}</span>
+              <span className="text-[12px] bg-indigo-100 text-indigo-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300">
+                {version}
+              </span>
             ) : null}
           </div>
 
@@ -45,7 +49,7 @@ const Card = ({
             <button
               className="border border-slate-300 rounded-full p-1 bg-green-50 hover:bg-violet-100 text-violet-700"
               title="Tag with version number"
-              // onClick={() => setShowTaggingInputs(true)}
+              onClick={openSchemaTaggingModal}
             >
               <TagIcon className="w-4 h-4" />
             </button>
@@ -64,7 +68,7 @@ const Card = ({
         </div>
 
         <p className="text-sm font-light max-w-[90%]">{description}</p>
-        <p className="text-xs text-violet-600">
+        <p className="text-sm font-semibold text-violet-700">
           {getRelativeTime(createdDate)}
         </p>
       </div>

@@ -1,3 +1,5 @@
+import { SchemaData } from "@/types";
+
 /**
  * This always create new history of a schema,
  * but without tagname.
@@ -117,4 +119,33 @@ export async function deleteSchemaHistoryService(
   const results = await response.json();
 
   return results.data;
+}
+
+export async function updateSchemaDetailsService(
+  projectId: string,
+  schemaId: string,
+  data: any
+) {
+  console.log(data);
+
+  const response = await fetch(
+    `/api/v1/projects/${projectId}/schemas?${new URLSearchParams({
+      schemaId,
+    })}`,
+    {
+      method: "PUT",
+      headers: {
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify(data),
+    }
+  );
+
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+
+  const results = await response.json();
+
+  return results.data as SchemaData;
 }

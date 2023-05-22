@@ -45,6 +45,34 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
 }
 
 /**
+ *
+ * @param req
+ * @param res
+ * @returns
+ */
+async function PUT(req: NextApiRequest, res: NextApiResponse) {
+  try {
+    const data = req.body as any;
+    const schemaId = req.query.schemaId as string;
+
+    const schema = await prisma.projectSchema.update({
+      where: {
+        id: schemaId,
+      },
+      data,
+    });
+
+    return res
+      .status(200)
+      .json({ message: "Schema details update successfully!", data: schema });
+  } catch (error) {
+    return res
+      .status(400)
+      .json({ message: "Failed to update schema details." });
+  }
+}
+
+/**
  * Get all schemas from a project
  */
 export async function GET(req: NextApiRequest, res: NextApiResponse) {
@@ -121,6 +149,9 @@ export default async function handler(
 
     case "GET":
       return await GET(req, res);
+
+    case "PUT":
+      return await PUT(req, res);
 
     case "DELETE":
       return await DELETE(req, res);

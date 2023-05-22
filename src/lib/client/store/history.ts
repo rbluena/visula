@@ -15,9 +15,9 @@ type Actions = {
   addSchema: (payload: PartialSchema) => void;
   removeSchema: (id: string) => void;
   appendLoadedSchemas: (paylod: any) => void;
-  updateSchemaMetadata: (id: string, payload: PartialSchema) => void;
+  updateSchemaDetails: (id: string, payload: PartialSchema) => void;
   resetState: (payload?: Partial<HistoryState>) => void;
-  // loadSchemaDesign: (id: string) => void;
+  setActiveSchemaId: (id: string | null) => void;
 };
 
 export const useHistoryStore = create(
@@ -34,7 +34,7 @@ export const useHistoryStore = create(
         state.data[payload.id as string] = payload;
       });
     },
-    updateSchemaMetadata(id, payload) {
+    updateSchemaDetails(id, payload) {
       set((state) => {
         state.data[id] = payload;
       });
@@ -53,6 +53,11 @@ export const useHistoryStore = create(
       set((state) => {
         delete state.data[schemaId];
         state.schemaIds = state.schemaIds.filter((id) => id !== schemaId);
+      });
+    },
+    setActiveSchemaId(id) {
+      set((state) => {
+        state.activeSchemaId = id;
       });
     },
     resetState(payload) {

@@ -132,6 +132,11 @@ const ContextMenuComponent = ({ children }: Props) => {
           type: "item",
         },
       ]);
+      // @ts-ignore
+    } else if (evt.target?.classList.contains("react-flow__edge-textbg")) {
+      setMenuItems([
+        { id: "0090909", label: "Relation", type: "label", action: null },
+      ]);
     } else {
       setMenuItems([
         {

@@ -3,7 +3,8 @@ import Head from "next/head";
 import { inter } from "@/assets/fonts";
 import { Toaster } from "react-hot-toast";
 import MigrationModal from "@/components/modals/MigrationModal";
-import ProjectSettingsModal from "../modals/ProjectSettingsModal";
+import ProjectSettingsModal from "@/components/modals/ProjectSettingsModal";
+import SchemaTaggingModal from "@/components/modals/SchemaTaggingModal";
 
 type Props = {
   children: ReactNode;
@@ -43,6 +44,7 @@ const MainLayout = ({
 
         <MigrationModal />
         <ProjectSettingsModal />
+        <SchemaTaggingModal />
       </main>
     </>
   );

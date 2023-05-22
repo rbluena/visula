@@ -1,7 +1,7 @@
+import { useReactFlow } from "reactflow";
 import { useFieldsStore } from "@/lib/client/store/fields";
 import { useModelRelationStore } from "@/lib/client/store/relations";
 import { useModelStore } from "@/lib/client/store/models";
-import { useReactFlow } from "reactflow";
 import {
   getNodesFromData,
   getEdgesFromRelations,
@@ -27,8 +27,8 @@ export default function useSchemaHistory() {
     setSchemaFieldsState(data?.fields);
     setSchemaRelationsState(data.relations);
     setSchemaModelsState(data?.models);
-    // Add models as nodes in the canvas
 
+    // Add models as nodes in the canvas
     const nodes = getNodesFromData(data?.models?.data || {});
     const edges = getEdgesFromRelations(data?.relations?.data || {});
 

@@ -24,7 +24,6 @@ const ProjectSettingsModal = () => {
       environmentId: "",
     },
   });
-  // const [isModalOpened, setIsModalOpened] = useState(false)
   const [cms, setCMS] = useState({
     type: activeProject?.projectSetting?.contentManagementSystems?.type || null,
   });
@@ -32,10 +31,17 @@ const ProjectSettingsModal = () => {
   const isModalOpened =
     openedModal === "project-settings" && activeProject !== null;
 
+  /**
+   *
+   */
   function onModalClosed() {
     setOpenedModal(null);
   }
 
+  /**
+   *
+   * @param data
+   */
   async function onSubmit(data: any) {
     setIsLoading(true);
 

@@ -16,14 +16,13 @@ import { useGlobalStore } from "@/lib/client/store/global";
 const RightPaneHistory = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
-  const setGlobalLoader = useGlobalStore((state) => state.setGlobalLoader);
+  const { setGlobalLoader, setOpenedModal } = useGlobalStore((state) => state);
   const [metaData, setMetaData] = useState<{
     pagination?: { total?: number; page: number; hasMore: boolean };
   }>({ pagination: { page: 1, hasMore: true } });
 
-  const { resetState, appendLoadedSchemas, removeSchema } = useHistoryStore(
-    (state) => state
-  );
+  const { resetState, appendLoadedSchemas, removeSchema, setActiveSchemaId } =
+    useHistoryStore((state) => state);
   const historyData = useHistoryStore((state) => {
     return state.schemaIds.map((id) => ({ ...state.data[id] }));
   });
@@ -47,6 +46,11 @@ const RightPaneHistory = () => {
         setIsLoadingMore(false);
       })
       .catch(() => setIsLoadingMore(false));
+  }
+
+  function openSchemaTaggingModal(id: string) {
+    setOpenedModal("schema-tagging");
+    setActiveSchemaId(id);
   }
 
   /**
@@ -89,6 +93,9 @@ const RightPaneHistory = () => {
                 createdDate={schema.createdAt as any}
                 version={schema.tag}
                 showSchema={() => renderSchemaModels(schema.data)}
+                openSchemaTaggingModal={() =>
+                  openSchemaTaggingModal(schema.id as string)
+                }
                 deleteSchemaHistory={() =>
                   deleteSchemaHistory(schema.id as string)
                 }

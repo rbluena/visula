@@ -5,6 +5,7 @@ type OpenedModal =
   | "deploy"
   | "model-update"
   | "project-settings"
+  | "schema-tagging"
   | null;
 
 export type NotificationMessage = {
