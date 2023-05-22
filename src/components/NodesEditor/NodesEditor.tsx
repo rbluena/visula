@@ -10,6 +10,7 @@ import ReactFlow, {
   Node,
 } from "reactflow";
 import { useModelsRelation } from "@/lib/client/hooks/useModelsRelation";
+import { useCallback } from "react";
 
 type Props = {
   showEditor?: boolean;
@@ -43,18 +44,19 @@ const NodeEditor = ({ showEditor = false }: Props) => {
    * @param _
    * @param draggedNode
    */
-  function onSelectionDragStop(_: any, draggedNode: Node) {
-    const model = data[draggedNode.id];
+  const onSelectionDragStop = useCallback(
+    (_: any, draggedNode: Node) => {
+      const model = data[draggedNode.id];
 
-    if (model) {
-      updateModel({
-        ...model,
-        position: draggedNode.position,
-      });
-    }
-
-    // onNodesChange(data);
-  }
+      if (model) {
+        updateModel({
+          ...model,
+          position: draggedNode.position,
+        });
+      }
+    },
+    [data, updateModel]
+  );
 
   // function onEdgesDeleted(edges: Edge[]) {
   //   if (edges.length) {
@@ -73,7 +75,6 @@ const NodeEditor = ({ showEditor = false }: Props) => {
         <ReactFlow
           onNodesChange={onNodesChange}
           onNodeDragStop={onSelectionDragStop}
-          // onDragEnd={onSelectionDragStop}
           onNodesDelete={onNodesDeleted}
           onEdgesDelete={onEdgesDeleted}
           onEdgesChange={onEdgesChange}
