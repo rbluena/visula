@@ -11,6 +11,7 @@ type Props = {
   version?: string;
   description?: string;
   createdDate: Date;
+  showSchema: MouseEventHandler;
   deleteSchemaHistory: MouseEventHandler;
 };
 
@@ -19,6 +20,7 @@ const Card = ({
   version,
   description = "",
   createdDate,
+  showSchema,
   deleteSchemaHistory,
 }: Props) => {
   return (
@@ -35,7 +37,7 @@ const Card = ({
           <div className="flex items-center gap-1">
             <button
               className="border border-slate-300 rounded-full p-1 bg-green-50 hover:bg-green-100 text-green-700"
-              // onClick={() => setShowTaggingInputs(true)}
+              onClick={showSchema}
               title="Show schema"
             >
               <TableCellsIcon className="w-4 h-4" />

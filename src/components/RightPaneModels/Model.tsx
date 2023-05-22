@@ -74,7 +74,7 @@ const Model = ({
           !isSelectedModel ? "h-0" : "h-auto py-2"
         }`}
       >
-        {modelData?.fields?.map((fieldUUID: string) => (
+        {modelData.fields?.map((fieldUUID: string) => (
           <ModelFieldComponent key={fieldUUID} fieldUUID={fieldUUID} />
         ))}
         {/* END: fields */}

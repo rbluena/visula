@@ -16,7 +16,7 @@ type Props = {
 };
 
 const NodeEditor = ({ showEditor = false }: Props) => {
-  const { deleteModel, data } = useModelStore((state) => state);
+  const { deleteModel, updateModel, data } = useModelStore((state) => state);
   const {
     onNodeConnect,
     onEdgeUpdate,
@@ -38,6 +38,24 @@ const NodeEditor = ({ showEditor = false }: Props) => {
     deleteModel(deletingNode[0]?.id);
   }
 
+  /**
+   * Updating position of the model
+   * @param _
+   * @param draggedNode
+   */
+  function onSelectionDragStop(_: any, draggedNode: Node) {
+    const model = data[draggedNode.id];
+
+    if (model) {
+      updateModel({
+        ...model,
+        position: draggedNode.position,
+      });
+    }
+
+    // onNodesChange(data);
+  }
+
   // function onEdgesDeleted(edges: Edge[]) {
   //   if (edges.length) {
   //     console.log("On edges deleted!", edges);
@@ -54,6 +72,8 @@ const NodeEditor = ({ showEditor = false }: Props) => {
       <ContextMenu>
         <ReactFlow
           onNodesChange={onNodesChange}
+          onNodeDragStop={onSelectionDragStop}
+          // onDragEnd={onSelectionDragStop}
           onNodesDelete={onNodesDeleted}
           onEdgesDelete={onEdgesDeleted}
           onEdgesChange={onEdgesChange}
@@ -63,6 +83,7 @@ const NodeEditor = ({ showEditor = false }: Props) => {
           onConnect={onNodeConnect}
           nodes={nodes}
           edges={edges}
+          // snapToGrid
           // fitView
           attributionPosition="bottom-right"
         >

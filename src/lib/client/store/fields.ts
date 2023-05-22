@@ -13,6 +13,7 @@ type Actions = {
   updateField: (payload: ModelField) => void;
   deleteField: (id: string) => void;
   setActiveField: (id: string) => void;
+  setSchemaFieldsState: (payload: any) => void;
 };
 
 export const useFieldsStore = create(
@@ -42,6 +43,11 @@ export const useFieldsStore = create(
       setActiveField(id) {
         set((state) => {
           state.activeFieldId = id;
+        });
+      },
+      setSchemaFieldsState(payload) {
+        set((state) => {
+          state.data = payload.data;
         });
       },
     })),

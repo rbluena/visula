@@ -3,7 +3,7 @@ import { Edge, MarkerType } from "reactflow";
 export default function getStyledEdge(edge: Edge): Edge {
   return {
     ...edge,
-    type: "smoothstep",
+    // type: "smoothstep",
     interactionWidth: 25,
     style: {
       strokeWidth: 2.5,

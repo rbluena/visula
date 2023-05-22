@@ -16,6 +16,7 @@ export type Actions = {
   onFieldCreated: (modelId: string, fieldId: string) => void;
   onFieldDeleted: (modelId: string, fieldId: string) => void;
   setActiveModel: (modelId: string) => void;
+  setSchemaModelsState: (payload: any) => void;
 };
 
 export const useModelStore = create(
@@ -61,6 +62,9 @@ export const useModelStore = create(
             (item) => item !== fieldId
           );
         });
+      },
+      setSchemaModelsState(payload) {
+        set((state) => ({ ...state, ...payload }));
       },
     })),
     {

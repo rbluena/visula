@@ -17,6 +17,7 @@ export type Actions = {
     sourceFieldId: string,
     targetModelId: string
   ) => void;
+  setSchemaRelationsState: (payload: any) => void;
 };
 
 export const useModelRelationStore = create(
@@ -55,6 +56,9 @@ export const useModelRelationStore = create(
             ].connectedTargetModels.filter((id) => id !== targetModelId);
           }
         });
+      },
+      setSchemaRelationsState(payload) {
+        set((state) => ({ ...state, ...payload }));
       },
     })),
 

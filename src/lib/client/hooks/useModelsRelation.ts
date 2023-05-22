@@ -22,9 +22,10 @@ export function useModelsRelation() {
   }, []);
 
   const onNodeConnect = useCallback(
-    (edge: Edge) => {
-      // Add edge to the canvas
+    (conn: Connection) => {
+      // Add edge to the casnvas
       setEdges((edges) => {
+        const edge = conn as Edge;
         // Avoid connecting a field to its own parent model
         if (edge.target === edge.source) {
           return edges;

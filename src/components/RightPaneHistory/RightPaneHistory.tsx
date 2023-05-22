@@ -8,17 +8,19 @@ import {
   getAllShemasService,
 } from "@/services/schemas";
 import { useRouter } from "next/router";
+import useSchemaHistory from "@/lib/client/hooks/useSchemaHistory";
+import { useGlobalStore } from "@/lib/client/store/global";
 
 // TODO: Options to "Diff"ing or checking the changes from one schema to another
 
 const RightPaneHistory = () => {
   const [isLoading, setIsLoading] = useState(true);
   const [isLoadingMore, setIsLoadingMore] = useState(false);
+  const setGlobalLoader = useGlobalStore((state) => state.setGlobalLoader);
   const [metaData, setMetaData] = useState<{
     pagination?: { total?: number; page: number; hasMore: boolean };
   }>({ pagination: { page: 1, hasMore: true } });
 
-  const { query } = useRouter();
   const { resetState, appendLoadedSchemas, removeSchema } = useHistoryStore(
     (state) => state
   );
@@ -26,7 +28,9 @@ const RightPaneHistory = () => {
     return state.schemaIds.map((id) => ({ ...state.data[id] }));
   });
 
-  const isHistoryStateHasAtleastOneItem = historyData.length > 0;
+  const { renderSchemaModels } = useSchemaHistory();
+
+  const { query } = useRouter();
 
   /**
    *
@@ -35,7 +39,7 @@ const RightPaneHistory = () => {
     setIsLoadingMore(true);
     getAllShemasService(query.id as string, {
       page: metaData.pagination!.page,
-      limit: 5,
+      limit: 10,
     })
       .then((responseData) => {
         appendLoadedSchemas(responseData);
@@ -45,28 +49,32 @@ const RightPaneHistory = () => {
       .catch(() => setIsLoadingMore(false));
   }
 
+  /**
+   *
+   * @param schemaId
+   */
   function deleteSchemaHistory(schemaId: string) {
+    setGlobalLoader(true);
     deleteSchemaHistoryService(query.id as string, schemaId)
       .then(() => {
         removeSchema(schemaId);
+        setGlobalLoader(false);
       })
-      .catch(console.log);
+      .catch(() => {
+        setGlobalLoader(false);
+      });
   }
 
   useEffect(() => {
-    if (!isHistoryStateHasAtleastOneItem) {
-      getAllShemasService(query.id as string, { page: 1, limit: 5 })
-        .then((data) => {
-          resetState(data);
-          setMetaData(metaData);
-          setIsLoading(false);
-        })
-        .catch(() => {
-          setIsLoading(false);
-        });
-    } else {
-      setIsLoading(false);
-    }
+    getAllShemasService(query.id as string, { page: 1, limit: 10 })
+      .then((data) => {
+        resetState(data);
+        setMetaData(metaData);
+        setIsLoading(false);
+      })
+      .catch(() => {
+        setIsLoading(false);
+      });
   }, []);
 
   return (
@@ -80,6 +88,7 @@ const RightPaneHistory = () => {
                 description={schema.description}
                 createdDate={schema.createdAt as any}
                 version={schema.tag}
+                showSchema={() => renderSchemaModels(schema.data)}
                 deleteSchemaHistory={() =>
                   deleteSchemaHistory(schema.id as string)
                 }
