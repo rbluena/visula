@@ -6,6 +6,7 @@ type PartialSchema = Partial<SchemaData>;
 
 type HistoryState = {
   activeSchemaId: string | null;
+  newLocalChanges: boolean;
   schemaIds: string[];
   data: Record<string, PartialSchema>;
   meta: { pagination?: { page: number; limit: number } };
@@ -18,11 +19,13 @@ type Actions = {
   updateSchemaDetails: (id: string, payload: PartialSchema) => void;
   resetState: (payload?: Partial<HistoryState>) => void;
   setActiveSchemaId: (id: string | null) => void;
+  localChangesUpdated: (payload: boolean) => void;
 };
 
 export const useHistoryStore = create(
   immer<HistoryState & Actions>((set) => ({
     activeSchemaId: null,
+    newLocalChanges: false,
     schemaIds: [],
     data: {},
     meta: {},
@@ -32,6 +35,7 @@ export const useHistoryStore = create(
       set((state) => {
         state.schemaIds.unshift(payload.id as string);
         state.data[payload.id as string] = payload;
+        state.newLocalChanges = false;
       });
     },
     updateSchemaDetails(id, payload) {
@@ -69,6 +73,11 @@ export const useHistoryStore = create(
         }
 
         state.data;
+      });
+    },
+    localChangesUpdated(payload) {
+      set((state) => {
+        state.newLocalChanges = payload;
       });
     },
   }))

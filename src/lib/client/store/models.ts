@@ -2,6 +2,7 @@ import { create } from "zustand";
 import { immer } from "zustand/middleware/immer";
 import { persist, createJSONStorage } from "zustand/middleware";
 import { ModelData } from "@/types";
+import { useHistoryStore } from "./history";
 
 export type ModelsState = {
   modelIds: string[];
@@ -17,6 +18,7 @@ export type Actions = {
   onFieldDeleted: (modelId: string, fieldId: string) => void;
   setActiveModel: (modelId: string) => void;
   setSchemaModelsState: (payload: any) => void;
+  localChangesUpdated: () => void;
 };
 
 export const useModelStore = create(
@@ -31,6 +33,9 @@ export const useModelStore = create(
         set((state) => {
           state.data[payload.id] = payload;
           state.modelIds.push(payload.id);
+
+          //
+          state.localChangesUpdated();
         });
       },
       setActiveModel(id) {
@@ -42,6 +47,9 @@ export const useModelStore = create(
       updateModel(payload) {
         set((state) => {
           state.data[payload.id] = payload;
+
+          //
+          state.localChangesUpdated();
         });
       },
       deleteModel(id) {
@@ -49,6 +57,9 @@ export const useModelStore = create(
           delete state.data[id];
           state.modelIds = state.modelIds.filter((item) => item !== id);
           state.activeModelId = null;
+
+          //
+          state.localChangesUpdated();
         });
       },
       onFieldCreated(modelId, fieldId) {
@@ -65,6 +76,9 @@ export const useModelStore = create(
       },
       setSchemaModelsState(payload) {
         set((state) => ({ ...state, ...payload }));
+      },
+      localChangesUpdated() {
+        useHistoryStore.getState().localChangesUpdated(true);
       },
     })),
     {

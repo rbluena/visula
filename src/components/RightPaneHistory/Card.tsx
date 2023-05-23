@@ -1,9 +1,5 @@
 import { getRelativeTime } from "@/lib/client/common/getTimeAgo";
-import {
-  TableCellsIcon,
-  TagIcon,
-  TrashIcon,
-} from "@heroicons/react/24/outline";
+import { EyeIcon, TagIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { MouseEventHandler } from "react";
 
 type Props = {
@@ -40,14 +36,14 @@ const Card = ({
 
           <div className="flex items-center gap-1">
             <button
-              className="border border-slate-300 rounded-full p-1 bg-green-50 hover:bg-green-100 text-green-700"
+              className="border border-slate-300 rounded-full p-1 bg-indigo-50 hover:bg-green-100 text-indigo-700"
               onClick={showSchema}
-              title="Show schema"
+              title="View models"
             >
-              <TableCellsIcon className="w-4 h-4" />
+              <EyeIcon className="w-4 h-4" />
             </button>
             <button
-              className="border border-slate-300 rounded-full p-1 bg-green-50 hover:bg-violet-100 text-violet-700"
+              className="border border-slate-300 rounded-full p-1 bg-slate-50 hover:bg-slate-100 text-slate-700"
               title="Tag with version number"
               onClick={openSchemaTaggingModal}
             >

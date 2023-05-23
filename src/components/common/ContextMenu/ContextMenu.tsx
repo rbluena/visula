@@ -26,12 +26,12 @@ type Props = {
 };
 
 const ContextMenuComponent = ({ children }: Props) => {
-  const { setMigrationModal, setGlobalLoader } = useGlobalStore(
+  const { setMigrationModal, setGlobalSavingLoader } = useGlobalStore(
     (state) => state
   );
   const { createModel } = useModels();
   const { data: models } = useModelStore((state) => state);
-  const addSchema = useHistoryStore((state) => state.addSchema);
+  const { addSchema, newLocalChanges } = useHistoryStore((state) => state);
   const relations = useModelRelationStore((state) => state.data);
   const flowInstance = useReactFlow();
   const inputRef = useRef<HTMLDivElement>(null);
@@ -86,6 +86,7 @@ const ContextMenuComponent = ({ children }: Props) => {
           key: 230232300,
           label: "Save",
           action: saveSchema,
+          disabled: !newLocalChanges,
           shortcut: "⌘+Shift+S",
           type: "item",
         },
@@ -93,6 +94,7 @@ const ContextMenuComponent = ({ children }: Props) => {
           key: 236550990,
           label: "Migration",
           action: generateMigrationCode,
+          disabled: newLocalChanges,
           shortcut: "",
           type: "item",
         },
@@ -240,7 +242,7 @@ const ContextMenuComponent = ({ children }: Props) => {
    * Add them senses to everyone
    */
   async function saveSchema() {
-    setGlobalLoader(true);
+    setGlobalSavingLoader(true);
     try {
       const schema = {
         models: JSON.parse(
@@ -260,10 +262,10 @@ const ContextMenuComponent = ({ children }: Props) => {
 
       addSchema(responseData);
 
-      setGlobalLoader(false);
+      setGlobalSavingLoader(false);
     } catch (error) {
       console.log(error);
-      setGlobalLoader(false);
+      setGlobalSavingLoader(false);
     }
   }
 
@@ -408,6 +410,7 @@ const CanvasMenu = forwardRef<any, MenuProps>(({ menuItems }, ref) => {
           <ContextMenu.Item
             key={item.key}
             onSelect={item.action}
+            disabled={item.disabled}
             className="group text-[14px] leading-none text-violet-800 rounded-[3px] flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:text-violet-400 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet-600 data-[highlighted]:text-white"
           >
             {item.label}
