@@ -44,9 +44,13 @@ const Card = ({
             </button>
             <button
               className="border border-slate-300 rounded-full p-1 bg-slate-50 hover:bg-slate-100 text-slate-700"
-              title="Tag with version number"
+              title="Tag this schema"
               onClick={openSchemaTaggingModal}
+              aria-describedby="aria-version-tag"
             >
+              <span id="aria-version-tag" className="sr-only">
+                Tag this schema
+              </span>
               <TagIcon className="w-4 h-4" />
             </button>
             <button
@@ -64,7 +68,7 @@ const Card = ({
         </div>
 
         <p className="text-sm font-light max-w-[90%]">{description}</p>
-        <p className="text-sm font-semibold text-violet-700">
+        <p className="text-xs font-semibold text-violet-700">
           {getRelativeTime(createdDate)}
         </p>
       </div>
