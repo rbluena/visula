@@ -1,15 +1,15 @@
 /* eslint-disable react-hooks/exhaustive-deps */
 import { useEffect, useState } from "react";
-import Card from "./Card";
+import { useRouter } from "next/router";
 import { useHistoryStore } from "@/lib/client/store/history";
-import Spinner from "../common/Spinner/Spinner";
 import {
   deleteSchemaHistoryService,
   getAllShemasService,
 } from "@/services/schemas";
-import { useRouter } from "next/router";
 import useSchemaHistory from "@/lib/client/hooks/useSchemaHistory";
 import { useGlobalStore } from "@/lib/client/store/global";
+import Spinner from "@/components/common/Spinner/Spinner";
+import Card from "./Card";
 
 // TODO: Options to "Diff"ing or checking the changes from one schema to another
 
@@ -92,7 +92,10 @@ const RightPaneHistory = () => {
                 description={schema.description}
                 createdDate={schema.createdAt as any}
                 version={schema.tag}
-                showSchema={() => renderSchemaModels(schema.data)}
+                showSchema={() => {
+                  renderSchemaModels(schema.data);
+                  setActiveSchemaId(schema.id as string);
+                }}
                 openSchemaTaggingModal={() =>
                   openSchemaTaggingModal(schema.id as string)
                 }

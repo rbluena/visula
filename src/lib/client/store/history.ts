@@ -35,6 +35,9 @@ export const useHistoryStore = create(
       set((state) => {
         state.schemaIds.unshift(payload.id as string);
         state.data[payload.id as string] = payload;
+
+        //
+        state.activeSchemaId = payload.id as string;
         state.newLocalChanges = false;
       });
     },
@@ -62,6 +65,7 @@ export const useHistoryStore = create(
     setActiveSchemaId(id) {
       set((state) => {
         state.activeSchemaId = id;
+        state.newLocalChanges = false;
       });
     },
     resetState(payload) {
@@ -69,10 +73,7 @@ export const useHistoryStore = create(
         if (payload) {
           state.data = payload.data as HistoryState["data"];
           state.schemaIds = payload.schemaIds as string[];
-          // state.meta = payload.meta
         }
-
-        state.data;
       });
     },
     localChangesUpdated(payload) {

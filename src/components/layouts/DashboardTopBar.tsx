@@ -30,11 +30,10 @@ const DashboardTopBar = ({
     }),
     shallow
   );
-  const { newLocalChanges, addSchema, localChangesUpdated } = useHistoryStore(
+  const { newLocalChanges, addSchema } = useHistoryStore(
     (state) => ({
       newLocalChanges: state.newLocalChanges,
       addSchema: state.addSchema,
-      localChangesUpdated: state.localChangesUpdated,
     }),
     shallow
   );
@@ -60,7 +59,6 @@ const DashboardTopBar = ({
       });
 
       addSchema(responseData);
-      localChangesUpdated(false);
       setSavingLoader(false);
     } catch (error) {
       setSavingLoader(false);

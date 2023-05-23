@@ -121,13 +121,18 @@ export async function deleteSchemaHistoryService(
   return results.data;
 }
 
+/**
+ *
+ * @param projectId
+ * @param schemaId
+ * @param data
+ * @returns
+ */
 export async function updateSchemaDetailsService(
   projectId: string,
   schemaId: string,
   data: any
 ) {
-  console.log(data);
-
   const response = await fetch(
     `/api/v1/projects/${projectId}/schemas?${new URLSearchParams({
       schemaId,
@@ -148,4 +153,52 @@ export async function updateSchemaDetailsService(
   const results = await response.json();
 
   return results.data as SchemaData;
+}
+
+/**
+ *
+ * @param projectId
+ * @param schemaId
+ * @returns
+ */
+export async function deploySchemaService(
+  projectId: string,
+  data: { schemaId: string; cmsType: "contentful" | "sanity" }
+) {
+  const response = await fetch(`/api/v1/projects/${projectId}/deploy`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+
+  const results = await response.json();
+
+  return results.data;
+}
+
+export async function generateMigrationCodeService(
+  projectId: string,
+  data: { schemaId: string; cmsType: "contentful" | "sanity" }
+) {
+  const response = await fetch(`/api/v1/projects/${projectId}/migration`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+
+  const results = await response.json();
+
+  return results.data;
 }

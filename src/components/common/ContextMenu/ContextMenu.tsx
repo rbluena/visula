@@ -14,9 +14,7 @@ import { useReactFlow } from "reactflow";
 import { v4 as uuidV4 } from "uuid";
 import { ModelData } from "@/types";
 import { useGlobalStore } from "@/lib/client/store/global";
-import { useModelRelationStore } from "@/lib/client/store/relations";
 import useModels from "@/lib/client/hooks/useModels";
-import { useModelStore } from "@/lib/client/store/models";
 import { useHistoryStore } from "@/lib/client/store/history";
 import { saveSchemaHistoryService } from "@/services/schemas";
 import { useRouter } from "next/router";
@@ -26,13 +24,11 @@ type Props = {
 };
 
 const ContextMenuComponent = ({ children }: Props) => {
-  const { setMigrationModal, setGlobalSavingLoader } = useGlobalStore(
+  const { setOpenedModal, setGlobalSavingLoader } = useGlobalStore(
     (state) => state
   );
   const { createModel } = useModels();
-  const { data: models } = useModelStore((state) => state);
   const { addSchema, newLocalChanges } = useHistoryStore((state) => state);
-  const relations = useModelRelationStore((state) => state.data);
   const flowInstance = useReactFlow();
   const inputRef = useRef<HTMLDivElement>(null);
   const clientPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
@@ -101,8 +97,8 @@ const ContextMenuComponent = ({ children }: Props) => {
         {
           key: 230990,
           label: "Deploy",
-          // action: openMigrationModal,
-          action: deploySchemaToContentful,
+          action: deploySchema,
+          disabled: newLocalChanges,
           shortcut: "",
           type: "item",
         },
@@ -313,47 +309,44 @@ const ContextMenuComponent = ({ children }: Props) => {
     };
   }
 
-  /**
-   *
-   */
-  function openMigrationModal() {
-    setMigrationModal(true);
+  function deploySchema() {
+    setOpenedModal("deploy");
   }
 
-  async function deploySchemaToContentful() {
-    try {
-      const response = await fetch(`/api/management`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ models, relations }),
-      });
+  // async function deploySchemaToContentful() {
+  //   try {
+  //     const response = await fetch(`/api/management`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ models, relations }),
+  //     });
 
-      const result = await response.json();
+  //     const result = await response.json();
 
-      if (result.error) {
-        throw new Error(result);
-      }
-    } catch (error) {
-      // If there is no accessToken, spaceId and environmentId  on the server side,
-      // then show notification error.
+  //     if (result.error) {
+  //       throw new Error(result);
+  //     }
+  //   } catch (error) {
+  //     // If there is no accessToken, spaceId and environmentId  on the server side,
+  //     // then show notification error.
 
-      // setNotification({
-      //   location: "model-canvas",
-      //   message: "Please provide access token and space ID.",
-      //   type: "warning",
-      // });
+  //     // setNotification({
+  //     //   location: "model-canvas",
+  //     //   message: "Please provide access token and space ID.",
+  //     //   type: "warning",
+  //     // });
 
-      // @ts-ignore
-      if (error.statusText === "InvalidContentfulAccessToken") {
-        openMigrationModal();
-      }
-    }
-  }
+  //     // @ts-ignore
+  //     if (error.statusText === "InvalidContentfulAccessToken") {
+  //       openMigrationModal();
+  //     }
+  //   }
+  // }
 
-  async function generateMigrationCode() {
-    openMigrationModal();
+  function generateMigrationCode() {
+    setOpenedModal("migration");
   }
 
   useEffect(() => {

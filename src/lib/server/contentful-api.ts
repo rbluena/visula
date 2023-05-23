@@ -6,9 +6,9 @@ import {
 } from "contentful-management";
 import { dataTypeMap, getAttachingValidations } from "./mappings/contentful";
 
-export const spaceId = "bxxkqpw2bm2i";
-export const environmentId = "dev";
-export const accessToken = "CFPAT-6mxbx5vJv4bjpVPgeihcZ6dY74ab1tZKFcN5JHzX3EY";
+// export const spaceId = "bxxkqpw2bm2i";
+// export const environmentId = "dev";
+// export const accessToken = "CFPAT-6mxbx5vJv4bjpVPgeihcZ6dY74ab1tZKFcN5JHzX3EY";
 
 export function deploySchemaToContentful(
   models: Record<string, ModelData>,
