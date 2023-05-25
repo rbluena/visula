@@ -98,7 +98,7 @@ const ContextMenuComponent = ({ children }: Props) => {
           key: 230990,
           label: "Deploy",
           action: deploySchema,
-          disabled: newLocalChanges,
+          disabled: newLocalChanges, // Local changes should be saved first before deployed
           shortcut: "",
           type: "item",
         },

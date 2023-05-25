@@ -33,7 +33,6 @@ function runMiddleware(
 async function POST(req: NextApiRequest, res: NextApiResponse) {
   const data: { models: any; relations: any } = req.body;
   let responseData = null;
-  const { contentType } = getContentfulClient();
 
   try {
     if (!isEmpty(data)) {

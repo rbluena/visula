@@ -77,3 +77,9 @@ export type ValidationItem = {
 
 export type Validations = any;
 export type ModelRelationNode = Node & ModelRelation;
+
+export type CMSAccessTokenDetails = {
+  accessToken: string;
+  spaceId: string;
+  environmentId: string;
+};

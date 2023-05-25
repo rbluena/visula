@@ -1,19 +1,108 @@
-import { ModelData, ModelRelation } from "@/types";
+import {
+  CMSAccessTokenDetails,
+  ModelData,
+  ModelField,
+  ModelRelation,
+} from "@/types";
 import {
   ContentFields,
   KeyValueMap,
   createClient,
 } from "contentful-management";
 import { dataTypeMap, getAttachingValidations } from "./mappings/contentful";
+import { isEmpty } from "lodash";
 
-// export const spaceId = "bxxkqpw2bm2i";
-// export const environmentId = "dev";
-// export const accessToken = "CFPAT-6mxbx5vJv4bjpVPgeihcZ6dY74ab1tZKFcN5JHzX3EY";
+/**
+ *
+ * @param model
+ * @returns
+ */
+export function convertModelToContentful(model: ModelData) {
+  const fields = model.fields as any;
 
-export function deploySchemaToContentful(
-  models: Record<string, ModelData>,
-  relations: Record<string, ModelRelation>
-) {
+  const contentfulFields: ContentFields<KeyValueMap>[] = fields.map(
+    (field: ModelField & { relation: any }) => {
+      return {
+        id: field.fieldId,
+        name: field.name,
+        required: field.validations?.required || false,
+        localized: field.validations?.localized || false,
+        type: dataTypeMap[field.dataType],
+
+        ...(!["List", "Media", "Relation"].includes(field.dataType) && {
+          type: dataTypeMap[field.dataType],
+        }),
+
+        ...(field.dataType === "List" && {
+          type: "Array",
+          items: { type: "Symbol" },
+        }),
+
+        ...(field.dataType === "Media" && {
+          ...(field.hasManyAssets
+            ? { type: "Array", items: { type: "Link", linkType: "Asset" } }
+            : { type: "Link", linkType: "Asset" }),
+        }),
+
+        ...(field.dataType === "Relation" && {
+          ...(field.relation?.hasMany
+            ? {
+                type: "Array",
+                items: {
+                  type: "Link",
+                  linkType: "Entry",
+                  validations: [
+                    {
+                      linkContentType:
+                        field.relation?.connectedTargetModels?.map(
+                          (item: any) => item.modelId
+                        ) || [],
+                    },
+                  ],
+                },
+              }
+            : {
+                type: "Link",
+                linkType: "Entry",
+                validations:
+                  field.relation?.connectedTargetModels?.map(
+                    (item: any) => item?.modelId
+                  ) || [],
+              }),
+        }),
+
+        validations: [
+          ...JSON.parse(
+            getAttachingValidations(field.dataType, field.validations)
+          ),
+        ],
+      };
+    }
+  );
+
+  const modelData: ContentfulModel = {
+    name: model.name,
+    fields: contentfulFields,
+  };
+
+  return modelData;
+}
+
+export function deploySchemaToContentful({
+  models,
+  fields,
+  relations,
+}: {
+  models: Record<string, ModelData> | undefined;
+  fields: Record<string, ModelField>;
+  relations: Record<string, ModelRelation> | undefined;
+}) {
+  if (isEmpty(models)) {
+    throw Error(
+      "This schema does not have any models to deploy. Please verify the schema design."
+    );
+  }
+
   const modelsKeys = Object.keys(models);
 
   return modelsKeys.map((modelKey) => {
@@ -21,20 +110,27 @@ export function deploySchemaToContentful(
     const modelID = modelData?.modelId || modelData.id;
 
     // @ts-ignore
-    const fields: ContentFields<KeyValueMap>[] = modelData.fields.map(
-      (field) => {
+    const contenfulFields: ContentFields<KeyValueMap>[] = modelData.fields.map(
+      (fieldId: string) => {
         let targetId = "";
         let targetModelUniqueIdentity = "";
 
+        let relationTargetModelsIds = [];
+
+        const field = fields[fieldId] as ModelField;
+
+        if (!isEmpty(relations) && field.dataType === "Relation") {
+          relationTargetModelsIds = relations[field.id].connectedTargetModels;
+        }
+
         if (field.dataType === "Relation") {
-          targetId = relations[field.id].targetModelId || "";
+          // targetId = relations[field.id].targetModelId || "";
           targetModelUniqueIdentity = models[targetId]?.modelId || "";
         }
 
         return {
-          id: field.fieldID,
+          id: field.fieldId,
           name: field.name,
-          // apiName: field.fieldID, TODO: Use this only if we override already existing model
           required: field.validations?.required || false,
           localized: field.validations?.localized || false,
           type: dataTypeMap[field.dataType],
@@ -77,19 +173,23 @@ export function deploySchemaToContentful(
     return {
       apiClientParams: {
         contentTypeId: modelID,
-        environmentId,
-        spaceId,
+        // environmentId,
+        // spaceId,
       },
       model: {
         name: modelData.name,
         description: modelData?.description || "",
-        fields,
+        fields: contenfulFields,
       },
     };
   });
 }
 
-export function getContentfulClient() {
+export function getContentfulClient({
+  accessToken,
+  spaceId,
+  environmentId,
+}: CMSAccessTokenDetails) {
   const plainClient = createClient(
     {
       accessToken,

@@ -46,6 +46,9 @@ export const useModelRelationStore = create(
         set((state) => {
           if (!state.data[sourceFieldId]) return;
           state.data[sourceFieldId] = payload;
+
+          //
+          state.localChangesUpdated();
         });
       },
       removeRelationFromStore(fieldId) {

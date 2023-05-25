@@ -182,6 +182,27 @@ export async function deploySchemaService(
   return results.data;
 }
 
+export async function deployModelService(
+  projectId: string,
+  data: { model: any; cmsType: "contentful" | "sanity" }
+) {
+  const response = await fetch(`/api/v1/projects/${projectId}/deploy`, {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+    },
+    body: JSON.stringify(data),
+  });
+
+  if (!response.ok) {
+    throw new Error(response.statusText);
+  }
+
+  const results = await response.json();
+
+  return results;
+}
+
 export async function generateMigrationCodeService(
   projectId: string,
   data: { schemaId: string; cmsType: "contentful" | "sanity" }

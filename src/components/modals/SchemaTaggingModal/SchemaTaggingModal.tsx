@@ -77,6 +77,14 @@ const SchemaTaggingModal = () => {
           />
         </div>
 
+        <div className="max-w-xs">
+          <TextInput
+            label="Tag"
+            placeholder="v1.2 or Production"
+            {...register("tag")}
+          />
+        </div>
+
         <div>
           <TextArea
             label="Description"
@@ -85,13 +93,6 @@ const SchemaTaggingModal = () => {
           />
         </div>
 
-        <div className="max-w-xs">
-          <TextInput
-            label="Version / Tag"
-            placeholder="1.2 / production"
-            {...register("tag")}
-          />
-        </div>
         <div>
           <button
             type="submit"

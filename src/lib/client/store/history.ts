@@ -6,6 +6,7 @@ type PartialSchema = Partial<SchemaData>;
 
 type HistoryState = {
   activeSchemaId: string | null;
+  userActions?: any[];
   newLocalChanges: boolean;
   schemaIds: string[];
   data: Record<string, PartialSchema>;
@@ -25,6 +26,7 @@ type Actions = {
 export const useHistoryStore = create(
   immer<HistoryState & Actions>((set) => ({
     activeSchemaId: null,
+    userActions: [],
     newLocalChanges: false,
     schemaIds: [],
     data: {},
@@ -60,6 +62,9 @@ export const useHistoryStore = create(
       set((state) => {
         delete state.data[schemaId];
         state.schemaIds = state.schemaIds.filter((id) => id !== schemaId);
+
+        //
+        state.activeSchemaId = null;
       });
     },
     setActiveSchemaId(id) {
