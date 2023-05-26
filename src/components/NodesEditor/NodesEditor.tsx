@@ -1,7 +1,4 @@
-import { getNodesFromData } from "@/lib/client/common/dataAndNodes";
-import { useModelStore } from "@/lib/client/store/models";
-import { ContextMenu } from "@/components";
-
+import { useCallback } from "react";
 import ReactFlow, {
   Background,
   Controls,
@@ -9,8 +6,24 @@ import ReactFlow, {
   useNodesState,
   Node,
 } from "reactflow";
+
+import { getNodesFromData } from "@/lib/client/common/dataAndNodes";
+import { useModelStore } from "@/lib/client/store/models";
+import { ContextMenu } from "@/components";
+
 import { useModelsRelation } from "@/lib/client/hooks/useModelsRelation";
-import { useCallback } from "react";
+
+function isNodeMoved(
+  prevPosition: { x: number; y: number },
+  currPosition: { x: number; y: number }
+) {
+  const isHorizontallyMoved =
+    Math.abs(Math.trunc(prevPosition.x) - Math.trunc(currPosition.x)) > 25;
+  const isVerticallyMoved =
+    Math.abs(Math.trunc(prevPosition.y) - Math.trunc(currPosition.y)) > 25;
+
+  return isHorizontallyMoved || isVerticallyMoved;
+}
 
 type Props = {
   showEditor?: boolean;
@@ -48,7 +61,7 @@ const NodeEditor = ({ showEditor = false }: Props) => {
     (_: any, draggedNode: Node) => {
       const model = data[draggedNode.id];
 
-      if (model) {
+      if (model && isNodeMoved(model.position, draggedNode.position)) {
         updateModel({
           ...model,
           position: draggedNode.position,
@@ -57,13 +70,6 @@ const NodeEditor = ({ showEditor = false }: Props) => {
     },
     [data, updateModel]
   );
-
-  // function onEdgesDeleted(edges: Edge[]) {
-  //   if (edges.length) {
-  //     console.log("On edges deleted!", edges);
-  //     // edges.forEach((edge) => deleteRelation(edge));
-  //   }
-  // }
 
   return (
     <div
