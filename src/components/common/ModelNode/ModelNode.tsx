@@ -28,7 +28,7 @@ const ModelNode = ({ id, name, modelId }: Props) => {
       <div className="px-4 py-3 flex items-center justify-between">
         <div className="space-y-1">
           <span className="block leading-4 text-[16px]">{name}</span>
-          <span className="block text-[10px] text-slate-500">{modelId}</span>
+          <span className="block text-xs text-slate-500">{modelId}</span>
         </div>
       </div>
       {/* END: Node header */}

@@ -1,10 +1,10 @@
 import { useCallback } from "react";
 import ReactFlow, {
   Background,
-  Controls,
   useEdgesState,
   useNodesState,
   Node,
+  MiniMap,
 } from "reactflow";
 
 import { getNodesFromData } from "@/lib/client/common/dataAndNodes";
@@ -90,12 +90,10 @@ const NodeEditor = ({ showEditor = false }: Props) => {
           onConnect={onNodeConnect}
           nodes={nodes}
           edges={edges}
-          // snapToGrid
-          // fitView
           attributionPosition="bottom-right"
         >
-          <Controls />
           <Background />
+          <MiniMap position="bottom-left" />
         </ReactFlow>
       </ContextMenu>
     </div>
