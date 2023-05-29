@@ -32,12 +32,10 @@ const MainLayout = ({
         {children}
         <Toaster
           toastOptions={{
-            position: "bottom-left",
-            className: "border-b border-b-green-400",
-            success: {
-              duration: 3000,
-              className: "border-b-2 border-b-green-400",
-            },
+            position: "top-left",
+            duration: 3000,
+            success: { className: "border-2 border-b-green-500" },
+            error: { className: "border-2 border-b-red-500" },
           }}
           containerClassName="w-[60%]"
         />

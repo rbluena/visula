@@ -1,4 +1,5 @@
 import { useState } from "react";
+import { toast } from "react-hot-toast";
 import * as ToggleGroupComponent from "@radix-ui/react-toggle-group";
 import Modal from "@/components/common/Modal/Modal";
 import Spinner from "@/components/common/Spinner/Spinner";
@@ -71,13 +72,14 @@ const SchemaDeploymentModal = () => {
 
         setGeneratedCode(code || "");
         openGeneratedCode(true);
+        toast.success("Migration code has been created successfully!");
       }
 
       setShowLoader(false);
       setOpenedModal(null);
     } catch (error) {
-      // Error
-      console.log(error);
+      // @ts-ignore
+      toast.error(error.message);
       setGeneratedCode("");
       setShowLoader(false);
     }
