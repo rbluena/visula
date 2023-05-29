@@ -26,7 +26,9 @@ const Model = ({
   onDeletingModel,
 }: Props) => {
   const { setOpenedModal } = useGlobalStore((state) => state);
-  const { createModelField } = useModelField();
+  const { createModelField, getModelFields } = useModelField();
+
+  const fields = getModelFields(modelData.fields);
 
   function addFieldInput() {
     createModelField(modelData.id, {
@@ -74,8 +76,8 @@ const Model = ({
           !isSelectedModel ? "h-0" : "h-auto py-2"
         }`}
       >
-        {modelData.fields?.map((fieldUUID: string) => (
-          <ModelFieldComponent key={fieldUUID} fieldUUID={fieldUUID} />
+        {fields?.map((field) => (
+          <ModelFieldComponent key={field.id} fieldData={field} />
         ))}
         {/* END: fields */}
       </div>

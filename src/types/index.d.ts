@@ -36,6 +36,10 @@ export type ModelField = {
   name: string;
   comment?: string;
   dataType: DataType;
+  relation?: {
+    hasMany: boolean;
+    connectedModels: { id: string; modelId: string; name: string }[];
+  };
   isUnique?: boolean;
   isRequired?: boolean;
   hasManyAssets?: boolean;
