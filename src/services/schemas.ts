@@ -203,6 +203,12 @@ export async function deployModelService(
   return results;
 }
 
+/**
+ *
+ * @param projectId
+ * @param data
+ * @returns
+ */
 export async function generateMigrationCodeService(
   projectId: string,
   data: { schemaId: string; cmsType: "contentful" | "sanity" }

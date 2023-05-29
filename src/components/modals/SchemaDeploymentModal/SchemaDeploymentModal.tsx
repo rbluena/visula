@@ -12,31 +12,39 @@ import { useRouter } from "next/router";
 import { useHistoryStore } from "@/lib/client/store/history";
 import prepeareModelToDeploy from "@/lib/client/common/prepareModelToDeploy";
 import { useModelStore } from "@/lib/client/store/models";
+import { shallow } from "zustand/shallow";
 
 let queue: string[] = [];
 
 const SchemaDeploymentModal = () => {
-  const { openedModal, setOpenedModal } = useGlobalStore((state) => state);
+  const { openedModal, setOpenedModal, setGeneratedCode, openGeneratedCode } =
+    useGlobalStore(
+      (state) => ({
+        openedModal: state.openedModal,
+        setOpenedModal: state.setOpenedModal,
+        setGeneratedCode: state.setGeneratedCode,
+        openGeneratedCode: state.openGeneratedCode,
+      }),
+      shallow
+    );
   const activeSchemaId = useHistoryStore((state) => state.activeSchemaId);
   const modelIds = useModelStore((state) => state.modelIds);
   const [showLoader, setShowLoader] = useState(false);
-  const [active, setActive] = useState<"contentful" | "sanity">("contentful");
+  const [active, setActive] = useState<"contentful" | "sanity" | null>(null);
   const { query } = useRouter();
 
   queue = modelIds.slice();
 
-  // const queueRef = useRef<string[] | null>(null);
-
   const isModalOpen = openedModal === "deploy" || openedModal === "migration";
 
   async function confirmedProgress() {
-    console.log("Called");
-
     try {
       if (openedModal === "deploy") {
         if (queue.length === 0) {
           return;
         }
+
+        setShowLoader(true);
 
         while (queue.length) {
           let currentModelId = queue.shift();
@@ -45,27 +53,33 @@ const SchemaDeploymentModal = () => {
             !queue.length
           );
 
-          const result = await deployModelService(query.id as string, {
+          // TODO: The deployment
+          await deployModelService(query.id as string, {
             model: deployingModel,
-            cmsType: active,
+            cmsType: active as "contentful" | "sanity",
           });
-
-          console.log(result);
         }
       }
 
+      setShowLoader(true);
+
       if (openedModal === "migration") {
-        // Do the migration
-        await generateMigrationCodeService(query.id as string, {
+        const code = await generateMigrationCodeService(query.id as string, {
           schemaId: activeSchemaId as string,
-          cmsType: active,
+          cmsType: active as "contentful" | "sanity",
         });
+
+        setGeneratedCode(code || "");
+        openGeneratedCode(true);
       }
-      // setShowLoader(false);
+
+      setShowLoader(false);
+      setOpenedModal(null);
     } catch (error) {
       // Error
       console.log(error);
-      // setShowLoader(false);
+      setGeneratedCode("");
+      setShowLoader(false);
     }
   }
 

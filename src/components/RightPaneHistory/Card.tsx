@@ -28,7 +28,7 @@ const Card = ({
           <div>
             <h2 className="text-sm font-semibold leading-tight">{name}</h2>
             {version ? (
-              <span className="text-[12px] bg-indigo-100 text-indigo-800 text-xs font-medium mr-2 px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300">
+              <span className="bg-indigo-500 text-white text-xs  shadow-inner font-semibold mr-2 px-2.5 py-0.5 rounded dark:bg-indigo-900 dark:text-indigo-300">
                 {version}
               </span>
             ) : null}
