@@ -12,7 +12,7 @@ const NodeField = ({ field, checkFieldIsConnected }: Props) => {
   return (
     <div key={field.id} className="relative">
       <div className="flex justify-between items-start">
-        <span className="block text-sm">{field.name}</span>
+        <span className="block text-sm text-slate-800">{field.name}</span>
         <span className="block text-xs leading-4 text-slate-500">
           {field.dataType}
         </span>

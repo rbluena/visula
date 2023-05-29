@@ -68,7 +68,7 @@ const Card = ({
         </div>
 
         <p className="text-sm font-light max-w-[90%]">{description}</p>
-        <p className="text-xs font-semibold text-violet-700">
+        <p className="text-xs font-semibold text-slate-600">
           {getRelativeTime(createdDate)}
         </p>
       </div>
