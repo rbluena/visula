@@ -3,10 +3,15 @@ import { ModelField } from "@/types";
 
 type Props = {
   field: ModelField;
+  showConnectingNodes: boolean;
   checkFieldIsConnected?: Function;
 };
 
-const NodeField = ({ field, checkFieldIsConnected }: Props) => {
+const NodeField = ({
+  field,
+  showConnectingNodes = true,
+  checkFieldIsConnected,
+}: Props) => {
   const fieldConnection = checkFieldIsConnected?.(field.id);
 
   return (
@@ -20,9 +25,12 @@ const NodeField = ({ field, checkFieldIsConnected }: Props) => {
           id={field.id}
           hidden={true}
           style={{
-            visibility: field.dataType !== "Relation" ? "hidden" : "visible",
+            visibility:
+              field.dataType == "Relation" && showConnectingNodes
+                ? "visible"
+                : "hidden",
           }}
-          className={`inline-block right-[-18px] top-[8px] ${
+          className={`inline-block right-[-14px] top-[8px] ${
             fieldConnection ? "bg-indigo-500" : "bg-slate-500 "
           } border border-green-300 rounded-full w-3 h-3  model-node__wrapper`}
           type="source"
