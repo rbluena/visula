@@ -33,14 +33,14 @@ const ContextMenuComponent = ({ children }: Props) => {
   const inputRef = useRef<HTMLDivElement>(null);
   const clientPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const [menuItems, setMenuItems] = useState<any[]>([]);
-  const modelIdRef = useRef();
+  const selectedItemRef = useRef();
 
   const { query } = useRouter();
 
   function onContextMenu(evt: MouseEvent<HTMLElement>) {
     clientPosRef.current.x = evt.clientX;
     clientPosRef.current.y = evt.clientY;
-    modelIdRef.current = evt.target
+    selectedItemRef.current = evt.target
       //@ts-ignore
       ?.closest("[data-id]")
       ?.getAttribute("data-id");
@@ -135,6 +135,12 @@ const ContextMenuComponent = ({ children }: Props) => {
     } else if (evt.target?.classList.contains("react-flow__edge-textbg")) {
       setMenuItems([
         { id: "0090909", label: "Relation", type: "label", action: null },
+        // {
+        //   key: 576555665,
+        //   label: "Delete",
+        //   action: deleteCurrentRelation,
+        //   type: "item",
+        // },
       ]);
     } else {
       setMenuItems([
@@ -152,18 +158,18 @@ const ContextMenuComponent = ({ children }: Props) => {
           action: deleteCurrentModel,
           type: "item",
         },
-        {
-          key: 576555,
-          label: "Duplicate",
-          // action: deleteCurrentModel,
-          type: "item",
-        },
+        // {
+        //   key: 576555,
+        //   label: "Duplicate",
+        //   // action: deleteCurrentModel,
+        //   type: "item",
+        // },
       ]);
     }
   }
 
   function deleteCurrentModel() {
-    const model = flowInstance.getNode(modelIdRef.current || "");
+    const model = flowInstance.getNode(selectedItemRef.current || "");
 
     if (model) {
       flowInstance.deleteElements({ nodes: [model] });
