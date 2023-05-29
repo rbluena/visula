@@ -1,3 +1,4 @@
+import capitalize from "lodash/capitalize";
 import { js_beautify } from "js-beautify";
 import { ModelData, ModelField, ModelRelation } from "@/types";
 import { dataTypeMap, getAttachingValidations } from "../mappings/contentful";
@@ -12,11 +13,11 @@ export function createMigrationCode(
 
   const contentTypeCodes = modelsKeys.map((key: string) => {
     const model = models[key] as ModelData;
-    const modelContentType = `${model.modelId}Type`;
+    const modelContentType = `${capitalize(model.modelId)}ContentType`;
 
     let script = `
 
-      // Creating ${model.name}
+      // Creating new content type ${model.name}
       const ${modelContentType} = migration
           .createContentType("${model.modelId}")
           .name("${model.name}")
@@ -31,64 +32,69 @@ export function createMigrationCode(
           field.relation = getFieldRelation(field.id, models, relations);
         }
 
-        let modelFieldType = `
+        // const fieldType = `${field.fieldId}FieldType`;
+
+        let fieldScript = `
         // Creating field for "${model.name}"
         ${modelContentType}
           .createField("${field.fieldId}", {
             required: ${field.validations?.required || false},
             localized: ${field.validations?.localized || false}
           })
+          .name("${field.name}")
       `;
 
         if (!["List", "Media", "Relation"].includes(field.dataType)) {
-          modelFieldType = `
-          ${modelContentType}
-          .type("${dataTypeMap[field.dataType]}")
-        `;
+          fieldScript += `.type("${dataTypeMap[field.dataType]}")`;
         }
 
         if (field.dataType === "List") {
-          modelFieldType = `${modelFieldType}.type("Array").linkType("Symbol")`;
+          fieldScript += `.type("Array").linkType("Symbol")`;
         }
 
         // Creating assets and references
         if (field.dataType === "Media") {
           if (field.hasManyAssets) {
-            modelFieldType = `${modelFieldType}.type("Array").items({ type: "Link", linkType: "Asset"})`;
+            fieldScript += `.type("Array").items({ type: "Link", linkType: "Asset"})`;
           } else {
-            modelFieldType = `${modelFieldType}.type("Link").linkType("Asset")`;
+            fieldScript += `.type("Link").linkType("Asset")`;
           }
         }
 
         //Referencess
         if (field.dataType === "Relation") {
           if (field.relationHasMany) {
-            modelFieldType = `${modelFieldType}.type("Array").items({ type: "Link", linkType: "Entry" })`;
+            fieldScript += `.type("Array").items({ type: "Link", linkType: "Entry", validations: [{ linkContentType: ${field?.relation?.connectedModels
+              ?.map((item) => `"${item.modelId}"`)
+              .toString()} }]})`;
           } else {
-            modelFieldType = `${modelFieldType}.type("Link").linkType("Entry")`;
+            fieldScript += `.type("Link").linkType("Entry")`;
           }
         }
 
         // Field validations
-        if (field?.relation?.connectedModels) {
-          modelFieldType = `${modelFieldType}.validations([{linkContentType: [${field.relation.connectedModels
+        if (!field.relationHasMany && field?.relation?.connectedModels) {
+          fieldScript += `.validations([{linkContentType: [${field.relation.connectedModels
             .map((item) => `"${item.modelId}"`)
             .toString()}]}, ${getAttachingValidations(
             field.dataType,
             field.validations
-          ).slice(1, -1)}])`;
+          ).slice(1, -1)}])
+          `;
         } else {
-          modelFieldType = `${modelFieldType}.validations([${getAttachingValidations(
+          fieldScript += `.validations([${getAttachingValidations(
             field.dataType,
             field.validations
-          ).slice(1, -1)}])`;
+          ).slice(1, -1)}])
+          `;
         }
 
-        return modelFieldType;
+        return fieldScript;
       })
       .join("");
 
-    return `${script}
+    return `
+    ${script}
     ${fieldScript}`;
   });
 
