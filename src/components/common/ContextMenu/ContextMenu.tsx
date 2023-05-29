@@ -88,7 +88,7 @@ const ContextMenuComponent = ({ children }: Props) => {
         },
         {
           key: 236550990,
-          label: "Migration",
+          label: "Migration code",
           action: generateMigrationCode,
           disabled: newLocalChanges,
           shortcut: "",
