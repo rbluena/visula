@@ -23,7 +23,7 @@ const ModelNode = ({ id, name, modelId }: Props) => {
   const fieldsData = getModelFields(modelFieldIds);
 
   return (
-    <div className="bg-white rounded-md w-[230px] shadow-lg shadow-indigo-500/40 border active:border-2  active:border-indigo-100 border-gray-50 model-node__wrapper">
+    <div className="bg-white rounded-md w-[230px] shadow-lg shadow-indigo-500/40 border-2 active:border-2  active:border-indigo-100 border-gray-50 model-node__wrapper">
       {/* START: Node header */}
       <div className="px-4 py-3 flex items-center justify-between">
         <div className="space-y-1">

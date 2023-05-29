@@ -7,6 +7,7 @@ import { getRelativeTime } from "@/lib/client/common/getTimeAgo";
 import { useGlobalStore } from "@/lib/client/store/global";
 import { useHistoryStore } from "@/lib/client/store/history";
 import { saveSchemaHistoryService } from "@/services/schemas";
+import { toast } from "react-hot-toast";
 
 type Props = {
   hideProjectTitle: boolean;
@@ -60,6 +61,7 @@ const DashboardTopBar = ({
 
       addSchema(responseData);
       setSavingLoader(false);
+      toast.success("New schema was created.");
     } catch (error) {
       setSavingLoader(false);
     }
@@ -84,12 +86,12 @@ const DashboardTopBar = ({
             <>
               <button
                 onClick={() => setOpenedModal("project-settings")}
-                className="flex flex-col items-start py-2 px-4 space-y-0 bg-slate-100 hover:bg-violet-100 rounded-md border-2 border-violet-400"
+                className="flex flex-col items-start py-2 px-4 space-y-0 bg-slate-100 hover:bg-violet-100 rounded-md border-2 border-indigo-400"
               >
                 <h1 className="text-md font-semibold text-slate-600 max-w-[124px] overflow-clip whitespace-nowrap overflow-ellipsis">
                   {project?.name}
                 </h1>
-                <div className="text-violet-700 text-xs">
+                <div className="text-indigo-700 text-xs">
                   <strong>Update:</strong>&nbsp;
                   {getRelativeTime(project.lastUpdated)}
                 </div>

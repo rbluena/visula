@@ -58,7 +58,7 @@ const Model = ({
             <div className="block w-full">{modelData.name}</div>
             <ChevronRightIcon
               strokeWidth={2}
-              className={`w-5 h-5 font-semibold text-violet-700 transition-transform transform ${
+              className={`w-5 h-5 font-semibold text-indigo-700 transition-transform transform ${
                 isSelectedModel ? "rotate-90" : ""
               }`}
             />
@@ -86,16 +86,16 @@ const Model = ({
       <div className="flex justify-between">
         <button
           onClick={addFieldInput}
-          className="text-xs flex items-center justify-center text-violet-600 rounded-md border border-violet-500 px-2 py-1"
+          className="text-xs font-semibold flex items-center justify-center text-indigo-600 rounded-md border border-indigo-500 px-2 py-1"
         >
-          <PlusSmallIcon strokeWidth={1} className="w-5 h-5" />
+          <PlusSmallIcon strokeWidth={2} className="w-5 h-5" />
           Add field
         </button>
 
         <div className="space-x-1">
           <button
             onClick={() => setOpenedModal("model-update")}
-            className="border border-slate-300 rounded-full p-1 bg-violet-50 hover:bg-violet-100 text-violet-700"
+            className="border border-slate-300 rounded-full p-1 bg-indigo-50 hover:bg-violet-100 text-indigo-700"
             aria-describedby="aria-model-delete"
             title="Delete this model"
           >
