@@ -5,7 +5,7 @@ import { toast } from "react-hot-toast";
 
 const RightPaneGeneratedCode = () => {
   const { generatedCode, openGeneratedCode } = useGlobalStore((state) => state);
-  const notifiy = () => toast("Copied to the clipboard.");
+  const notifiy = () => toast.success("Copied to the clipboard.");
 
   async function copyCodeContent() {
     if (window) {

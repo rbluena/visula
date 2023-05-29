@@ -34,7 +34,13 @@ const MainLayout = ({
           toastOptions={{
             position: "top-left",
             duration: 3000,
-            success: { className: "border-2 border-b-green-500" },
+            success: {
+              className: "border-2 border-b-indigo-500",
+              iconTheme: {
+                primary: "rgb(79 70 229)",
+                secondary: "#FFFAEE",
+              },
+            },
             error: { className: "border-2 border-b-red-500" },
           }}
           containerClassName="w-[60%]"
