@@ -13,7 +13,7 @@ export type ModelRelationState = {
 
 export type Actions = {
   addRelation: (payload: ModelRelation) => void;
-  updateRelation: (fieldId: string, payload: ModelRelation) => void;
+  updateRelation: (fieldId: string, payload: Partial<ModelRelation>) => void;
   removeRelationFromStore: (fieldId: string) => void;
   disconnectRelationTargetModel: (
     sourceFieldId: string,
@@ -45,7 +45,10 @@ export const useModelRelationStore = create(
       updateRelation(sourceFieldId, payload) {
         set((state) => {
           if (!state.data[sourceFieldId]) return;
-          state.data[sourceFieldId] = payload;
+          state.data[sourceFieldId] = {
+            ...state.data[sourceFieldId],
+            ...payload,
+          };
 
           //
           state.localChangesUpdated();

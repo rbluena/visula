@@ -74,7 +74,7 @@ const RightPane = () => {
       <div className="absolute top-0 h-screen w-[60px] left-[-60px] overflow-hidden">
         <button
           onClick={() => setToggleSidebarExpansion(!toggleSidebarExpansion)}
-          className="rounded fixed bottom-0 ml-2 mb-3 flex items-center justify-center bg-violet-600 text-white hover:opacity-75 p-2 shadow-md"
+          className="rounded fixed bottom-0 ml-2 mb-3 flex items-center justify-center bg-indigo-600 text-white hover:opacity-75 p-2 shadow-md"
         >
           <ChevronDoubleLeftIcon
             className={`w-8 h-8 ${toggleSidebarExpansion ? "rotate-180" : ""}`}

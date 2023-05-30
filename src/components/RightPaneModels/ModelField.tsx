@@ -16,7 +16,9 @@ type Props = {
 };
 
 const ModelFieldComponent = ({ fieldData }: Props) => {
-  const addRelation = useModelRelationStore((state) => state.addRelation);
+  const { addRelation, updateRelation } = useModelRelationStore(
+    (state) => state
+  );
   const { updateModelField, deleteModelField } = useModelField();
   const { validationInputsData } = useFieldValidations(fieldData.dataType);
   const { onDeletingConnectedField } = useModelsRelation();
@@ -37,17 +39,25 @@ const ModelFieldComponent = ({ fieldData }: Props) => {
     updateModelField(updatingInfo);
 
     if (updates.dataType === "Relation" || has(updates, "relationHasMany")) {
-      addRelation({
-        sourceModelId: fieldData.parentId,
-        sourceFieldId: fieldData.id,
-        connectedTargetModels: [],
-        hasMany: has(updates, "relationHasMany")
-          ? !!updates.relationHasMany
-          : !!fieldData.relationHasMany,
-      });
+      if (prevDataType === "Relation") {
+        updateRelation(fieldData.id, {
+          hasMany: has(updates, "relationHasMany")
+            ? !!updates.relationHasMany
+            : !!fieldData.relationHasMany,
+        });
+      } else {
+        addRelation({
+          sourceModelId: fieldData.parentId,
+          sourceFieldId: fieldData.id,
+          connectedTargetModels: [],
+          hasMany: has(updates, "relationHasMany")
+            ? !!updates.relationHasMany
+            : !!fieldData.relationHasMany,
+        });
+      }
     }
 
-    if (prevDataType === "Relation" && updates.dataType !== "Relation") {
+    if (prevDataType === "Relation" && updatingInfo.dataType !== "Relation") {
       onDeletingConnectedField(fieldData.id);
     }
   }

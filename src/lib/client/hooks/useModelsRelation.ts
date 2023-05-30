@@ -2,8 +2,8 @@
 import { useCallback, useRef } from "react";
 import { addEdge, updateEdge, useReactFlow, Edge, Connection } from "reactflow";
 import { useModelRelationStore } from "@/lib/client/store/relations";
-import getStyledEdge from "../common/getStyledEdge";
 import { ModelRelation } from "@/types";
+import getStyledEdge from "../common/getStyledEdge";
 import getEdgeId from "../common/getEdgeId";
 
 export function useModelsRelation() {
