@@ -4,7 +4,6 @@ import isEmpty from "lodash/isEmpty";
 import prisma from "@/lib/server/prisma";
 import type { CMSAccessTokenDetails } from "@/types";
 import {
-  deploySchemaToContentful,
   getContentfulClient,
   convertModelToContentful,
 } from "@/lib/server/contentful-api";
@@ -33,84 +32,77 @@ function runMiddleware(
   });
 }
 
-async function POST_OLD(req: NextApiRequest, res: NextApiResponse) {
-  try {
-    const { schemaId, cmsType } = req.body;
-    const projectId = req.query.id as string | undefined;
+// async function POST_OLD(req: NextApiRequest, res: NextApiResponse) {
+//   try {
+//     const { schemaId, cmsType } = req.body;
+//     const projectId = req.query.id as string | undefined;
 
-    // Check if project has contentful CMS
-    const cms = await prisma.projectSetting.findFirst({
-      where: {
-        projectId,
-      },
-      select: {
-        contentManagementSystems: true,
-      },
-    });
+//     // Check if project has contentful CMS
+//     const cms = await prisma.projectSetting.findFirst({
+//       where: {
+//         projectId,
+//       },
+//       select: {
+//         contentManagementSystems: true,
+//       },
+//     });
 
-    if (isEmpty(cms)) {
-      throw Error(
-        "There is no CMS authorization key was set, please add token to proceed."
-      );
-    }
+//     if (isEmpty(cms)) {
+//       throw Error(
+//         "There is no CMS authorization key was set, please add token to proceed."
+//       );
+//     }
 
-    const cmsAccessDetails = cms.contentManagementSystems.find((item) => {
-      //@ts-ignore
-      return item?.type === cmsType;
-    }) as CMSAccessDetails | undefined;
+//     const cmsAccessDetails = cms.contentManagementSystems.find((item) => {
+//       //@ts-ignore
+//       return item?.type === cmsType;
+//     }) as CMSAccessDetails | undefined;
 
-    if (isEmpty(cmsAccessDetails)) {
-      throw Error(
-        `There is no access token for ${cmsType}, please provide the token to proceed.`
-      );
-    }
+//     if (isEmpty(cmsAccessDetails)) {
+//       throw Error(
+//         `There is no access token for ${cmsType}, please provide the token to proceed.`
+//       );
+//     }
 
-    // Retrieving schema data for deployment.
-    const schemaData = await prisma.projectSchema.findFirst({
-      where: {
-        id: schemaId,
-      },
-      select: {
-        data: true,
-      },
-    });
+//     // Retrieving schema data for deployment.
+//     const schemaData = await prisma.projectSchema.findFirst({
+//       where: {
+//         id: schemaId,
+//         projectId,
+//       },
+//       select: {
+//         data: true,
+//       },
+//     });
 
-    if (isEmpty(schemaData) || isEmpty(schemaData.data)) {
-      throw Error(
-        "Failed to find selected schema, please save current schema or select from history section and try again."
-      );
-    }
+//     if (isEmpty(schemaData) || isEmpty(schemaData.data)) {
+//       throw Error(
+//         "Failed to find selected schema, please save current schema or select from history section and try again."
+//       );
+//     }
 
-    // Deployment
-    const { contentType } = getContentfulClient({
-      accessToken: cmsAccessDetails.accessToken,
-      spaceId: cmsAccessDetails.spaceId,
-      environmentId: cmsAccessDetails.environmentId,
-    });
+//     // Deployment
+//     const { models, fields, relations } = schemaData.data as {
+//       models: any | undefined;
+//       fields: any | undefined;
+//       relations: any | undefined;
+//     };
 
-    const { models, fields, relations } = schemaData.data as {
-      models: any | undefined;
-      fields: any | undefined;
-      relations: any | undefined;
-    };
+//     deploySchemaToContentful({
+//       models: models?.data,
+//       fields: fields?.data,
+//       relations: relations?.data,
+//     });
 
-    console.log(schemaData.data);
+//     // console.log(cmsAccessDetails);
 
-    deploySchemaToContentful({
-      models: models?.data,
-      fields: fields?.data,
-      relations: relations?.data,
-    });
+//     // console.log(schemaData);
 
-    // console.log(cmsAccessDetails);
-
-    // console.log(schemaData);
-
-    return res.status(200).json({ message: "Success" });
-  } catch (error) {
-    return res.status(error?.status || 500).json({ message: error?.message });
-  }
-}
+//     return res.status(200).json({ message: "Success" });
+//   } catch (error) {
+//     return res.status(error?.status || 500).json({ message: error?.message });
+//   }
+// }
 
 async function POST(req: NextApiRequest, res: NextApiResponse) {
   try {
@@ -143,6 +135,8 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
         `There is no access token for ${cmsType}, please provide the token to proceed.`
       );
     }
+
+    console.log(JSON.stringify(cmsAccessDetails, null, 2));
 
     if (cmsAccessDetails.type === "contentful") {
       const contentfulContentType = convertModelToContentful(model);
@@ -185,7 +179,6 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
         message: "Models should be delete for a chema to created.",
       });
     }
-    console.log(JSON.stringify(error, null, 3));
     // @ts-ignore
     return res.status(error?.status || 500).json({ message: error?.message });
   }

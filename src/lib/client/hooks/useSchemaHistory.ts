@@ -2,7 +2,6 @@ import { useReactFlow } from "reactflow";
 import { useFieldsStore } from "@/lib/client/store/fields";
 import { useModelRelationStore } from "@/lib/client/store/relations";
 import { useModelStore } from "@/lib/client/store/models";
-import { useHistoryStore } from "@/lib/client/store/history";
 import {
   getNodesFromData,
   getEdgesFromRelations,

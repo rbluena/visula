@@ -1,10 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import Cors from "cors";
-import { isEmpty } from "lodash";
-import {
-  getContentfulClient,
-  deploySchemaToContentful,
-} from "@/lib/server/contentful-api";
+// import { isEmpty } from "lodash";
+import {} from // deploySchemaToContentful,
+"@/lib/server/contentful-api";
 
 // Initializing the cors middleware
 // You can read more about the available options here: https://github.com/expressjs/cors#configuration-options
@@ -30,21 +28,21 @@ function runMiddleware(
   });
 }
 
-async function POST(req: NextApiRequest, res: NextApiResponse) {
+/* async function POST(req: NextApiRequest, res: NextApiResponse) {
   const data: { models: any; relations: any } = req.body;
   let responseData = null;
 
   try {
-    if (!isEmpty(data)) {
-      const requestPayload = deploySchemaToContentful(
-        data.models,
-        data.relations
-      ).map((item) =>
-        contentType.createWithId(item.apiClientParams, item.model)
-      );
+    // if (!isEmpty(data)) {
+    //   const requestPayload = deploySchemaToContentful(
+    //     data.models,
+    //     data.relations
+    //   ).map((item) =>
+    //     contentType.createWithId(item.apiClientParams, item.model)
+    //   );
 
-      responseData = await Promise.all(requestPayload);
-    }
+    //   responseData = await Promise.all(requestPayload);
+    // }
 
     return res.status(201).json({
       code: 201,
@@ -69,7 +67,7 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
       data: null,
     });
   }
-}
+} */
 
 export default async function handler(
   req: NextApiRequest,
@@ -80,7 +78,7 @@ export default async function handler(
 
   switch (req.method) {
     case "POST":
-      return await POST(req, res);
+    // return await POST(req, res);
 
     default:
       return res.status(405).json({
