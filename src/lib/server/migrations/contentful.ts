@@ -1,105 +1,101 @@
+import capitalize from "lodash/capitalize";
 import { js_beautify } from "js-beautify";
-import { ModelData, ModelRelation } from "@/types";
+import { ModelData, ModelField, ModelRelation } from "@/types";
 import { dataTypeMap, getAttachingValidations } from "../mappings/contentful";
+import { getFieldRelation } from "@/lib/shared/prepareSchema";
 
 export function createMigrationCode(
   models: Record<string, ModelData>,
+  fields: Record<string, ModelField>,
   relations: Record<string, ModelRelation>
 ) {
-  const modelsKeys = Object.keys(models);
+  const modelsKeys = Object.keys(models) || [];
 
   const contentTypeCodes = modelsKeys.map((key: string) => {
     const model = models[key] as ModelData;
-    const modelContentType = `${model.modelId}Type`;
+    const modelContentType = `${capitalize(model.modelId)}ContentType`;
 
     let script = `
-      // Creating ${model.name}
-      const ${modelContentType}  = migration
-            .createContentType("${model.modelId}")
-            .name("${model.name}")
-            .description(${model?.description || '""'});
+
+      // Creating new content type ${model.name}
+      const ${modelContentType} = migration
+          .createContentType("${model.modelId}")
+          .name("${model.name}")
+          .description("${model?.description || ""}");
     `;
 
-    const fieldSourceCode = model.fields
-      .map((field) => {
-        let fieldType = `
-        // Creating field for "${model.name}"
-        ${modelContentType}
-        .createField("${field.fieldID}", {
-          type: "${dataTypeMap[field.dataType]}",
-          required: ${field.validations?.required || false},
-          localized: ${field.validations?.localized || false},
-        })
-        `;
-
-        // Creating links for assets and references.
-        if (field.dataType === "Media") {
-          const items = field.hasManyAssets
-            ? `
-            .items({
-              type: "Link",
-              linkType: "Asset",
-            })
-          `
-            : `
-              .linkType("Asset")
-          `;
-
-          fieldType = `
-          ${fieldType}
-          ${items}
-        `;
-        }
+    const fieldScript = model.fields
+      ?.map((fieldKey) => {
+        const field = fields?.[fieldKey];
 
         if (field.dataType === "Relation") {
-          const targetId = relations[field.id].targetModelId;
-          const targetModelUniqueIdentity =
-            models[targetId || ""]?.modelId || "";
-
-          const items = field.relationHasMany
-            ? `
-            .items({
-              type: "Link",
-              linkType: "Entry",
-            })
-          `
-            : `
-              .linkType("Entry")
-          `;
-
-          fieldType = `
-            ${fieldType}
-            ${items}
-            .validations([
-              { linkContentType: ["${targetModelUniqueIdentity}"]},
-              ${getAttachingValidations(
-                field.dataType,
-                field.validations
-                // Removing the beginning and ending square brackets
-              ).slice(1, -1)}
-            ])
-          `;
-
-          return fieldType;
+          field.relation = getFieldRelation(field.id, models, relations);
         }
 
-        fieldType = `
-            ${fieldType}.validations([
-              ${getAttachingValidations(
-                field.dataType,
-                field.validations
-              ).slice(1, -1)}
-          ])
-        `;
+        // const fieldType = `${field.fieldId}FieldType`;
 
-        return fieldType;
+        let fieldScript = `
+        // Creating field for "${model.name}"
+        ${modelContentType}
+          .createField("${field.fieldId}", {
+            required: ${field.validations?.required || false},
+            localized: ${field.validations?.localized || false}
+          })
+          .name("${field.name}")
+      `;
+
+        if (!["List", "Media", "Relation"].includes(field.dataType)) {
+          fieldScript += `.type("${dataTypeMap[field.dataType]}")`;
+        }
+
+        if (field.dataType === "List") {
+          fieldScript += `.type("Array").linkType("Symbol")`;
+        }
+
+        // Creating assets and references
+        if (field.dataType === "Media") {
+          if (field.hasManyAssets) {
+            fieldScript += `.type("Array").items({ type: "Link", linkType: "Asset"})`;
+          } else {
+            fieldScript += `.type("Link").linkType("Asset")`;
+          }
+        }
+
+        //Referencess
+        if (field.dataType === "Relation") {
+          if (field.relationHasMany) {
+            fieldScript += `.type("Array").items({ type: "Link", linkType: "Entry", validations: [{ linkContentType: ${field?.relation?.connectedModels
+              ?.map((item) => `"${item.modelId}"`)
+              .toString()} }]})`;
+          } else {
+            fieldScript += `.type("Link").linkType("Entry")`;
+          }
+        }
+
+        // Field validations
+        if (!field.relationHasMany && field?.relation?.connectedModels) {
+          fieldScript += `.validations([{linkContentType: [${field.relation.connectedModels
+            .map((item) => `"${item.modelId}"`)
+            .toString()}]}, ${getAttachingValidations(
+            field.dataType,
+            field.validations
+          ).slice(1, -1)}])
+          `;
+        } else {
+          fieldScript += `.validations([${getAttachingValidations(
+            field.dataType,
+            field.validations
+          ).slice(1, -1)}])
+          `;
+        }
+
+        return fieldScript;
       })
       .join("");
 
     return `
-      ${script}
-      ${fieldSourceCode}
-    `;
+    ${script}
+    ${fieldScript}`;
   });
 
   return js_beautify(

@@ -5,25 +5,25 @@ import { TrashIcon, Cog8ToothIcon } from "@heroicons/react/24/outline";
 import dataTypes from "@/data/dataTypes";
 import useFieldValidations from "@/lib/client/hooks/useFieldValidations";
 import { useModelRelationStore } from "@/lib/client/store/relations";
-import { useFieldsStore } from "@/lib/client/store/fields";
 import useModelField from "@/lib/client/hooks/useModelFields";
 import { useModelsRelation } from "@/lib/client/hooks/useModelsRelation";
 import usePreviousValue from "@/lib/client/hooks/usePreviousValue";
-import ValidationsPopover from "./ValidationsPopover";
 import { DataType, ModelField } from "@/types";
+import ValidationsPopover from "./ValidationsPopover";
 
 type Props = {
-  fieldUUID: string;
+  fieldData: ModelField;
 };
 
-const ModelFieldComponent = ({ fieldUUID }: Props) => {
-  const data = useFieldsStore((state) => state.data[fieldUUID]);
-  const addRelation = useModelRelationStore((state) => state.addRelation);
+const ModelFieldComponent = ({ fieldData }: Props) => {
+  const { addRelation, updateRelation } = useModelRelationStore(
+    (state) => state
+  );
   const { updateModelField, deleteModelField } = useModelField();
-  const { validationInputsData } = useFieldValidations(data.dataType);
+  const { validationInputsData } = useFieldValidations(fieldData.dataType);
   const { onDeletingConnectedField } = useModelsRelation();
 
-  const prevDataType = usePreviousValue(data.dataType);
+  const prevDataType = usePreviousValue(fieldData.dataType);
 
   /**
    *
@@ -32,25 +32,33 @@ const ModelFieldComponent = ({ fieldUUID }: Props) => {
    */
   function updateFieldData(updates: Partial<ModelField>) {
     const updatingInfo = {
-      ...data,
+      ...fieldData,
       ...updates,
     };
 
     updateModelField(updatingInfo);
 
     if (updates.dataType === "Relation" || has(updates, "relationHasMany")) {
-      addRelation({
-        sourceModelId: data.parentId,
-        sourceFieldId: data.id,
-        connectedTargetModels: [],
-        hasMany: has(updates, "relationHasMany")
-          ? !!updates.relationHasMany
-          : !!data.relationHasMany,
-      });
+      if (prevDataType === "Relation") {
+        updateRelation(fieldData.id, {
+          hasMany: has(updates, "relationHasMany")
+            ? !!updates.relationHasMany
+            : !!fieldData.relationHasMany,
+        });
+      } else {
+        addRelation({
+          sourceModelId: fieldData.parentId,
+          sourceFieldId: fieldData.id,
+          connectedTargetModels: [],
+          hasMany: has(updates, "relationHasMany")
+            ? !!updates.relationHasMany
+            : !!fieldData.relationHasMany,
+        });
+      }
     }
 
-    if (prevDataType === "Relation") {
-      onDeletingConnectedField(data.id);
+    if (prevDataType === "Relation" && updatingInfo.dataType !== "Relation") {
+      onDeletingConnectedField(fieldData.id);
     }
   }
 
@@ -60,15 +68,15 @@ const ModelFieldComponent = ({ fieldUUID }: Props) => {
         <div className="flex items-end space-x-1 space-y-2">
           <div className="">
             <span className="block text-[10px] text-slate-600 pl-1">
-              {data.fieldId}
+              {fieldData.fieldId}
             </span>
             <input
               type="text"
               placeholder="Field name"
               className="bg-slate-50 text-xs leading-tight p-1.5 border border-slate-300 rounded-md"
-              defaultValue={data.name}
+              defaultValue={fieldData.name}
               onBlur={(evt) => {
-                if (data.fieldId.length === 0) {
+                if (fieldData.fieldId.length === 0) {
                   updateFieldData({
                     fieldId: camelCase(evt.target.value),
                     name: evt.target.value,
@@ -86,7 +94,7 @@ const ModelFieldComponent = ({ fieldUUID }: Props) => {
 
           <select
             className="bg-slate-50 text-xs leading-tight p-1.5 border border-slate-300 rounded-md"
-            value={data.dataType}
+            value={fieldData.dataType}
             onChange={(evt) =>
               updateFieldData({ dataType: evt.target.value as DataType })
             }
@@ -100,12 +108,13 @@ const ModelFieldComponent = ({ fieldUUID }: Props) => {
             })}
           </select>
 
-          {data.dataType === "Relation" ? (
+          {fieldData.dataType === "Relation" ? (
             <select
-              value={data.relationHasMany ? "hasMany" : "hasOne"}
+              value={fieldData.relationHasMany ? "hasMany" : "hasOne"}
               className="bg-slate-50 text-xs leading-tight p-1.5 border border-slate-300 rounded-md"
               onChange={(evt) =>
                 updateFieldData({
+                  dataType: "Relation",
                   relationHasMany: evt.target.value === "hasOne" ? false : true,
                 })
               }
@@ -116,9 +125,9 @@ const ModelFieldComponent = ({ fieldUUID }: Props) => {
           ) : null}
 
           {/* START: Media */}
-          {data.dataType === "Media" ? (
+          {fieldData.dataType === "Media" ? (
             <select
-              value={data.hasManyAssets ? "hasMany" : "hasOne"}
+              value={fieldData.hasManyAssets ? "hasMany" : "hasOne"}
               className="bg-slate-50 text-xs leading-tight p-1.5 border border-slate-300 rounded-md"
               onChange={(evt) =>
                 updateFieldData({
@@ -134,10 +143,10 @@ const ModelFieldComponent = ({ fieldUUID }: Props) => {
 
           {/* START: validation popover trigger */}
           <ValidationsPopover
-            fieldId={data.fieldId}
+            fieldId={fieldData.fieldId}
             validationInputsData={validationInputsData}
             updateFieldData={updateFieldData}
-            validationValues={data.validations}
+            validationValues={fieldData.validations}
           >
             <PopoverTrigger asChild>
               <button className="border border-slate-300 rounded-full p-1.5 bg-slate-50 hover:bg-slate-200 shadow-sm text-slate-700">
@@ -148,7 +157,7 @@ const ModelFieldComponent = ({ fieldUUID }: Props) => {
           {/* START: validation popover trigger */}
 
           <button
-            onClick={() => deleteModelField(data.parentId, data.id)}
+            onClick={() => deleteModelField(fieldData.parentId, fieldData.id)}
             className="border border-slate-300 rounded-full p-1.5 bg-red-50 hover:bg-red-100 text-red-700 shadow-sm"
           >
             <TrashIcon strokeWidth={1.2} className="w-4 h-4" />

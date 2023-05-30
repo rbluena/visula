@@ -55,7 +55,7 @@ const RightModelPane = ({ showMultipleModels }: Props) => {
   }
 
   /**
-   * Removing model node from canvas, hence the model will deleted automatically,
+   * Removing model node from canvas, hence the model will be deleted from the store automatically,
    * ref: NodeEditor component
    * @param modelData Model details
    */

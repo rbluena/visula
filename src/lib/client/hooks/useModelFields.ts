@@ -2,12 +2,19 @@ import { ModelField } from "@/types";
 import { useModelsRelation } from "./useModelsRelation";
 import { useModelStore } from "../store/models";
 import { useFieldsStore } from "../store/fields";
+import { getFieldRelation } from "@/lib/shared/prepareSchema";
+import { useModelRelationStore } from "../store/relations";
 
 export default function useModelField() {
   const { data, addField, updateField, deleteField } = useFieldsStore(
     (state) => state
   );
-  const { onFieldCreated, onFieldDeleted } = useModelStore((state) => state);
+  const {
+    onFieldCreated,
+    onFieldDeleted,
+    data: models,
+  } = useModelStore((state) => state);
+  const relations = useModelRelationStore((state) => state.data);
   const { onDeletingConnectedField } = useModelsRelation();
 
   /**
@@ -36,8 +43,20 @@ export default function useModelField() {
   }
 
   function getModelFields(fieldIds: string[]) {
+    return fieldIds.map((id) => {
+      const fieldData = { ...data[id] };
+
+      if (fieldData.dataType === "Relation") {
+        fieldData.relation = getFieldRelation(id, models, relations);
+      }
+
+      return {
+        ...fieldData,
+      };
+    });
     return fieldIds.map((id) => ({
       ...data[id],
+      connectedModels: [],
     }));
   }
 

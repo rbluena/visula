@@ -2,8 +2,8 @@
 import { useCallback, useRef } from "react";
 import { addEdge, updateEdge, useReactFlow, Edge, Connection } from "reactflow";
 import { useModelRelationStore } from "@/lib/client/store/relations";
-import getStyledEdge from "../common/getStyledEdge";
 import { ModelRelation } from "@/types";
+import getStyledEdge from "../common/getStyledEdge";
 import getEdgeId from "../common/getEdgeId";
 
 export function useModelsRelation() {
@@ -22,9 +22,10 @@ export function useModelsRelation() {
   }, []);
 
   const onNodeConnect = useCallback(
-    (edge: Edge) => {
-      // Add edge to the canvas
+    (conn: Connection) => {
+      // Add edge to the casnvas
       setEdges((edges) => {
+        const edge = conn as Edge;
         // Avoid connecting a field to its own parent model
         if (edge.target === edge.source) {
           return edges;

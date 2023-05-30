@@ -1,7 +1,8 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import Cors from "cors";
-import prisma from "@/lib/server/prisma";
+import { Prisma } from "@prisma/client";
 import isEmpty from "lodash/isEmpty";
+import prisma from "@/lib/server/prisma";
 
 const cors = Cors({
   methods: ["POST", "HEAD"],
@@ -26,11 +27,11 @@ function runMiddleware(
 async function PUT(req: NextApiRequest, res: NextApiResponse) {
   const {
     data,
-    contentManagementSystem,
-  }: { contentManagementSystem: any; data: any } = req.body;
+    contentManagementSystems,
+  }: { contentManagementSystems: Prisma.JsonArray; data: any } = req.body;
 
   try {
-    if (!isEmpty(contentManagementSystem)) {
+    if (!isEmpty(contentManagementSystems)) {
       const project = await prisma.project.update({
         where: {
           id: req.query.id as string,
@@ -41,14 +42,10 @@ async function PUT(req: NextApiRequest, res: NextApiResponse) {
           projectSetting: {
             upsert: {
               create: {
-                contentManagementSystem: JSON.stringify(
-                  contentManagementSystem
-                ),
+                contentManagementSystems: contentManagementSystems,
               },
               update: {
-                contentManagementSystem: JSON.stringify(
-                  contentManagementSystem
-                ),
+                contentManagementSystems: contentManagementSystems,
               },
             },
           },
@@ -86,7 +83,7 @@ async function PUT(req: NextApiRequest, res: NextApiResponse) {
       data: project,
     });
   } catch (error) {
-    console.log(`Error: `, error);
+    return res.status(400).json({ message: "Error occured!" });
   }
 }
 

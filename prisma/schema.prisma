@@ -34,23 +34,25 @@ model Project {
 }
 
 model ProjectSetting {
-  id                      String  @id @default(cuid())
-  contentManagementSystem Json
-  project                 Project @relation(fields: [projectId], references: [id])
-  projectId               String  @unique
+  id                       String  @id @default(cuid())
+  contentManagementSystems Json[]
+  project                  Project @relation(fields: [projectId], references: [id])
+  projectId                String  @unique
 
   @@map("project_settings")
 }
 
 model ProjectSchema {
-  id                 String   @id @default(cuid())
-  name               String?
-  versionDescription String?  @db.Text
-  checksum           String
-  project            Project  @relation(fields: [projectId], references: [id])
-  projectId          String
-  createdAt          DateTime @default(now())
-  updatedAt          DateTime @updatedAt
+  id              String   @id @default(cuid())
+  name            String?
+  description     String?  @db.Text
+  tag             String?
+  data            Json
+  parentHistoryId String? // All non-tagged schema changes are associated with the tagged changes as their parent
+  project         Project  @relation(fields: [projectId], references: [id])
+  projectId       String
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
 
   @@map("project_schema")
 }

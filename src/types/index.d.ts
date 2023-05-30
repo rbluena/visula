@@ -8,6 +8,17 @@ export type UserProject = {
   projectSetting: Record<string, any>;
 };
 
+export type SchemaData = {
+  id: string;
+  name: string;
+  description?: string;
+  tag?: string;
+  data: string;
+  projectId?: string;
+  createdAt: string;
+  updatedAt?: string;
+};
+
 export type ModelData = {
   id: string;
   modelId: string;
@@ -25,6 +36,10 @@ export type ModelField = {
   name: string;
   comment?: string;
   dataType: DataType;
+  relation?: {
+    hasMany: boolean;
+    connectedModels: { id: string; modelId: string; name: string }[];
+  };
   isUnique?: boolean;
   isRequired?: boolean;
   hasManyAssets?: boolean;
@@ -66,3 +81,9 @@ export type ValidationItem = {
 
 export type Validations = any;
 export type ModelRelationNode = Node & ModelRelation;
+
+export type CMSAccessTokenDetails = {
+  accessToken: string;
+  spaceId: string;
+  environmentId: string;
+};

@@ -26,8 +26,8 @@ export const useProjectsStore = create(
     },
     addProject(payload) {
       set((state) => {
-        state.data[payload.id] = payload;
-        state.projectIds.push(payload.id);
+        state.data[payload?.id] = payload;
+        state.projectIds.push(payload?.id);
       });
     },
     setActiveProject(projectId) {

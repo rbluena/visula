@@ -14,29 +14,33 @@ import { useReactFlow } from "reactflow";
 import { v4 as uuidV4 } from "uuid";
 import { ModelData } from "@/types";
 import { useGlobalStore } from "@/lib/client/store/global";
-import { useModelRelationStore } from "@/lib/client/store/relations";
 import useModels from "@/lib/client/hooks/useModels";
-import { useModelStore } from "@/lib/client/store/models";
+import { useHistoryStore } from "@/lib/client/store/history";
+import { saveSchemaHistoryService } from "@/services/schemas";
+import { useRouter } from "next/router";
 
 type Props = {
   children: ReactNode;
 };
 
 const ContextMenuComponent = ({ children }: Props) => {
-  const { setMigrationModal } = useGlobalStore((state) => state);
+  const { setOpenedModal, setGlobalSavingLoader } = useGlobalStore(
+    (state) => state
+  );
   const { createModel } = useModels();
-  const { data: models } = useModelStore((state) => state);
-  const relations = useModelRelationStore((state) => state.data);
+  const { addSchema, newLocalChanges } = useHistoryStore((state) => state);
   const flowInstance = useReactFlow();
   const inputRef = useRef<HTMLDivElement>(null);
   const clientPosRef = useRef<{ x: number; y: number }>({ x: 0, y: 0 });
   const [menuItems, setMenuItems] = useState<any[]>([]);
-  const modelIdRef = useRef();
+  const selectedItemRef = useRef();
+
+  const { query } = useRouter();
 
   function onContextMenu(evt: MouseEvent<HTMLElement>) {
     clientPosRef.current.x = evt.clientX;
     clientPosRef.current.y = evt.clientY;
-    modelIdRef.current = evt.target
+    selectedItemRef.current = evt.target
       //@ts-ignore
       ?.closest("[data-id]")
       ?.getAttribute("data-id");
@@ -59,7 +63,7 @@ const ContextMenuComponent = ({ children }: Props) => {
           key: 23000,
           label: "Add",
           action: createNewModel,
-          shortcut: "⌘+N",
+          shortcut: "⌘+Shift+N",
           type: "item",
         },
         {
@@ -75,17 +79,27 @@ const ContextMenuComponent = ({ children }: Props) => {
           type: "label",
         },
         {
+          key: 230232300,
+          label: "Save",
+          action: saveSchema,
+          disabled: !newLocalChanges,
+          shortcut: "⌘+Shift+S",
+          type: "item",
+        },
+        {
           key: 236550990,
-          label: "Create migration",
+          label: "Migration code",
           action: generateMigrationCode,
+          disabled: newLocalChanges,
           shortcut: "",
           type: "item",
         },
         {
           key: 230990,
-          label: "Deploy schema",
-          // action: openMigrationModal,
-          action: deploySchemaToContentful,
+          label: "Deploy",
+          action: deploySchema,
+          disabled: true, // Local changes should be saved first before deployed
+          // disabled: newLocalChanges, // Local changes should be saved first before deployed
           shortcut: "",
           type: "item",
         },
@@ -117,6 +131,17 @@ const ContextMenuComponent = ({ children }: Props) => {
           type: "item",
         },
       ]);
+      // @ts-ignore
+    } else if (evt.target?.classList.contains("react-flow__edge-textbg")) {
+      setMenuItems([
+        { id: "0090909", label: "Relation", type: "label", action: null },
+        // {
+        //   key: 576555665,
+        //   label: "Delete",
+        //   action: deleteCurrentRelation,
+        //   type: "item",
+        // },
+      ]);
     } else {
       setMenuItems([
         {
@@ -133,18 +158,18 @@ const ContextMenuComponent = ({ children }: Props) => {
           action: deleteCurrentModel,
           type: "item",
         },
-        {
-          key: 576555,
-          label: "Duplicate",
-          // action: deleteCurrentModel,
-          type: "item",
-        },
+        // {
+        //   key: 576555,
+        //   label: "Duplicate",
+        //   // action: deleteCurrentModel,
+        //   type: "item",
+        // },
       ]);
     }
   }
 
   function deleteCurrentModel() {
-    const model = flowInstance.getNode(modelIdRef.current || "");
+    const model = flowInstance.getNode(selectedItemRef.current || "");
 
     if (model) {
       flowInstance.deleteElements({ nodes: [model] });
@@ -164,6 +189,11 @@ const ContextMenuComponent = ({ children }: Props) => {
       y: clientPosRef.current.y - canvasViewPort.y,
     };
 
+    /**
+     *
+     * @param event
+     * @returns
+     */
     const onInputKeyDown = (event: KeyboardEvent<HTMLDivElement>): void => {
       evt.preventDefault();
       const modelName = inputRef.current?.innerText as string;
@@ -171,7 +201,7 @@ const ContextMenuComponent = ({ children }: Props) => {
       const isEscapeKey = event.key.toLowerCase() === "escape";
       const isEnterKey = event.key.toLowerCase() === "enter";
 
-      if (isEscapeKey || (isBackspaceKey && modelName?.length === 1)) {
+      if (isEscapeKey || (isBackspaceKey && modelName?.length === 0)) {
         setNodes((nodes) => nodes.filter((item) => item.id !== "newnodeinput"));
         return;
       }
@@ -209,6 +239,37 @@ const ContextMenuComponent = ({ children }: Props) => {
         ),
       },
     });
+  }
+
+  /**
+   * Add them senses to everyone
+   */
+  async function saveSchema() {
+    setGlobalSavingLoader(true);
+    try {
+      const schema = {
+        models: JSON.parse(
+          sessionStorage.getItem("visula-schema-models") || "{}"
+        )?.state,
+        fields: JSON.parse(
+          sessionStorage.getItem("visula-schema-fields") || "{}"
+        )?.state,
+        relations: JSON.parse(
+          sessionStorage.getItem("visula-schema-relations") || "{}"
+        )?.state,
+      };
+
+      const responseData = await saveSchemaHistoryService(query.id as string, {
+        schema,
+      });
+
+      addSchema(responseData);
+
+      setGlobalSavingLoader(false);
+    } catch (error) {
+      console.log(error);
+      setGlobalSavingLoader(false);
+    }
   }
 
   function downloadImage(
@@ -255,46 +316,44 @@ const ContextMenuComponent = ({ children }: Props) => {
     };
   }
 
-  function openMigrationModal() {
-    // const notify = () => toast("Please provide access token and space ID.");
-    // notify();
-    setMigrationModal(true);
+  function deploySchema() {
+    setOpenedModal("deploy");
   }
 
-  async function deploySchemaToContentful() {
-    try {
-      const response = await fetch(`/api/management`, {
-        method: "POST",
-        headers: {
-          "Content-Type": "application/json",
-        },
-        body: JSON.stringify({ models, relations }),
-      });
+  // async function deploySchemaToContentful() {
+  //   try {
+  //     const response = await fetch(`/api/management`, {
+  //       method: "POST",
+  //       headers: {
+  //         "Content-Type": "application/json",
+  //       },
+  //       body: JSON.stringify({ models, relations }),
+  //     });
 
-      const result = await response.json();
+  //     const result = await response.json();
 
-      if (result.error) {
-        throw new Error(result);
-      }
-    } catch (error) {
-      // If there is no accessToken, spaceId and environmentId  on the server side,
-      // then show notification error.
+  //     if (result.error) {
+  //       throw new Error(result);
+  //     }
+  //   } catch (error) {
+  //     // If there is no accessToken, spaceId and environmentId  on the server side,
+  //     // then show notification error.
 
-      // setNotification({
-      //   location: "model-canvas",
-      //   message: "Please provide access token and space ID.",
-      //   type: "warning",
-      // });
+  //     // setNotification({
+  //     //   location: "model-canvas",
+  //     //   message: "Please provide access token and space ID.",
+  //     //   type: "warning",
+  //     // });
 
-      // @ts-ignore
-      if (error.statusText === "InvalidContentfulAccessToken") {
-        openMigrationModal();
-      }
-    }
-  }
+  //     // @ts-ignore
+  //     if (error.statusText === "InvalidContentfulAccessToken") {
+  //       openMigrationModal();
+  //     }
+  //   }
+  // }
 
-  async function generateMigrationCode() {
-    openMigrationModal();
+  function generateMigrationCode() {
+    setOpenedModal("migration");
   }
 
   useEffect(() => {
@@ -351,6 +410,7 @@ const CanvasMenu = forwardRef<any, MenuProps>(({ menuItems }, ref) => {
           <ContextMenu.Item
             key={item.key}
             onSelect={item.action}
+            disabled={item.disabled}
             className="group text-[14px] leading-none text-violet-800 rounded-[3px] flex items-center h-[25px] px-[5px] relative pl-[25px] select-none outline-none data-[disabled]:text-violet-400 data-[disabled]:pointer-events-none data-[highlighted]:bg-violet-600 data-[highlighted]:text-white"
           >
             {item.label}

@@ -2,8 +2,9 @@ import { ReactNode } from "react";
 import Head from "next/head";
 import { inter } from "@/assets/fonts";
 import { Toaster } from "react-hot-toast";
-import MigrationModal from "@/components/modals/MigrationModal";
-import ProjectSettingsModal from "../modals/ProjectSettingsModal";
+import ProjectSettingsModal from "@/components/modals/ProjectSettingsModal";
+import SchemaTaggingModal from "@/components/modals/SchemaTaggingModal";
+import SchemaDeploymentModal from "../modals/SchemaDeploymentModal/SchemaDeploymentModal";
 
 type Props = {
   children: ReactNode;
@@ -31,18 +32,23 @@ const MainLayout = ({
         {children}
         <Toaster
           toastOptions={{
-            position: "bottom-left",
-            className: "border-b border-b-green-400",
+            position: "top-left",
+            duration: 3000,
             success: {
-              duration: 3000,
-              className: "border-b-2 border-b-green-400",
+              className: "border-2 border-b-indigo-500",
+              iconTheme: {
+                primary: "rgb(79 70 229)",
+                secondary: "#FFFAEE",
+              },
             },
+            error: { className: "border-2 border-b-red-500" },
           }}
           containerClassName="w-[60%]"
         />
 
-        <MigrationModal />
+        <SchemaDeploymentModal />
         <ProjectSettingsModal />
+        <SchemaTaggingModal />
       </main>
     </>
   );

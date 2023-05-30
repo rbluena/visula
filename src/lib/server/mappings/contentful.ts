@@ -12,7 +12,6 @@ export const dataTypeMap = {
   Location: "Location",
   Date: "Date",
   Object: "Object",
-  // Array: "Array",
   List: "Array", // { "type": "Array", "items": { "type": "Symbol" } }
   Media: "Link", // { "type": "Array", "items": { "type": "Link", "linkType": "Asset" } }
   Relation: "Link", // { "type": "Array", "items": { "type": "Link", "linkType": "Entry" } }

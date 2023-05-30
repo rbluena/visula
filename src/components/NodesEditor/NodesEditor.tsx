@@ -1,22 +1,36 @@
+import { useCallback } from "react";
+import ReactFlow, {
+  Background,
+  useEdgesState,
+  useNodesState,
+  Node,
+  MiniMap,
+} from "reactflow";
+
 import { getNodesFromData } from "@/lib/client/common/dataAndNodes";
 import { useModelStore } from "@/lib/client/store/models";
 import { ContextMenu } from "@/components";
 
-import ReactFlow, {
-  Background,
-  Controls,
-  useEdgesState,
-  useNodesState,
-  Node,
-} from "reactflow";
 import { useModelsRelation } from "@/lib/client/hooks/useModelsRelation";
+
+function isNodeMoved(
+  prevPosition: { x: number; y: number },
+  currPosition: { x: number; y: number }
+) {
+  const isHorizontallyMoved =
+    Math.abs(Math.trunc(prevPosition.x) - Math.trunc(currPosition.x)) > 25;
+  const isVerticallyMoved =
+    Math.abs(Math.trunc(prevPosition.y) - Math.trunc(currPosition.y)) > 25;
+
+  return isHorizontallyMoved || isVerticallyMoved;
+}
 
 type Props = {
   showEditor?: boolean;
 };
 
 const NodeEditor = ({ showEditor = false }: Props) => {
-  const { deleteModel, data } = useModelStore((state) => state);
+  const { deleteModel, updateModel, data } = useModelStore((state) => state);
   const {
     onNodeConnect,
     onEdgeUpdate,
@@ -38,12 +52,24 @@ const NodeEditor = ({ showEditor = false }: Props) => {
     deleteModel(deletingNode[0]?.id);
   }
 
-  // function onEdgesDeleted(edges: Edge[]) {
-  //   if (edges.length) {
-  //     console.log("On edges deleted!", edges);
-  //     // edges.forEach((edge) => deleteRelation(edge));
-  //   }
-  // }
+  /**
+   * Updating position of the model
+   * @param _
+   * @param draggedNode
+   */
+  const onSelectionDragStop = useCallback(
+    (_: any, draggedNode: Node) => {
+      const model = data[draggedNode.id];
+
+      if (model && isNodeMoved(model.position, draggedNode.position)) {
+        updateModel({
+          ...model,
+          position: draggedNode.position,
+        });
+      }
+    },
+    [data, updateModel]
+  );
 
   return (
     <div
@@ -54,6 +80,7 @@ const NodeEditor = ({ showEditor = false }: Props) => {
       <ContextMenu>
         <ReactFlow
           onNodesChange={onNodesChange}
+          onNodeDragStop={onSelectionDragStop}
           onNodesDelete={onNodesDeleted}
           onEdgesDelete={onEdgesDeleted}
           onEdgesChange={onEdgesChange}
@@ -63,11 +90,10 @@ const NodeEditor = ({ showEditor = false }: Props) => {
           onConnect={onNodeConnect}
           nodes={nodes}
           edges={edges}
-          // fitView
           attributionPosition="bottom-right"
         >
-          <Controls />
           <Background />
+          <MiniMap position="bottom-left" />
         </ReactFlow>
       </ContextMenu>
     </div>
