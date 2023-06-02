@@ -43,7 +43,7 @@ export default function useModelField() {
   }
 
   function getModelFields(fieldIds: string[]) {
-    return fieldIds.map((id) => {
+    return fieldIds?.map((id) => {
       const fieldData = { ...data[id] };
 
       if (fieldData.dataType === "Relation") {

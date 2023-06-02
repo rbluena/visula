@@ -1,14 +1,14 @@
 import { GetServerSideProps } from "next";
 import { ReactFlowProvider } from "reactflow";
 import prisma from "@/lib/server/prisma";
-import { MainLayout, NodesEditor, CodeEditor } from "@/components";
+import { MainLayout, NodesEditor, CodeEditor, BottomSheet } from "@/components";
 import { useUIStore } from "@/lib/client/store/ui";
 import UpdateModelModal from "@/components/modals/UpdateModelModal";
 import DashboardTopBar from "@/components/layouts/DashboardTopBar";
 import { RightPane } from "@/components";
 import { useProject, useProjectInit } from "@/lib/client/hooks/useProject";
 import { UserProject } from "@/types";
-
+import DataGenerator from "@/features/data-generation/DataGenerator";
 const Try = ({ project }: { project: UserProject; error: string }) => {
   const editor = useUIStore((state) => state.editor);
   const { globalLoader } = useProjectInit(project); // Project when page is loaded
@@ -33,8 +33,14 @@ const Try = ({ project }: { project: UserProject; error: string }) => {
 
           <RightPane />
         </div>
+
         <UpdateModelModal />
+        <BottomSheet>
+          <DataGenerator />
+        </BottomSheet>
       </ReactFlowProvider>
+
+      {/* Internet, Image, Date, Phone, Location, Comerce, Finance, Animals, Vehicle, Number  */}
     </MainLayout>
   );
 };
