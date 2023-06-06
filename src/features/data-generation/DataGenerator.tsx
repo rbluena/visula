@@ -16,6 +16,7 @@ import DataTable from "./components/DataTable";
 import { useGeneratorStore } from "./store";
 import { useDataGenerator } from "./hooks";
 import { XMarkIcon } from "@heroicons/react/24/outline";
+import { useGlobalStore } from "@/lib/client/store/global";
 
 const DataGenerator = () => {
   const [selectedFields, setSelectedFields] = useState<string[]>([]);
@@ -27,6 +28,9 @@ const DataGenerator = () => {
     onSelectingModel,
   } = useModels();
   const addGeneratedData = useGeneratorStore((state) => state.addGeneratedData);
+  const setBottomSheetStatus = useGlobalStore(
+    (state) => state.setBottomSheetOpenStatus
+  );
   const { getModelGeneratedData, getGridData } = useDataGenerator();
   const activeSchemaId = useHistoryStore((state) => state.activeSchemaId);
   const { getModelFields } = useModelField();
@@ -124,7 +128,11 @@ const DataGenerator = () => {
         )}
 
         <div className="ml-auto h-full min-w-[400px] flex items-center flex-row-reverse px-4 gap-2">
-          <Button variant="danger" size="sm">
+          <Button
+            variant="danger"
+            size="sm"
+            onClick={() => setBottomSheetStatus("closed")}
+          >
             <span className="sr-only">Close bottom sheet</span>
             <XMarkIcon className="w-4 h-4" />
           </Button>
@@ -164,7 +172,7 @@ const DataGenerator = () => {
       {/* START: FIELDS AND SELECTING DATA TYPE */}
       <div className="w-full h-full bg-white">
         {!isEmpty(activeModel) ? (
-          <div className="w-full flex">
+          <div className="w-full flex h-full">
             <div className=" w-[400px]">
               <form onSubmit={handleSubmit(onSubmit)} className="divide-y">
                 {fields?.map((field) => (
