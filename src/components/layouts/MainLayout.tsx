@@ -1,10 +1,10 @@
 import { ReactNode } from "react";
 import Head from "next/head";
-import { inter } from "@/assets/fonts";
 import { Toaster } from "react-hot-toast";
+import { inter } from "@/assets/fonts";
 import ProjectSettingsModal from "@/components/modals/ProjectSettingsModal";
 import SchemaTaggingModal from "@/components/modals/SchemaTaggingModal";
-import SchemaDeploymentModal from "../modals/SchemaDeploymentModal/SchemaDeploymentModal";
+import SchemaDeploymentModal from "@/components/modals/SchemaDeploymentModal";
 
 type Props = {
   children: ReactNode;

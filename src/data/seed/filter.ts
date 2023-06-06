@@ -3,9 +3,10 @@ export const options = {
     {
       label: "Random",
       options: [
-        { label: "Word", value: "word" },
-        { label: "Sentence", value: "sentence" },
-        { label: "Paragraph", value: "paragraph" },
+        { label: "Word", value: "lorem.word" },
+        { label: "Sentence", value: "lorem.sentence" },
+        { label: "Paragraphs", value: "lorem.paragraphs" },
+        { label: "Slug", value: "lorem.slug" },
       ],
     },
   ],
@@ -16,7 +17,7 @@ export const options = {
         { label: "Job title", value: "person.jobTitle" },
         { label: "Job type", value: "person.jobType" },
         { label: "Job description", value: "person.jobDescriptor" },
-        { label: "Bio", value: "person.bios" },
+        { label: "Bio", value: "person.bio" },
       ],
     },
   ],
@@ -29,7 +30,7 @@ export const options = {
         { label: "Middle name", value: "person.middleName" },
         { label: "Full name", value: "person.fullName" },
         { label: "Prefix", value: "person.prefix" },
-        { label: "Age", value: "age" },
+        { label: "Age", value: "date.age" },
         { label: "Gender", value: "person.gender" },
       ],
     },
@@ -63,6 +64,7 @@ export const options = {
 
 export const groupedOptions = [
   ...options.random,
+  ...options.person,
   ...options.occupation,
   ...options.date,
   ...options.location,

@@ -17,6 +17,7 @@
     "postinstall": "prisma generate"
   },
   "dependencies": {
+    "@faker-js/faker": "^8.0.2",
     "@heroicons/react": "^2.0.17",
     "@keyv/redis": "^2.5.8",
     "@monaco-editor/react": "^4.4.6",
@@ -29,12 +30,14 @@
     "@radix-ui/react-switch": "^1.0.2",
     "@radix-ui/react-tabs": "^1.0.3",
     "@radix-ui/react-toggle-group": "^1.0.3",
+    "@silevis/reactgrid": "^4.0.4",
     "@types/antlr4": "^4.11.2",
     "@types/cors": "^2.8.13",
     "@types/node": "18.15.11",
     "@types/react": "18.0.31",
     "@types/react-dom": "18.0.11",
     "antlr4": "^4.12.0",
+    "class-variance-authority": "^0.6.0",
     "contentful-management": "^10.35.4",
     "contentful-migration": "^4.12.9",
     "cors": "^2.8.5",

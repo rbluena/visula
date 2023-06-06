@@ -2,14 +2,17 @@ import React from "react";
 import { groupedOptions } from "@/data/seed/filter";
 import { Select, Button } from "@/components/form";
 import { ModelField } from "@/types";
+import { Controller } from "react-hook-form";
 
 type Props = {
   field: ModelField;
+  modelId: string;
+  control: any;
   register: any;
   removeField: Function;
 };
 
-const FieldGenComponent = ({ field, register, removeField }: Props) => {
+const FieldGenComponent = ({ field, control, removeField }: Props) => {
   if (field.relation) {
     // TODO: Apply relation dummy data generation
     return null;
@@ -21,13 +24,20 @@ const FieldGenComponent = ({ field, register, removeField }: Props) => {
       className="flex flex-col bg-indigo-50 py-4 px-4 mb-2 max-w-[450px]"
     >
       <p className="text-lg font-semibold">{field.name}</p>
-      <input type="text" {...register(field.fieldId)} hidden />
       <div className="flex gap-4">
-        <Select
-          label="Type"
-          options={groupedOptions}
-          placeholder="Select data type"
+        <Controller
+          control={control}
+          name={`${field.fieldId}`}
+          render={({ field }) => (
+            <Select
+              {...field}
+              isClearable
+              placeholder="Select type"
+              options={groupedOptions}
+            />
+          )}
         />
+
         {/* <div className="flex flex-col">
           <div className="flex gap-2">
             <Select

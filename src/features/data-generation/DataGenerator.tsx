@@ -1,22 +1,47 @@
-// import { useState } from "react";
-import { isEmpty } from "lodash";
-// import { useHistoryStore } from "@/lib/client/store/history";
+import { useEffect, useState, useRef } from "react";
+import { useRouter } from "next/router";
+import isEmpty from "lodash/isEmpty";
+import omitBy from "lodash/omitBy";
+import isNil from "lodash/isNil";
+import { useForm } from "react-hook-form";
+import { toast } from "react-hot-toast";
 import useModels from "@/lib/client/hooks/useModels";
 import { Button } from "@/components/form";
-import { useForm } from "react-hook-form";
 import useModelField from "@/lib/client/hooks/useModelFields";
-import { useEffect, useState } from "react";
+import { generateSchemaContent } from "@/services/generator";
+import { useHistoryStore } from "@/lib/client/store/history";
+import { Spinner } from "@/components";
 import FieldGenComponent from "./components/FieldGenComponent";
+import DataTable from "./components/DataTable";
+import { useGeneratorStore } from "./store";
+import { useDataGenerator } from "./hooks";
+import { XMarkIcon } from "@heroicons/react/24/outline";
 
 const DataGenerator = () => {
-  // const [selectedValue, setSelectedValue] = useState<any>("");
-  // const activeSchemaId = useHistoryStore((state) => state.activeSchemaId);
   const [selectedFields, setSelectedFields] = useState<string[]>([]);
-  const { selectedActiveModel: activeModel } = useModels();
+  const [totalCount, setTotalCount] = useState("10");
+  const [isGenerating, setIsGenerating] = useState(false);
+  const {
+    selectedActiveModel: activeModel,
+    getModelsData,
+    onSelectingModel,
+  } = useModels();
+  const addGeneratedData = useGeneratorStore((state) => state.addGeneratedData);
+  const { getModelGeneratedData, getGridData } = useDataGenerator();
+  const activeSchemaId = useHistoryStore((state) => state.activeSchemaId);
   const { getModelFields } = useModelField();
-  const { register, handleSubmit } = useForm();
+  const { register, handleSubmit, control } = useForm();
+
+  const { query } = useRouter();
+
+  const allModels = getModelsData();
 
   const fields = getModelFields(selectedFields);
+
+  const submitRef = useRef<HTMLButtonElement>(null);
+
+  const generatedData = getModelGeneratedData(activeModel.id);
+  const gridData = getGridData(fields, generatedData?.data);
 
   /**
    *
@@ -25,8 +50,43 @@ const DataGenerator = () => {
     setSelectedFields((state) => state.filter((item) => item !== id));
   }
 
-  function onSubmit(data: any) {
-    console.log(data);
+  /**
+   *
+   * @param data
+   */
+  async function onSubmit(data: any) {
+    let newObj = { ...omitBy(data, isNil) };
+
+    for (const prop in newObj) {
+      if (Object.prototype.hasOwnProperty.call(newObj, prop)) {
+        const element = data[prop];
+
+        newObj[prop] = {
+          ...element,
+          dataType: null,
+        };
+      }
+    }
+
+    try {
+      setIsGenerating(true);
+      const payload = {
+        modelId: activeModel.modelId,
+        totalCount: parseInt(totalCount, 10),
+        data: {
+          ...newObj,
+        },
+      };
+
+      const genData = await generateSchemaContent(query.id as string, payload);
+      addGeneratedData(activeModel.id, activeSchemaId as string, genData);
+      setIsGenerating(false);
+    } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
+      setIsGenerating(false);
+    }
   }
 
   useEffect(() => {
@@ -38,47 +98,107 @@ const DataGenerator = () => {
     setSelectedFields([]);
   }, [activeModel?.fields]);
 
-  if (isEmpty(activeModel)) {
-    return null;
-  }
-
   return (
     <div className="bg-slate-50 h-full">
       {/* START: Header */}
       <div className="w-full h-[50px] border-b border-b-slate-100 flex items-center px-4">
-        <div>
-          <h2 className="text-2xl font-semibold">{activeModel.name}</h2>
-        </div>
+        {allModels?.length ? (
+          <div className="flex gap-2 items-center">
+            <select
+              className="min-w-[100px] text-sm p-1.5 rounded-md border border-slate-300 bg-slate-50"
+              onChange={(evt) => onSelectingModel(evt.target.value)}
+              placeholder="Select model"
+              value={activeModel.id}
+            >
+              <option disabled>Select model</option>
+              {allModels?.map((model) => (
+                <option key={model.id} value={model.id}>
+                  {model.name}
+                </option>
+              ))}
+            </select>
+            {/* <h2 className="text-xl">Model</h2> */}
+          </div>
+        ) : (
+          <p className="text-slate-500 font-semibold">No model created</p>
+        )}
+
         <div className="ml-auto h-full min-w-[400px] flex items-center flex-row-reverse px-4 gap-2">
-          <Button>Close</Button>
-          <Button>Generate</Button>
-          <select name="" id="">
-            <option value={10}>5</option>
-            <option value={10}>10</option>
-            <option value={10}>25</option>
-            <option value={10} disabled>
+          <Button variant="danger" size="sm">
+            <span className="sr-only">Close bottom sheet</span>
+            <XMarkIcon className="w-4 h-4" />
+          </Button>
+          <Button
+            variant="primary"
+            modifier="outline"
+            className="min-w-[100px]"
+            size="sm"
+            onClick={() => {
+              submitRef.current?.click();
+            }}
+          >
+            {isGenerating ? <Spinner className="w-4 h-4" /> : "Generate"}
+          </Button>
+          <select
+            className="min-w-[100px] text-sm p-1.5 rounded-md border leading-loose border-slate-300 bg-slate-50"
+            onChange={(evt) => setTotalCount(evt.target.value)}
+            value={totalCount}
+          >
+            <option value="5">5</option>
+            <option value="10">10</option>
+            <option value="25">25</option>
+            <option value="50" disabled>
               50
             </option>
-            <option value={10} disabled>
+            <option value="100" disabled>
               100
+            </option>
+            <option value="1000" disabled>
+              1000
             </option>
           </select>
         </div>
       </div>
       {/* END: Header */}
 
-      {/* <div className="w-[450px] bg-slate-100"></div> */}
-      <div className="bg-white w-full overflow-y-auto h-full py-10 pt-5">
-        <form onSubmit={handleSubmit(onSubmit)} className="divide-y">
-          {fields?.map((field) => (
-            <FieldGenComponent
-              key={field.id}
-              field={field}
-              register={register}
-              removeField={removeField}
-            />
-          ))}
-        </form>
+      {/* START: FIELDS AND SELECTING DATA TYPE */}
+      <div className="w-full h-full bg-white">
+        {!isEmpty(activeModel) ? (
+          <div className="w-full flex">
+            <div className=" w-[400px]">
+              <form onSubmit={handleSubmit(onSubmit)} className="divide-y">
+                {fields?.map((field) => (
+                  <FieldGenComponent
+                    key={field.id}
+                    field={field}
+                    modelId={activeModel?.modelId}
+                    control={control}
+                    register={register}
+                    removeField={removeField}
+                  />
+                ))}
+
+                <Button ref={submitRef} type="submit" hidden>
+                  Submit
+                </Button>
+              </form>
+            </div>
+
+            {/* START: TABLE */}
+            <div className="w-full h-full overflow-auto">
+              {!isGenerating && !isEmpty(gridData) ? (
+                <DataTable gridData={gridData} />
+              ) : null}
+
+              {isGenerating ? (
+                <div className="w-full h-full grid place-items-center">
+                  <Spinner className="w-8 h-8" />
+                </div>
+              ) : null}
+            </div>
+          </div>
+        ) : null}
+        {/* END: FIELDS AND SELECTING DATA TYPE */}
       </div>
     </div>
   );

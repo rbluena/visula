@@ -2,7 +2,7 @@ import React from "react";
 import Selector, { Props as SelectProps } from "react-select";
 
 const formatGroupLabel = (data: any) => (
-  <div className="flex justify-between items-center bg-slate-100">
+  <div className="flex justify-between items-center my-2">
     <span className="text-[12px] text-slate-600 font-semibold">
       {data.label}
     </span>
@@ -17,7 +17,7 @@ type Props = SelectProps & {
 };
 
 const Select = React.forwardRef<any, Props>(
-  ({ id, label, ...rest }, forwardRef) => {
+  ({ id, label, ...props }, forwardRef) => {
     return (
       <div className="my-2 flex flex-col">
         {label ? (
@@ -53,15 +53,13 @@ const Select = React.forwardRef<any, Props>(
               padding: 0,
               margin: 0,
             }),
-            menu: (base, another) => {
-              console.log(base, another);
+            menu: (base) => {
               return { ...base };
             },
           }}
-          isClearable
           isSearchable
           formatGroupLabel={formatGroupLabel}
-          {...rest}
+          {...props}
         />
       </div>
     );

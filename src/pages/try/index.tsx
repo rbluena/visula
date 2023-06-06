@@ -9,6 +9,7 @@ import { RightPane } from "@/components";
 import { useProject, useProjectInit } from "@/lib/client/hooks/useProject";
 import { UserProject } from "@/types";
 import DataGenerator from "@/features/data-generation/DataGenerator";
+
 const Try = ({ project }: { project: UserProject; error: string }) => {
   const editor = useUIStore((state) => state.editor);
   const { globalLoader } = useProjectInit(project); // Project when page is loaded
