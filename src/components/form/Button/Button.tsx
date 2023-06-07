@@ -10,7 +10,7 @@ const buttonStyle = cva(
         default: "",
         primary: "",
         secondary: "",
-        danger: "bg-red-500 text-white border border-red-500",
+        danger: "",
         monochrome: "bg-black text-white",
       },
       modifier: {
@@ -62,6 +62,19 @@ const buttonStyle = cva(
         variant: "primary",
         modifier: "icon",
         className: "text-indigo-700 bg-indigo-50 border border-indigo-400",
+      },
+
+      // Danger
+      {
+        variant: "danger",
+        modifier: "default",
+        className: "bg-red-500 text-white border border-red-500",
+      },
+
+      {
+        variant: "danger",
+        modifier: "outline",
+        className: "border border-red-500 text-red-600",
       },
 
       // Monochrome button

@@ -72,7 +72,7 @@ const DashboardTopBar = ({
 
       addSchema(responseData);
       setSavingLoader(false);
-      toast.success("New schema was created.");
+      toast.success("New schema has been saved.");
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);

@@ -41,8 +41,6 @@ export function useDataGenerator() {
       };
 
       const rows: Row[] = genData.map((item: any, index: number) => {
-        // console.log(item);
-
         return {
           rowId: index,
           cells: fields.map((field) => ({
@@ -52,8 +50,6 @@ export function useDataGenerator() {
           })),
         } as Row;
       });
-
-      console.log(rows);
 
       return {
         headerRow,

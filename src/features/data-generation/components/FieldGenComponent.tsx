@@ -3,6 +3,7 @@ import { groupedOptions } from "@/data/seed/filter";
 import { Select, Button } from "@/components/form";
 import { ModelField } from "@/types";
 import { Controller } from "react-hook-form";
+import { TrashIcon } from "@heroicons/react/24/outline";
 
 type Props = {
   field: ModelField;
@@ -21,10 +22,10 @@ const FieldGenComponent = ({ field, control, removeField }: Props) => {
   return (
     <div
       key={field.id}
-      className="flex flex-col bg-indigo-50 py-4 px-4 mb-2 max-w-[450px]"
+      className="flex flex-col bg-slate-50 p-4 mb-2 border-y border-slate-200 max-w-[450px]"
     >
       <p className="text-lg font-semibold">{field.name}</p>
-      <div className="flex gap-4">
+      <div className="flex items-baseline gap-4">
         <Controller
           control={control}
           name={`${field.fieldId}`}
@@ -33,6 +34,7 @@ const FieldGenComponent = ({ field, control, removeField }: Props) => {
               {...field}
               isClearable
               placeholder="Select type"
+              required
               options={groupedOptions}
             />
           )}
@@ -65,8 +67,17 @@ const FieldGenComponent = ({ field, control, removeField }: Props) => {
           <Button>Add constraint</Button>
         </div> */}
 
-        <Button type="button" onClick={() => removeField(field.id)}>
-          Remove
+        <Button
+          type="button"
+          variant="danger"
+          modifier="outline"
+          size="sm"
+          onClick={() => removeField(field.id)}
+        >
+          <span id="" className="sr-only">
+            Remove {field.name} from generating content
+          </span>
+          <TrashIcon className="w-4 h-4" />
         </Button>
       </div>
     </div>

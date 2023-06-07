@@ -39,7 +39,12 @@ const DataGenerator = () => {
   const { getModelGeneratedData, getGridData } = useDataGenerator();
   const activeSchemaId = useHistoryStore((state) => state.activeSchemaId);
   const { getModelFields } = useModelField();
-  const { register, handleSubmit, control } = useForm();
+  const {
+    register,
+    handleSubmit,
+    control,
+    formState: { isValid },
+  } = useForm();
 
   const { query } = useRouter();
 
@@ -119,7 +124,9 @@ const DataGenerator = () => {
               placeholder="Select model"
               value={activeModel.id}
             >
-              <option disabled>Select model</option>
+              <option disabled selected>
+                Select model
+              </option>
               {allModels?.map((model) => (
                 <option key={model.id} value={model.id}>
                   {model.name}
@@ -160,6 +167,7 @@ const DataGenerator = () => {
             variant="primary"
             className="min-w-[100px]"
             size="sm"
+            disabled={!isValid}
             onClick={() => {
               submitRef.current?.click();
             }}
@@ -192,8 +200,11 @@ const DataGenerator = () => {
       <div className="w-full h-full bg-white">
         {!isEmpty(activeModel) ? (
           <div className="w-full flex h-full">
-            <div className=" w-[400px]">
-              <form onSubmit={handleSubmit(onSubmit)} className="divide-y">
+            <div
+              className="w-[400px] overflow-auto pb-4"
+              style={{ height: "calc(100% - 50px)" }}
+            >
+              <form onSubmit={handleSubmit(onSubmit)} className="">
                 {fields?.map((field) => (
                   <FieldGenComponent
                     key={field.id}
@@ -205,14 +216,17 @@ const DataGenerator = () => {
                   />
                 ))}
 
-                <Button ref={submitRef} type="submit" hidden>
+                <Button ref={submitRef} type="submit" className="hidden">
                   Submit
                 </Button>
               </form>
             </div>
 
             {/* START: TABLE */}
-            <div className="w-full h-full overflow-auto">
+            <div
+              className="w-full px-2 pb-2 overflow-auto"
+              style={{ height: "calc(100% - 50px)" }}
+            >
               {!isGenerating && !isEmpty(gridData) ? (
                 <DataTable gridData={gridData} />
               ) : null}
