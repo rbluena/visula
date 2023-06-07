@@ -15,7 +15,11 @@ import FieldGenComponent from "./components/FieldGenComponent";
 import DataTable from "./components/DataTable";
 import { useGeneratorStore } from "./store";
 import { useDataGenerator } from "./hooks";
-import { XMarkIcon } from "@heroicons/react/24/outline";
+import {
+  ArrowsPointingInIcon,
+  ArrowsPointingOutIcon,
+  XMarkIcon,
+} from "@heroicons/react/24/outline";
 import { useGlobalStore } from "@/lib/client/store/global";
 
 const DataGenerator = () => {
@@ -31,6 +35,7 @@ const DataGenerator = () => {
   const setBottomSheetStatus = useGlobalStore(
     (state) => state.setBottomSheetOpenStatus
   );
+  const bottomSheetOpen = useGlobalStore((state) => state.bottomSheetOpen);
   const { getModelGeneratedData, getGridData } = useDataGenerator();
   const activeSchemaId = useHistoryStore((state) => state.activeSchemaId);
   const { getModelFields } = useModelField();
@@ -139,6 +144,20 @@ const DataGenerator = () => {
           <Button
             variant="primary"
             modifier="outline"
+            onClick={() =>
+              setBottomSheetStatus(
+                bottomSheetOpen === "expanded" ? "opened" : "expanded"
+              )
+            }
+          >
+            {bottomSheetOpen === "expanded" ? (
+              <ArrowsPointingInIcon className="w-4 h-4" />
+            ) : (
+              <ArrowsPointingOutIcon className="w-4 h-4" />
+            )}
+          </Button>
+          <Button
+            variant="primary"
             className="min-w-[100px]"
             size="sm"
             onClick={() => {

@@ -28,7 +28,7 @@ const BottomSheet = ({ children }: Props) => {
       className={`bg-white w-full transition-all fixed bottom-1 z-50 overflow-hidden shadow-xl border-t-2 border-t-slate-200`}
       style={{ top: `${sheetHeight}%` }}
     >
-      {children}
+      {bottomSheetStatus === "closed" ? null : children}
     </div>
   );
 };
