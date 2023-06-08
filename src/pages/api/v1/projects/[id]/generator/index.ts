@@ -59,14 +59,14 @@ async function POST(req: NextApiRequest, res: NextApiResponseWithFormat) {
       });
     }
 
-    if (totalCount > 25) {
+    if (!totalCount || totalCount > 50) {
       return res.status(400).json({
         err: false,
         error: {
           status: 400,
           statusText: "InvalidRequest",
           message:
-            "With current subscription you can't generate more than 25 dummy content",
+            "With current subscription you can't generate more than 50 dummy content",
         },
         data: null,
       });
