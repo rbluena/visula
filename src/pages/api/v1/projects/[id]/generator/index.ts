@@ -3,13 +3,25 @@ import Cors from "cors";
 import { faker } from "@faker-js/faker";
 import isEmpty from "lodash/isEmpty";
 
+type ApiResponseFormat = {
+  error: {
+    message: string;
+    statusText?: string;
+    status: number;
+  } | null;
+  err: boolean;
+  data: { data: any; message: string } | null;
+};
+
+type NextApiResponseWithFormat = NextApiResponse<ApiResponseFormat>;
+
 const cors = Cors({
   methods: ["POST", "HEAD"],
 });
 
 function runMiddleware(
   req: NextApiRequest,
-  res: NextApiResponse,
+  res: NextApiResponseWithFormat,
   fn: Function
 ) {
   return new Promise((resolve, reject) => {
@@ -29,21 +41,35 @@ function runMiddleware(
  * @param res
  * @returns
  */
-async function POST(req: NextApiRequest, res: NextApiResponse) {
+async function POST(req: NextApiRequest, res: NextApiResponseWithFormat) {
   try {
-    const { modelId, schemaId, totalCount, data } = req.body;
+    // const { modelId, schemaId, totalCount, data } = req.body;
+    const { totalCount, data } = req.body;
 
     if (isEmpty(data)) {
       return res.status(400).json({
-        statusText: "InvalidRequest",
-        message: "No fields selected, please select a model and its fields.",
+        err: true,
+        error: {
+          status: 400,
+          statusText: "InvalidRequest",
+          message:
+            "Dummy data for the schema can't be generated. Please make sure all fields are filled properly.",
+        },
+        data: null,
       });
     }
 
     if (totalCount > 25) {
-      return res
-        .status(400)
-        .json({ statusText: "InvalidRequest", message: "" });
+      return res.status(400).json({
+        err: false,
+        error: {
+          status: 400,
+          statusText: "InvalidRequest",
+          message:
+            "With current subscription you can't generate more than 25 dummy content",
+        },
+        data: null,
+      });
     }
 
     const generatedData = Array.from({ length: totalCount }, function () {
@@ -63,26 +89,53 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
     });
 
     if (!generatedData) {
-      return res.status(400).json({
-        statusText: "",
-        message: "Error message...",
+      return res.status(404).json({
+        err: true,
+        error: {
+          status: 404,
+          statusText: "NotFound",
+          message:
+            "Dummy data for the schema can't be generated. Please make sure all fields are filled properly.",
+        },
+        data: null,
       });
     }
 
-    return res
-      .status(201)
-      .json({ statusText: "Success", message: "", data: generatedData });
+    return res.status(201).json({
+      err: false,
+      error: null,
+      data: {
+        data: generatedData,
+        message: "Data has been generated successfully!",
+      },
+    });
   } catch (error) {
+    if (error instanceof Error) {
+      return res.status(500).json({
+        err: true,
+        error: {
+          message: error.message,
+          status: 500,
+        },
+        data: null,
+      });
+    }
+
     return res.status(500).json({
-      message:
-        "We couldn't be able to complete your request. We are checking the problem and fixing right away.",
+      err: true,
+      error: {
+        status: 500,
+        message:
+          "We couldn't be able to complete your request. We are checking the problem and fixing right away.",
+      },
+      data: null,
     });
   }
 }
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponseWithFormat
 ) {
   await runMiddleware(req, res, cors);
 
@@ -93,13 +146,14 @@ export default async function handler(
       return await POST(req, res);
 
     default:
-      return res.status(500).json({
+      return res.status(405).json({
+        err: true,
         error: {
-          code: 500,
-          error: true,
+          status: 405,
           statusText: "MethodNotAllowed",
-          message: "Only PUT and GET is available on this API",
+          message: "Only POST are available on this API",
         },
+        data: null,
       });
   }
 }

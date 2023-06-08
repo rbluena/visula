@@ -93,12 +93,13 @@ const DataGenerator = () => {
       };
 
       const genData = await generateSchemaContent(query.id as string, payload);
-      addGeneratedData(activeModel.id, activeSchemaId as string, genData);
+      addGeneratedData(activeModel.id, activeSchemaId as string, genData.data);
       setIsGenerating(false);
     } catch (error) {
       if (error instanceof Error) {
         toast.error(error.message);
       }
+
       setIsGenerating(false);
     }
   }
@@ -182,9 +183,7 @@ const DataGenerator = () => {
             <option value="5">5</option>
             <option value="10">10</option>
             <option value="25">25</option>
-            <option value="50" disabled>
-              50
-            </option>
+            <option value="50">50</option>
             <option value="100" disabled>
               100
             </option>

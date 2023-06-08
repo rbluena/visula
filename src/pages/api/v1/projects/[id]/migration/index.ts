@@ -8,9 +8,21 @@ const cors = Cors({
   methods: ["POST", "HEAD"],
 });
 
+type ApiResponseFormat = {
+  error: {
+    message: string;
+    statusText?: string;
+    status: number;
+  } | null;
+  err: boolean;
+  data?: any;
+};
+
+type NextApiResponseWithError = NextApiResponse<ApiResponseFormat>;
+
 function runMiddleware(
   req: NextApiRequest,
-  res: NextApiResponse,
+  res: NextApiResponseWithError,
   fn: Function
 ) {
   return new Promise((resolve, reject) => {
@@ -24,7 +36,7 @@ function runMiddleware(
   });
 }
 
-async function POST(req: NextApiRequest, res: NextApiResponse) {
+async function POST(req: NextApiRequest, res: NextApiResponseWithError) {
   const { schemaId } = req.body;
   const projectId = req.query.id as string | undefined;
 
@@ -43,9 +55,12 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
 
     if (isEmpty(schemaData?.data)) {
       return res.status(400).json({
-        statusText: "NotFound",
-        message:
-          "Schema can't be found, please select or save a schema and try again.",
+        err: true,
+        error: {
+          status: 400,
+          message:
+            "Schema can't be found, please select or save a schema and try again.",
+        },
       });
     }
 
@@ -60,19 +75,23 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
 
     return res
       .status(200)
-      .json({ statusText: "Success", message: "Success", data: migrationCode });
+      .json({ err: false, error: null, data: migrationCode });
   } catch (error) {
-    return res.status(500).json({
-      statusText: "InternalServerError",
-      message:
-        "Failed to process the request, please bear with us we are working on it.",
-    });
+    if (error instanceof Error) {
+      return res.status(500).json({
+        err: true,
+        error: {
+          message: error.message,
+          status: 500,
+        },
+      });
+    }
   }
 }
 
 export default async function handler(
   req: NextApiRequest,
-  res: NextApiResponse
+  res: NextApiResponseWithError
 ) {
   // Run the middleware
   await runMiddleware(req, res, cors);
@@ -83,10 +102,11 @@ export default async function handler(
 
     default:
       return res.status(405).json({
+        err: true,
         error: {
-          code: 405,
-          message: "Method Not Allowed",
-          suggestion: "Only POST are available on this API",
+          status: 405,
+          statusText: "MethodNotAllowed",
+          message: "Only POST are available on this API",
         },
       });
   }

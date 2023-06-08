@@ -1,4 +1,7 @@
-export async function generateSchemaContent(projectId: string, data: any) {
+export async function generateSchemaContent(
+  projectId: string,
+  data: any
+): Promise<{ data: any; message: string }> {
   const response = await fetch(`/api/v1/projects/${projectId}/generator`, {
     method: "POST",
     headers: {
@@ -8,7 +11,8 @@ export async function generateSchemaContent(projectId: string, data: any) {
   });
 
   if (!response.ok) {
-    throw new Error(response.statusText);
+    const error = await response.json();
+    throw new Error(error?.error?.message || "");
   }
 
   const results = await response.json();

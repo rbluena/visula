@@ -39,14 +39,6 @@ const NodeField = ({
           isConnectableEnd={false}
         />
       </div>
-
-      {/* {field?.relation?.connectedModels ? (
-        <div className="flex flex-col text-xs text-slate-500 bg-slate-50 px-1 pl-2 rounded">
-          {field?.relation?.connectedModels?.map((item) => (
-            <span key={item.modelId}>{item.modelId}</span>
-          ))}
-        </div>
-      ) : null} */}
     </div>
   );
 };
