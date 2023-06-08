@@ -17,7 +17,12 @@ const NodeField = ({
   return (
     <div key={field.id} className="relative">
       <div className="flex justify-between items-start">
-        <span className="block text-sm text-slate-800">{field.name}</span>
+        <div className="">
+          <span className="block text-sm text-slate-800">{field.name}</span>
+          <span className="block text-[10px] text-slate-400">
+            {field.fieldId}
+          </span>
+        </div>
         <span className="block text-xs leading-4 text-slate-500">
           {field?.validations?.required ? <span className="">*</span> : ""}
           {field.dataType}
