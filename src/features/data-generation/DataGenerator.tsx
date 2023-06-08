@@ -125,7 +125,7 @@ const DataGenerator = () => {
               placeholder="Select model"
               value={activeModel.id}
             >
-              <option disabled selected>
+              <option value="" disabled selected>
                 Select model
               </option>
               {allModels?.map((model) => (
@@ -134,7 +134,6 @@ const DataGenerator = () => {
                 </option>
               ))}
             </select>
-            {/* <h2 className="text-xl">Model</h2> */}
           </div>
         ) : (
           <p className="text-slate-500 font-semibold">No model created</p>

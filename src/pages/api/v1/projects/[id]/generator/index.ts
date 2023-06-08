@@ -74,15 +74,35 @@ async function POST(req: NextApiRequest, res: NextApiResponseWithFormat) {
 
     const generatedData = Array.from({ length: totalCount }, function () {
       return Object.keys(data).reduce((acc, next) => {
-        const item = data[next] as { label: string; value: string };
-        const [firstKey, secondKey] = item.value?.split(".");
+        const item = data[next] as {
+          label: string;
+          value: string;
+          options: any;
+        };
+        const [firstKey, secondKey, options] = item.value?.split(".");
 
         let fakerFn =
           // @ts-ignore
           secondKey?.length > 0 ? faker[firstKey][secondKey] : faker[firstKey];
 
         // @ts-ignore
-        acc[next] = fakerFn?.();
+        acc[next] = options ? fakerFn?.(JSON.parse(options)) : fakerFn?.();
+
+        // Full address is created differently
+        if (secondKey === "address") {
+          // @ts-ignore
+          acc[next] = `${faker.location.streetAddress(
+            true
+          )}, ${faker.location.city()}`;
+        }
+
+        if (firstKey === "coordinates") {
+          // @ts-ignore
+          acc[next] = {
+            latitude: faker.location.latitude(),
+            longitude: faker.location.longitude(),
+          };
+        }
 
         return acc;
       }, {});

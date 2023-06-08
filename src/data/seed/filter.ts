@@ -10,6 +10,17 @@ export const options = {
       ],
     },
   ],
+  number: [
+    {
+      label: "Number",
+      options: [
+        { label: "Integer", value: "number.int" },
+        { label: "Decimal", value: "number.float" },
+        { label: "Binary", value: 'number.binary.{ "min": 0, "max": 65535 }' },
+        { label: "Phone", value: "phone.number" },
+      ],
+    },
+  ],
   occupation: [
     {
       label: "Occupation",
@@ -30,8 +41,8 @@ export const options = {
         { label: "Middle name", value: "person.middleName" },
         { label: "Full name", value: "person.fullName" },
         { label: "Prefix", value: "person.prefix" },
-        { label: "Age", value: "date.age" },
-        { label: "Gender", value: "person.gender" },
+        { label: "Age", value: 'number.int.{"min": 5, "max": 100}' },
+        { label: "Gender", value: "person.sex" },
       ],
     },
   ],
@@ -46,27 +57,53 @@ export const options = {
         { label: "Street", value: "location.street" },
         { label: "Zip code", value: "location.zipCode" },
         { label: "Latitude", value: "location.latitude" },
-        { label: "Longitude", value: "location.langitude" },
+        { label: "Longitude", value: "location.longitude" },
+        { label: "Coordinates", value: "coordinates" },
       ],
     },
   ],
   date: [
     {
       label: "Date",
-      options: [{ label: "Date", value: "date.anytime" }],
+      options: [
+        { label: "Date", value: "date.anytime" },
+        { label: "Month", value: "date.month" },
+      ],
+    },
+  ],
+  internet: [
+    {
+      label: "Internet",
+      options: [
+        { label: "Email", value: "internet.email" },
+        { label: "URL", value: "internet.url" },
+        { label: "IP", value: "internet.ipv4" },
+      ],
+    },
+  ],
+  commerce: [
+    {
+      label: "Commerce",
+      options: [
+        { label: "Product", value: "commerce.product" },
+        { label: "Price", value: "commerce.price" },
+      ],
     },
   ],
   boolean: [
     { label: "Boolean", options: [{ label: "True/False", value: "boolean" }] },
   ],
-  object: [{ label: "Object", options: [] }],
+  // object: [{ label: "Object", options: [] }],
 };
 
 export const groupedOptions = [
   ...options.random,
+  ...options.number,
   ...options.person,
   ...options.occupation,
   ...options.date,
+  ...options.internet,
   ...options.location,
+  ...options.commerce,
   ...options.boolean,
 ];

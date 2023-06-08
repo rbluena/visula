@@ -23,7 +23,6 @@ export function useDataGenerator() {
   function getGridData(fields: ModelField[], data: any = []) {
     try {
       const genData = JSON.parse(data);
-      // console.log(genData);
 
       if (isEmpty(fields) || isEmpty(genData)) {
         return;
@@ -43,11 +42,19 @@ export function useDataGenerator() {
       const rows: Row[] = genData.map((item: any, index: number) => {
         return {
           rowId: index,
-          cells: fields.map((field) => ({
-            type: "text",
-            text: item[field.fieldId] ? item[field.fieldId] : "",
-            nonEditable: true,
-          })),
+          cells: fields.map((field) => {
+            const val = item[field.fieldId] ? item[field.fieldId] : "";
+
+            return {
+              ...(typeof val === "number" || typeof val === "object"
+                ? {
+                    type: "text",
+                    text: JSON.stringify(val),
+                  }
+                : { type: "text", text: val }),
+              nonEditable: true,
+            };
+          }),
         } as Row;
       });
 

@@ -137,9 +137,9 @@ const ProjectSettingsModal = () => {
               <div className="flex gap-2">
                 <InformationCircleIcon className="w-8 h-8 block text-lg" />
                 <span className="text-[12px] text-slate-500">
-                  The information below is not required to create a migration
-                  code; however, is needed for deploying schema and dummy data
-                  to the CMS.
+                  The information below is not required in order to create a
+                  migration code; however, is needed for deploying schema and
+                  dummy data to the CMS.
                 </span>
               </div>
 
