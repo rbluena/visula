@@ -19,6 +19,7 @@ const NodeField = ({
       <div className="flex justify-between items-start">
         <span className="block text-sm text-slate-800">{field.name}</span>
         <span className="block text-xs leading-4 text-slate-500">
+          {field?.validations?.required ? <span className="">*</span> : ""}
           {field.dataType}
         </span>
         <Handle
