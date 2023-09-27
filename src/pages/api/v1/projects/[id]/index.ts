@@ -1,6 +1,5 @@
 import type { NextApiRequest, NextApiResponse } from "next";
 import Cors from "cors";
-import { Prisma } from "@prisma/client";
 import isEmpty from "lodash/isEmpty";
 import prisma from "@/lib/server/prisma";
 
@@ -28,7 +27,7 @@ async function PUT(req: NextApiRequest, res: NextApiResponse) {
   const {
     data,
     contentManagementSystems,
-  }: { contentManagementSystems: Prisma.JsonArray; data: any } = req.body;
+  }: { contentManagementSystems: any; data: any } = req.body;
 
   try {
     if (!isEmpty(contentManagementSystems)) {
@@ -42,10 +41,10 @@ async function PUT(req: NextApiRequest, res: NextApiResponse) {
           projectSetting: {
             upsert: {
               create: {
-                contentManagementSystems: contentManagementSystems,
+                contentManagementSystems,
               },
               update: {
-                contentManagementSystems: contentManagementSystems,
+                contentManagementSystems,
               },
             },
           },
