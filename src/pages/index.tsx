@@ -55,11 +55,10 @@ export default function Home() {
               {/* start: Right side pane, video */}
               <div className="w-full mt-4 md:w-[60%] md:mt-0">
                 <iframe
-                  src="https://www.veed.io/embed/579c3433-b70e-4ef4-87b7-6483dfd7e7cd"
+                  src="https://www.veed.io/embed/bd0a7d25-1d72-42d9-8a0c-72e9bea999e1"
                   width="100%"
-                  // height="504"
+                  title="Visula - How to design schema"
                   className="aspect-video w-full"
-                  title="Visula - How to"
                   allowFullScreen
                 />
               </div>
