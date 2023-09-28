@@ -120,7 +120,7 @@ const ModelFieldComponent = ({ fieldData }: Props) => {
               }
             >
               <option value="hasOne">One content</option>
-              <option value="hasMany">Many content</option>
+              <option value="hasMany">Many contents</option>
             </select>
           ) : null}
 

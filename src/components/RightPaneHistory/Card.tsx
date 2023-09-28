@@ -1,6 +1,6 @@
-import { getRelativeTime } from "@/lib/client/common/getTimeAgo";
-import { EyeIcon, TagIcon, TrashIcon } from "@heroicons/react/24/outline";
 import { MouseEventHandler } from "react";
+import { EyeIcon, TagIcon, TrashIcon } from "@heroicons/react/24/outline";
+import { getRelativeTime } from "@/lib/client/common/getTimeAgo";
 
 type Props = {
   name: string;
@@ -34,16 +34,16 @@ const Card = ({
             ) : null}
           </div>
 
-          <div className="flex items-center gap-1">
+          <div className="flex items-start gap-1">
             <button
-              className="border border-slate-300 rounded-full p-1 bg-indigo-50 hover:bg-green-100 text-indigo-700"
+              className="border border-slate-300 rounded-full p-1.5 bg-indigo-50 hover:bg-green-100 text-indigo-700"
               onClick={showSchema}
               title="View models"
             >
               <EyeIcon className="w-4 h-4" />
             </button>
             <button
-              className="border border-slate-300 rounded-full p-1 bg-slate-50 hover:bg-slate-100 text-slate-700"
+              className="border border-slate-300 rounded-full p-1.5 bg-slate-50 hover:bg-slate-100 text-slate-700"
               title="Tag this schema"
               onClick={openSchemaTaggingModal}
               aria-describedby="aria-version-tag"
@@ -55,7 +55,7 @@ const Card = ({
             </button>
             <button
               aria-describedby="aria-version-delete"
-              className="border border-slate-300 rounded-full p-1 bg-red-50 hover:bg-red-100 text-red-700"
+              className="border border-slate-300 rounded-full p-1.5 bg-red-50 hover:bg-red-100 text-red-700"
               title="Delete this schema"
               onClick={deleteSchemaHistory}
             >

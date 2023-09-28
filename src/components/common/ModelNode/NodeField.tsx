@@ -17,8 +17,14 @@ const NodeField = ({
   return (
     <div key={field.id} className="relative">
       <div className="flex justify-between items-start">
-        <span className="block text-sm text-slate-800">{field.name}</span>
+        <div className="">
+          <span className="block text-sm text-slate-800">{field.name}</span>
+          <span className="block text-[10px] text-slate-400">
+            {field.fieldId}
+          </span>
+        </div>
         <span className="block text-xs leading-4 text-slate-500">
+          {field?.validations?.required ? <span className="">*</span> : ""}
           {field.dataType}
         </span>
         <Handle
@@ -38,14 +44,6 @@ const NodeField = ({
           isConnectableEnd={false}
         />
       </div>
-
-      {/* {field?.relation?.connectedModels ? (
-        <div className="flex flex-col text-xs text-slate-500 bg-slate-50 px-1 pl-2 rounded">
-          {field?.relation?.connectedModels?.map((item) => (
-            <span key={item.modelId}>{item.modelId}</span>
-          ))}
-        </div>
-      ) : null} */}
     </div>
   );
 };

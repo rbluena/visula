@@ -92,6 +92,18 @@ const SchemaTaggingModal = () => {
             {...register("description")}
           />
         </div>
+        {/* <div className="flex items-center py-2">
+          <input
+            className="w-5 h-5"
+            id="private"
+            {...register("owner")}
+            type="checkbox"
+          />
+          &nbsp;
+          <label className="block text-sm" htmlFor="private">
+            Private
+          </label>
+        </div> */}
 
         <div>
           <button

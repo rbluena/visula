@@ -200,7 +200,7 @@ export async function deployModelService(
 
   const results = await response.json();
 
-  return results;
+  return results.data;
 }
 
 /**

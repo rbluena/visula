@@ -96,7 +96,7 @@ const ContextMenuComponent = ({ children }: Props) => {
         },
         {
           key: 230990,
-          label: "Deploy",
+          label: "Deploy schema",
           action: deploySchema,
           disabled: true, // Local changes should be saved first before deployed
           // disabled: newLocalChanges, // Local changes should be saved first before deployed
@@ -390,7 +390,7 @@ const CanvasMenu = forwardRef<any, MenuProps>(({ menuItems }, ref) => {
           return (
             <ContextMenu.Label
               key={item.key}
-              className="pl-[25px] text-xs leading-[25px] text-slate-400"
+              className="pl-[25px] text-xs leading-[25px] text-slate-500"
             >
               {item.label}
             </ContextMenu.Label>

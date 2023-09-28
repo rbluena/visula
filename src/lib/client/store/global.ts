@@ -21,6 +21,7 @@ export type GlobalState = {
   isGeneratedCodeOpen: boolean;
   globalLoader: boolean;
   savingLoader: boolean;
+  bottomSheetOpen: "closed" | "opened" | "expanded";
   notification: null | NotificationMessage;
 };
 
@@ -30,6 +31,7 @@ export type Actions = {
   openGeneratedCode: (payload: boolean) => void;
   setGlobalLoader: (payload: boolean) => void;
   setGlobalSavingLoader: (payload: boolean) => void;
+  setBottomSheetOpenStatus: (payload: GlobalState["bottomSheetOpen"]) => void;
   setNotification: (payload: NotificationMessage | null) => void;
   setOpenedModal: (payload: OpenedModal) => void;
 };
@@ -38,6 +40,7 @@ export const useGlobalStore = create<GlobalState & Actions>((set) => ({
   isMigrationModalOpen: false,
   openedModal: null,
   isGeneratedCodeOpen: false,
+  bottomSheetOpen: "closed",
   generatedCode: "",
   notification: null,
   globalLoader: true,
@@ -56,6 +59,9 @@ export const useGlobalStore = create<GlobalState & Actions>((set) => ({
   },
   setGlobalLoader(payload) {
     set(() => ({ globalLoader: payload }));
+  },
+  setBottomSheetOpenStatus(payload) {
+    set(() => ({ bottomSheetOpen: payload }));
   },
   setGlobalSavingLoader: (payload) => {
     set(() => ({ savingLoader: payload }));

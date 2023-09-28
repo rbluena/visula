@@ -1,13 +1,18 @@
 import { useRouter } from "next/router";
 import { shallow } from "zustand/shallow";
 import Link from "next/link";
-import { CloudArrowUpIcon, HomeIcon } from "@heroicons/react/24/outline";
+import {
+  CloudArrowUpIcon,
+  HomeIcon,
+  TableCellsIcon,
+} from "@heroicons/react/24/outline";
 import Spinner from "@/components/common/Spinner/Spinner";
 import { getRelativeTime } from "@/lib/client/common/getTimeAgo";
 import { useGlobalStore } from "@/lib/client/store/global";
 import { useHistoryStore } from "@/lib/client/store/history";
 import { saveSchemaHistoryService } from "@/services/schemas";
 import { toast } from "react-hot-toast";
+import { Button } from "../form";
 
 type Props = {
   hideProjectTitle: boolean;
@@ -23,11 +28,17 @@ const DashboardTopBar = ({
   showLoader = true,
   project = {},
 }: Props) => {
-  const { setOpenedModal, setSavingLoader, isSaving } = useGlobalStore(
+  const {
+    setOpenedModal,
+    setSavingLoader,
+    isSaving,
+    setBottomSheetOpenStatus,
+  } = useGlobalStore(
     (state) => ({
       setOpenedModal: state.setOpenedModal,
       isSaving: state.savingLoader,
       setSavingLoader: state.setGlobalSavingLoader,
+      setBottomSheetOpenStatus: state.setBottomSheetOpenStatus,
     }),
     shallow
   );
@@ -61,8 +72,11 @@ const DashboardTopBar = ({
 
       addSchema(responseData);
       setSavingLoader(false);
-      toast.success("New schema was created.");
+      toast.success("New schema has been saved.");
     } catch (error) {
+      if (error instanceof Error) {
+        toast.error(error.message);
+      }
       setSavingLoader(false);
     }
   }
@@ -73,12 +87,23 @@ const DashboardTopBar = ({
         <span />
       ) : (
         <div className="flex items-start space-x-2 pointer-events-auto">
-          <Link
-            href="/"
-            className="bg-slate-100  flex items-center justify-center rounded p-2 hover:bg-violet-100"
-          >
-            <HomeIcon className="text-lg w-6 h-6 font-semibold" />
-          </Link>
+          <div className="flex flex-col gap-2">
+            <Link
+              href="/"
+              className="bg-slate-100  flex items-center justify-center rounded p-2 hover:bg-violet-100"
+            >
+              <HomeIcon className="text-lg w-6 h-6 font-semibold" />
+            </Link>
+            <Button
+              variant="primary"
+              modifier="outline"
+              onClick={() => setBottomSheetOpenStatus("opened")}
+              title="Generate schema's data"
+              // className="bg-indigo-100  flex items-center justify-center rounded p-2 hover:bg-violet-100"
+            >
+              <TableCellsIcon className="text-lg w-6 h-6 font-semibold" />
+            </Button>
+          </div>
 
           {showLoader ? (
             <Spinner className="w-6 h-6" />

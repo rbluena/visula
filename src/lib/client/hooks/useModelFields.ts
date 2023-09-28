@@ -43,7 +43,7 @@ export default function useModelField() {
   }
 
   function getModelFields(fieldIds: string[]) {
-    return fieldIds.map((id) => {
+    return fieldIds?.map((id) => {
       const fieldData = { ...data[id] };
 
       if (fieldData.dataType === "Relation") {
@@ -60,15 +60,10 @@ export default function useModelField() {
     }));
   }
 
-  function updateFieldValidation(value: any) {
-    console.log(value);
-  }
-
   return {
     updateModelField,
     createModelField,
     deleteModelField,
     getModelFields,
-    updateFieldValidation,
   };
 }

@@ -97,7 +97,6 @@ const Model = ({
             onClick={() => setOpenedModal("model-update")}
             className="border border-slate-300 rounded-full p-1 bg-indigo-50 hover:bg-violet-100 text-indigo-700"
             aria-describedby="aria-model-delete"
-            title="Delete this model"
           >
             <span id="aria-model-delete" className="sr-only">
               Update model details
@@ -108,7 +107,6 @@ const Model = ({
             onClick={() => onDeletingModel(modelData.id)}
             className="border border-slate-300 rounded-full p-1 bg-red-50 hover:bg-red-100 text-red-700"
             aria-describedby="aria-model-delete"
-            title="Delete this model"
           >
             <span id="aria-model-delete" className="sr-only">
               Delete model {modelData.name}
