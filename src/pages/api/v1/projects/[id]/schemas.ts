@@ -107,7 +107,7 @@ export async function GET(req: NextApiRequest, res: NextApiResponse) {
 
     let schemaIds: string[] = [];
 
-    const mappedData = allSchemas.reduceRight((acc, curr) => {
+    const mappedData = allSchemas.reduceRight((acc: any, curr: any) => {
       schemaIds.push(curr.id);
       acc[curr.id] = curr;
 

@@ -19,14 +19,6 @@ const Nav = () => {
           <li>
             <Link
               className="text-indigo-700 text-sm font-bold hover:underline hover:opacity-80"
-              href="/waitlist"
-            >
-              Join waitlist
-            </Link>
-          </li>
-          <li>
-            <Link
-              className="text-indigo-700 text-sm font-bold hover:underline hover:opacity-80"
               href="/roadmap"
             >
               Roadmap

@@ -35,13 +35,13 @@ export default function Home() {
                 </p>
 
                 <div className="flex gap-2 flex-wrap">
-                  <Link
+                  {/* <Link
                     href="/waitlist"
                     className="rounded-full bg-slate-900 hover:bg-black leading-4 p-4 px-8 text-md flex items-center justify-center text-white"
                   >
                     Join the waitlist&nbsp;&nbsp;
                     <ArrowRightIcon className="w-4 h-4 text-lg" />
-                  </Link>
+                  </Link> */}
                   <Link
                     href="/try"
                     className="rounded-full border-2 border-slate-900 hover:bg-slate-600 leading-4 p-4 px-8 text-md flex items-center justify-center text-slate-900 hover:text-white"
@@ -51,19 +51,19 @@ export default function Home() {
                   </Link>
                 </div>
               </div>
-
               {/* start: Right side pane, video */}
               <div className="w-full mt-4 md:w-[60%] md:mt-0">
                 <iframe
-                  src="https://www.veed.io/embed/bd0a7d25-1d72-42d9-8a0c-72e9bea999e1"
-                  width="100%"
-                  title="Visula - How to design schema"
+                  loading="lazy"
                   className="aspect-video w-full"
+                  // style="position: absolute; width: 100%; height: 100%; top: 0; left: 0; border: none; padding: 0;margin: 0;"
+                  src="https:&#x2F;&#x2F;www.canva.com&#x2F;design&#x2F;DAGGlnjQ49M&#x2F;GXjUXPiFC6RuQjLS4PtM0A&#x2F;watch?embed"
                   allowFullScreen
-                />
+                  allow="fullscreen"
+                ></iframe>
               </div>
-              {/* end: Right side pane, video */}
             </div>
+            {/* end: Right side pane, video */}
           </div>
         </div>
       </div>

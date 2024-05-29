@@ -48,6 +48,7 @@ const Raodmap = () => {
         <iframe
           className={`airtable-embed ${showFeatureRequest ? "" : "hidden"}`}
           src="https://airtable.com/embed/shrCojmuMcdxvyV8G?backgroundColor=blue"
+          loading="lazy"
           width="100%"
           height="533"
           onLoad={() => setIsLoading(false)}
@@ -57,6 +58,7 @@ const Raodmap = () => {
         <iframe
           className={`airtable-embed ${showFeatureRequest ? "hidden" : ""}`}
           src="https://airtable.com/embed/shrsY2eoICp1MtcXm?backgroundColor=blue"
+          loading="lazy"
           width="100%"
           height="533"
           onLoad={() => setIsLoading(false)}

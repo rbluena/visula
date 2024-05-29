@@ -125,7 +125,7 @@ async function POST(req: NextApiRequest, res: NextApiResponse) {
       );
     }
 
-    const cmsAccessDetails = cms.contentManagementSystems.find((item) => {
+    const cmsAccessDetails = cms.contentManagementSystems.find((item: any) => {
       //@ts-ignore
       return item?.type === cmsType;
     }) as CMSAccessDetails | undefined;
